@@ -5,19 +5,27 @@
 
 import os.path
 import wx
+from wx.lib.pubsub import pub as Publisher
 
 
 
 '''
 Interface graphique de l'application
 @author: Julien
+@todo: Log
 '''
 
 
 
-class MainFrame(wx.Frame):
+FILELIST_CHANGED = "FILELIST_CHANGED"
+ACTIONLIST_CHANGED = "ACTIONLIST_CHANGED"
+
+
+
+class Model(object):
     '''
-    Fenêtre principale
+    Données de l'application
+    Contient les fichiers à modifier ainsi que les actions à effectuer
     @author: Julien
     '''
     
@@ -27,9 +35,57 @@ class MainFrame(wx.Frame):
         Constructeur
         @author: Julien
         '''
+        self.filelist = []
+        self.actionlist = []
+    
+    
+    def AddFile(self, path):
+        '''
+        Ajouter un fichier
+        @param path: Chemin du fichier
+        @return: False si le fichier existait déjà, True sinon
+        @author: Julien
+        '''
+        if path in self.filelist:
+            return False
+        else:
+            self.filelist.append(path)
+            Publisher.sendMessage(FILELIST_CHANGED)
+            return True
+    
+    
+    def RemoveFile(self, path):
+        '''
+        Retirer un fichier
+        @param path: Chemin du fichier
+        @return: False si le fichier n'existait pas, True sinon
+        @author: Julien
+        '''
+        if path not in self.filelist:
+            return False
+        else:
+            self.filelist.remove(path)
+            Publisher.sendMessage(FILELIST_CHANGED)
+            return True
+
+
+
+class View(wx.Frame):
+    '''
+    Fenêtre principale
+    @author: Julien
+    '''
+    
+    
+    def __init__(self):
+        '''
+        Constructeur
+        @param parent: Fenêtre parent
+        @author: Julien
+        '''
         # Fenêtre
         minSize = (500,500)
-        wx.Frame.__init__ (self, parent=None, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
+        wx.Frame.__init__ (self, None, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
         self.SetMinSize(minSize)
         self.CenterOnScreen()
         
@@ -52,8 +108,7 @@ class MainFrame(wx.Frame):
         # Barre d'outils
         toolBar = self.CreateToolBar()
         #     Quitter
-        quitter_tool = toolBar.AddLabelTool(wx.ID_ANY, "Quitter", wx.Bitmap('icons/exit.png'))
-        self.Bind(wx.EVT_TOOL, self.OnTest, quitter_tool)
+        self.quitter_tool = toolBar.AddLabelTool(wx.ID_ANY, "Quitter", wx.Bitmap('icons/exit.png'))
         # .
         toolBar.Realize()
         
@@ -79,14 +134,11 @@ class MainFrame(wx.Frame):
         listFiles_header_toolbar = wx.ToolBar(listFiles_panel, style=wx.TB_FLAT|wx.TB_HORZ_TEXT)
         listFiles_boxSizer.Add(listFiles_header_toolbar, flag=wx.EXPAND)
         #                 Ajouter un fichier
-        addFile_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter un fichier", bitmap=wx.Bitmap(name="icons/add_file.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Ajouter un fichier dans la liste")
-        self.Bind(wx.EVT_TOOL, self.OnAddFile, addFile_tool)
+        self.addFile_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter un fichier", bitmap=wx.Bitmap(name="icons/add_file.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Ajouter un fichier dans la liste")
         #                 Ajouter un répertoire
-        addFolder_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter un répertoire", bitmap=wx.Bitmap(name="icons/add_folder.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Ajouter un répertoire dans la liste")
-        self.Bind(wx.EVT_TOOL, self.OnAddFolder, addFolder_tool)
+        self.addFolder_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter un répertoire", bitmap=wx.Bitmap(name="icons/add_folder.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Ajouter un répertoire dans la liste")
         #                 Supprimer la sélection
-        removeSelectedListFiles_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Supprimer la sélection", bitmap=wx.Bitmap(name="icons/delete.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Supprimer les fichiers sélectionnés de la liste")
-        self.Bind(wx.EVT_TOOL, self.OnRemoveSelectedListFiles, removeSelectedListFiles_tool)
+        self.removeSelectedListFiles_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Supprimer la sélection", bitmap=wx.Bitmap(name="icons/delete.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Supprimer les fichiers sélectionnés de la liste")
         #             .
         listFiles_header_toolbar.Realize()
         #             Liste
@@ -127,20 +179,34 @@ class MainFrame(wx.Frame):
         listActions_action_sizer.Add(self.selectedAction_panel, flag=wx.EXPAND |wx.ALL, border=5)
         #     .
         splitter.SplitHorizontally(listFiles_panel, listActions_panel, 150) # TODO: Proportion initiale
+
+
+
+class Controller(object):
+    '''
+    Controlleur de l'application
+    @author: Julien
+    '''
     
     
-    
-    def AddPath(self, path):
+    def __init__(self):
         '''
-        Ajouter un fichier ou un répertoire
-        @param path: Chemin
+        Constructeur
         @author: Julien
         '''
-        (head, tail) = os.path.split(path)
-        index = self.listFiles_listCtrl.InsertStringItem(0, label=head)
-        self.listFiles_listCtrl.SetStringItem(index, 1, tail)
-        self.listFiles_listCtrl.SetStringItem(index, 2, "TODO")
-    
+        self.model = Model()
+        self.view = View()
+        # Bindings
+        #     Barre d'outils principale
+        self.view.Bind(wx.EVT_TOOL, self.OnTest, self.view.quitter_tool)
+        #     Barre d'outils de la liste des fichiers
+        self.view.Bind(wx.EVT_TOOL, self.OnAddFile, self.view.addFile_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnAddFolder, self.view.addFolder_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedListFiles, self.view.removeSelectedListFiles_tool)
+        self.view.Show()
+        # Événements du modèle
+        Publisher.subscribe(self.FilelistChanged, FILELIST_CHANGED)
+        #Publisher.subscribe(self.ActionlistChanged, ACTIONLIST_CHANGED)
     
     
     def OnAddFile(self, event):
@@ -148,9 +214,17 @@ class MainFrame(wx.Frame):
         Ajout d'un fichier
         @param event: Événement
         @author: Julien
-        @todo: Impélmenter
+        @todo: Répertoire par défaut
         '''
         print "OnAddFile"
+        
+        fDialog = wx.FileDialog(parent=self.view, message="Sélectionnez les fichiers", style=wx.FD_MULTIPLE)
+        if fDialog.ShowModal() != wx.ID_OK :
+            return
+        direname = fDialog.GetDirectory()
+        for basename in fDialog.GetFilenames():
+            path = os.path.join(direname, basename)
+            self.model.AddFile(path)
         event.Skip()
     
     
@@ -176,27 +250,27 @@ class MainFrame(wx.Frame):
         event.Skip()
     
     
-    def UpdateSurvey(self):
+    def FilelistChanged(self):
         '''
-        Mettre à jour l'aperçu des noms de fichier après modification
+        Rafraichir la liste des fichiers
+        @param filelist: Liste des fichiers
         @author: Julien
-        @todo: Implémenter
         '''
-        print "UpdateSurvey"
+        print "FilelistChanged"
+        self.view.listFiles_listCtrl.DeleteAllItems()
+        for path in self.model.filelist:
+            (head, tail) = os.path.split(path)
+            index = self.view.listFiles_listCtrl.InsertStringItem(0, label=head)
+            self.view.listFiles_listCtrl.SetStringItem(index, 1, tail)
+            self.view.listFiles_listCtrl.SetStringItem(index, 2, "TODO")
     
     
     def OnTest(self, event):
-        print "OnTest"
-        self.AddPath("C:\\toto\\app\\fdv.mp3")
-        event.Skip()
-        
-
+        print "self.OnTest"
 
 
 
 if __name__ == '__main__':
-    ex = wx.App(redirect=False)
-    fen = MainFrame()
-    fen.Show(True)
-    ex.MainLoop()
-    pass
+    app = wx.App(False)
+    controller = Controller()
+    app.MainLoop()
