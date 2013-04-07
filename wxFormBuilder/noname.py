@@ -17,7 +17,7 @@ import wx.xrc
 class MyFrame1 ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 576,702 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 820,761 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
@@ -49,12 +49,16 @@ class MyFrame1 ( wx.Frame ):
 		
 		listFiles_boxSizer.Add( self.listFiles_title_staticText, 0, wx.ALL, 5 )
 		
-		self.listFiles_toolbar = wx.ToolBar( self.listFiles_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT|wx.TB_HORZ_TEXT ) 
+		self.listFiles_toolbar = wx.ToolBar( self.listFiles_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT|wx.TB_TEXT ) 
 		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Ajouter un fichier", wx.Bitmap( u"../formatmp3/gui/icons/add_file.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Ajouter un fichier dans la liste", wx.EmptyString, None ) 
 		
 		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Ajouter un répertoire", wx.Bitmap( u"../formatmp3/gui/icons/add_folder.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Ajouter une répertoire dans la liste", wx.EmptyString, None ) 
 		
-		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Supprimer la sélection", wx.Bitmap( u"../formatmp3/gui/icons/delete.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Supprimer les fichiers sélectionnés de la liste", wx.EmptyString, None ) 
+		self.listFiles_toolbar.AddSeparator()
+		
+		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Supprimer la sélection", wx.Bitmap( u"../formatmp3/gui/icons/remove_selected.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Supprimer les fichiers sélectionnés de la liste", wx.EmptyString, None ) 
+		
+		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Supprimer tous les fichiers de la liste", wx.Bitmap( u"../formatmp3/gui/icons/remove_all.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Supprimer tous les fichiers de la liste", wx.EmptyString, None ) 
 		
 		self.listFiles_toolbar.Realize() 
 		
@@ -76,18 +80,50 @@ class MyFrame1 ( wx.Frame ):
 		
 		listActions_boxSizer.Add( self.listActions_title_staticText, 0, wx.ALL, 5 )
 		
-		self.m_toolBar4 = wx.ToolBar( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_HORIZONTAL ) 
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.NullBitmap, wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		self.m_toolBar4 = wx.ToolBar( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_HORIZONTAL )
+		self.m_toolBar4.SetToolBitmapSize( wx.Size( 16,16 ) )
+		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"Up", wx.Bitmap( u"../formatmp3/gui/icons/up.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
 		
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.NullBitmap, wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"Down", wx.Bitmap( u"../formatmp3/gui/icons/down.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_toolBar4.AddSeparator()
+		
+		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.Bitmap( u"../formatmp3/gui/icons/remove_selected.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.Bitmap( u"../formatmp3/gui/icons/remove_all.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
 		
 		self.m_toolBar4.Realize() 
 		
 		listActions_boxSizer.Add( self.m_toolBar4, 0, wx.EXPAND, 5 )
 		
+		bSizer6 = wx.BoxSizer( wx.HORIZONTAL )
+		
 		listActionsToDo_listBoxChoices = []
 		self.listActionsToDo_listBox = wx.ListBox( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, listActionsToDo_listBoxChoices, 0 )
-		listActions_boxSizer.Add( self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5 )
+		bSizer6.Add( self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5 )
+		
+		bSizer7 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.m_button3 = wx.Button( self.listActions_panel, wx.ID_ANY, u"Monter", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.m_button3, 0, wx.ALL, 5 )
+		
+		
+		bSizer7.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_button4 = wx.Button( self.listActions_panel, wx.ID_ANY, u"Supprimer", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.m_button4, 0, wx.ALL, 5 )
+		
+		
+		bSizer7.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
+		
+		self.m_button5 = wx.Button( self.listActions_panel, wx.ID_ANY, u"Descendre", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.m_button5, 0, wx.ALL, 5 )
+		
+		
+		bSizer6.Add( bSizer7, 0, wx.EXPAND, 5 )
+		
+		
+		listActions_boxSizer.Add( bSizer6, 1, wx.EXPAND, 5 )
 		
 		listActions_action_sizer = wx.BoxSizer( wx.HORIZONTAL )
 		
@@ -117,7 +153,7 @@ class MyFrame1 ( wx.Frame ):
 		self.listActions_panel.SetSizer( listActions_boxSizer )
 		self.listActions_panel.Layout()
 		listActions_boxSizer.Fit( self.listActions_panel )
-		self.splitter.SplitHorizontally( self.listFiles_panel, self.listActions_panel, 405 )
+		self.splitter.SplitHorizontally( self.listFiles_panel, self.listActions_panel, 301 )
 		mainSizer.Add( self.splitter, 1, wx.ALL|wx.EXPAND, 0 )
 		
 		
@@ -131,7 +167,7 @@ class MyFrame1 ( wx.Frame ):
 		pass
 	
 	def splitterOnIdle( self, event ):
-		self.splitter.SetSashPosition( 405 )
+		self.splitter.SetSashPosition( 301 )
 		self.splitter.Unbind( wx.EVT_IDLE )
 	
 

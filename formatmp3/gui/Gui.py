@@ -39,34 +39,97 @@ class Model(object):
         self.actionlist = []
     
     
-    def AddFile(self, path):
-        '''
-        Ajouter un fichier
-        @param path: Chemin du fichier
-        @return: False si le fichier existait déjà, True sinon
-        @author: Julien
-        '''
-        if path in self.filelist:
-            return False
-        else:
-            self.filelist.append(path)
-            Publisher.sendMessage(FILELIST_CHANGED)
-            return True
+    #def AddFile(self, path):
+    #    '''
+    #    Ajouter un fichier
+    #    @param path: Chemin du fichier
+    #    @author: Julien
+    #    '''
+    #    if path not in self.filelist:
+    #        self.filelist.append(path)
+    #        self.filelist.sort()
+    #        Publisher.sendMessage(FILELIST_CHANGED)
     
     
-    def RemoveFile(self, path):
+    def AddFiles(self, pathlist=[]):
         '''
-        Retirer un fichier
-        @param path: Chemin du fichier
-        @return: False si le fichier n'existait pas, True sinon
+        Ajouter des fichiers
+        @param pathlist: Liste des chemins des fichiers
         @author: Julien
         '''
-        if path not in self.filelist:
-            return False
-        else:
-            self.filelist.remove(path)
+        filesAdded = False
+        for path in pathlist:
+            if path not in self.filelist:
+                self.filelist.append(path)
+                filesAdded = True
+        if filesAdded:
+            self.filelist.sort()
             Publisher.sendMessage(FILELIST_CHANGED)
-            return True
+    
+    
+    def _addFolder(self, dirname):
+        '''
+        Ajout de chacun des fichiers contenus dans le répertoire de manière récursive
+        @param dirname: Chemin du répertoire
+        @author: Julien
+        '''
+        for basename in os.listdir(dirname):
+            path = os.path.join(dirname, basename)
+            if os.path.isdir(path):
+                self._addFolder(path)
+            elif os.path.isfile(path):
+                if path not in self.filelist:
+                    self.filelist.append(path)
+    
+    
+    def AddFolder(self, path):
+        '''
+        Ajouter un répertoire
+        @param path: Chemin du répertoire
+        @author: Julien
+        '''
+        oldCount = len(self.filelist)
+        self._addFolder(path)
+        newCount = len(self.filelist)
+        if oldCount < newCount:
+            self.filelist.sort()
+            Publisher.sendMessage(FILELIST_CHANGED)
+    
+    
+    #def RemoveFile(self, path):
+    #    '''
+    #    Retirer un fichier
+    #    @param path: Chemin du fichier
+    #    @author: Julien
+    #    '''
+    #    if path in self.filelist:
+    #        self.filelist.remove(path)
+    #        Publisher.sendMessage(FILELIST_CHANGED)
+    
+    
+    def RemoveFiles(self, pathlist=[]):
+        '''
+        Retirer des fichiers
+        @param pathlist: Liste des chemins des fichiers
+        @author: Julien
+        '''
+        filesDeleted = False
+        for path in pathlist:
+            if path in self.filelist:
+                self.filelist.remove(path)
+                filesDeleted = True
+        if filesDeleted:
+            Publisher.sendMessage(FILELIST_CHANGED)
+    
+    
+    def RemoveAllFiles(self):
+        '''
+        Retirer tous les fichiers
+        @author: Julien
+        '''
+        if self.filelist != []:
+            self.filelist = []
+            Publisher.sendMessage(FILELIST_CHANGED)
 
 
 
@@ -84,7 +147,7 @@ class View(wx.Frame):
         @author: Julien
         '''
         # Fenêtre
-        minSize = (500,500)
+        minSize = (600,600)
         wx.Frame.__init__ (self, None, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
         self.SetMinSize(minSize)
         self.CenterOnScreen()
@@ -126,27 +189,43 @@ class View(wx.Frame):
         listFiles_boxSizer = wx.BoxSizer(wx.VERTICAL)
         listFiles_panel.SetSizer(listFiles_boxSizer)
         #             Titre
-        listFiles_header_title_staticText = wx.StaticText(listFiles_panel, label="Fichiers à modifier")
-        listFiles_header_title_font = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString)
-        listFiles_header_title_staticText.SetFont(listFiles_header_title_font)
-        listFiles_boxSizer.Add(listFiles_header_title_staticText, flag=wx.ALL, border=5)
+        listFiles_title_staticText = wx.StaticText(listFiles_panel, label="Fichiers à modifier")
+        listFiles_title_font = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString)
+        listFiles_title_staticText.SetFont(listFiles_title_font)
+        listFiles_boxSizer.Add(listFiles_title_staticText, flag=wx.ALL, border=5)
         #             Barre d'outils
-        listFiles_header_toolbar = wx.ToolBar(listFiles_panel, style=wx.TB_FLAT|wx.TB_HORZ_TEXT)
-        listFiles_boxSizer.Add(listFiles_header_toolbar, flag=wx.EXPAND)
+        listFiles_toolbar = wx.ToolBar(listFiles_panel, style=wx.TB_FLAT|wx.TB_TEXT)
+        listFiles_boxSizer.Add(listFiles_toolbar, flag=wx.EXPAND)
         #                 Ajouter un fichier
-        self.addFile_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter un fichier", bitmap=wx.Bitmap(name="icons/add_file.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Ajouter un fichier dans la liste")
+        addFile_image = wx.Image("icons/add_file.png")
+        addFile_image.Rescale(16,16)
+        addFile_bitmap = wx.BitmapFromImage(addFile_image)
+        self.addFile_tool = listFiles_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter fichier", bitmap=addFile_bitmap, shortHelp="Ajouter un fichier dans la liste")
         #                 Ajouter un répertoire
-        self.addFolder_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter un répertoire", bitmap=wx.Bitmap(name="icons/add_folder.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Ajouter un répertoire dans la liste")
-        #                 Supprimer la sélection
-        self.removeSelectedListFiles_tool = listFiles_header_toolbar.AddLabelTool(wx.ID_ANY, label="Supprimer la sélection", bitmap=wx.Bitmap(name="icons/delete.png", type=wx.BITMAP_TYPE_PNG), shortHelp="Supprimer les fichiers sélectionnés de la liste")
+        addFolder_image = wx.Image("icons/add_folder.png")
+        addFolder_image.Rescale(16,16)
+        addFolder_bitmap = wx.BitmapFromImage(addFolder_image)
+        self.addFolder_tool = listFiles_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter répertoire", bitmap=addFolder_bitmap, shortHelp="Ajouter un répertoire dans la liste")
         #             .
-        listFiles_header_toolbar.Realize()
+        listFiles_toolbar.AddSeparator()
+        #                 Supprimer la sélection
+        removeSelectedListFiles_image = wx.Image("icons/remove_selected.png")
+        removeSelectedListFiles_image.Rescale(16,16)
+        removeSelectedListFiles_bitmap = wx.BitmapFromImage(removeSelectedListFiles_image)
+        self.removeSelectedListFiles_tool = listFiles_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. sélection", bitmap=removeSelectedListFiles_bitmap, shortHelp="Supprimer les fichiers sélectionnés de la liste")
+        #                 Supprimer tout
+        removeAllListFiles_image = wx.Image("icons/remove_all.png")
+        removeAllListFiles_image.Rescale(16,16)
+        removeAllListFiles_bitmap = wx.BitmapFromImage(removeAllListFiles_image)
+        self.removeAllListFiles_tool = listFiles_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. tout", bitmap=removeAllListFiles_bitmap, shortHelp="Supprimer tous les fichiers de la liste")
+        #             .
+        listFiles_toolbar.Realize()
         #             Liste
         self.listFiles_listCtrl = wx.ListCtrl(listFiles_panel, style=wx.LC_REPORT)
-        listFiles_boxSizer.Add(self.listFiles_listCtrl, 1, wx.ALL|wx.EXPAND, 5)
         self.listFiles_listCtrl.InsertColumn(0, "Dossier", width=200)
         self.listFiles_listCtrl.InsertColumn(1, "Nom d'origine", width=125)
         self.listFiles_listCtrl.InsertColumn(2, "Nouveau nom", width=125)
+        listFiles_boxSizer.Add(self.listFiles_listCtrl, 1, wx.ALL|wx.EXPAND, 5)
         #         Liste des actions
         listActions_panel = wx.Panel(splitter)
         listActions_boxSizer = wx.BoxSizer(wx.VERTICAL)
@@ -156,6 +235,33 @@ class View(wx.Frame):
         listActions_title_font = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString)
         listActions_title_staticText.SetFont(listActions_title_font)
         listActions_boxSizer.Add(listActions_title_staticText, flag=wx.ALL, border=5)
+        #             Barre d'outils
+        listActions_toolbar = wx.ToolBar(listActions_panel, style=wx.TB_FLAT|wx.TB_TEXT)
+        listActions_boxSizer.Add(listActions_toolbar, flag=wx.EXPAND)
+        #                 Monter l'action
+        upSelectedAction_image = wx.Image("icons/up.png")
+        upSelectedAction_image.Rescale(16,16)
+        upSelectedAction_bitmap = wx.BitmapFromImage(upSelectedAction_image)
+        self.upSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Monter", bitmap=upSelectedAction_bitmap, shortHelp="Monter l'action sélectionnée dans la liste")
+        #                 Descendre l'action
+        downSelectedAction_image = wx.Image("icons/down.png")
+        downSelectedAction_image.Rescale(16,16)
+        downSelectedAction_bitmap = wx.BitmapFromImage(downSelectedAction_image)
+        self.downSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Descendre", bitmap=downSelectedAction_bitmap, shortHelp="Descendre l'action sélectionnée dans la liste")
+        #             .
+        listActions_toolbar.AddSeparator()
+        #                 Supprimer la sélection
+        removeSelectedAction_image = wx.Image("icons/remove_selected.png")
+        removeSelectedAction_image.Rescale(16,16)
+        removeSelectedAction_bitmap = wx.BitmapFromImage(removeSelectedAction_image)
+        self.removeSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. sélection", bitmap=removeSelectedAction_bitmap, shortHelp="Supprimer l'action sélectionné de la liste")
+        #                 Supprimer tout
+        removeAllActions_image = wx.Image("icons/remove_all.png")
+        removeAllActions_image.Rescale(16,16)
+        removeAllActions_bitmap = wx.BitmapFromImage(removeAllActions_image)
+        self.removeSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. tout", bitmap=removeAllActions_bitmap, shortHelp="Supprimer toutes les actions de la liste")
+        #             .
+        listActions_toolbar.Realize()
         #             Liste
         self.listActionsToDo_listBox = wx.ListBox(listActions_panel)
         listActions_boxSizer.Add(self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5)
@@ -200,31 +306,33 @@ class Controller(object):
         #     Barre d'outils principale
         self.view.Bind(wx.EVT_TOOL, self.OnTest, self.view.quitter_tool)
         #     Barre d'outils de la liste des fichiers
-        self.view.Bind(wx.EVT_TOOL, self.OnAddFile, self.view.addFile_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnAddFiles, self.view.addFile_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnAddFolder, self.view.addFolder_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedListFiles, self.view.removeSelectedListFiles_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllListFiles, self.view.removeAllListFiles_tool)
         self.view.Show()
         # Événements du modèle
         Publisher.subscribe(self.FilelistChanged, FILELIST_CHANGED)
         #Publisher.subscribe(self.ActionlistChanged, ACTIONLIST_CHANGED)
     
     
-    def OnAddFile(self, event):
+    def OnAddFiles(self, event):
         '''
-        Ajout d'un fichier
+        Ajout de fichiers
         @param event: Événement
         @author: Julien
         @todo: Répertoire par défaut
         '''
-        print "OnAddFile"
-        
-        fDialog = wx.FileDialog(parent=self.view, message="Sélectionnez les fichiers", style=wx.FD_MULTIPLE)
+        print "OnAddFiles"
+        fDialog = wx.FileDialog(self.view, "Sélectionnez les fichiers", style=wx.FD_MULTIPLE)
         if fDialog.ShowModal() != wx.ID_OK :
             return
+        pathlist = []
         direname = fDialog.GetDirectory()
         for basename in fDialog.GetFilenames():
             path = os.path.join(direname, basename)
-            self.model.AddFile(path)
+            pathlist.append(path)
+        self.model.AddFiles(pathlist)
         event.Skip()
     
     
@@ -236,19 +344,43 @@ class Controller(object):
         @todo: Impélmenter
         '''
         print "OnAddFolder"
+        dDialog = wx.DirDialog(self.view, "Répertoire source", style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
+        if dDialog.ShowModal() != wx.ID_OK :
+            return
+        path = dDialog.GetPath()
+        self.model.AddFolder(path)
         event.Skip()
     
     
     def OnRemoveSelectedListFiles(self, event):
         '''
-        Supprimer la liste des fichiers ou répertoires sélectionnés de la liste
+        Supprimer la liste des fichiers sélectionnés
         @param event: Événement
         @author: Julien
-        @todo: Impélmenter
         '''
         print "OnRemoveSelectedListFiles"
+        pathlist = []
+        index = self.view.listFiles_listCtrl.GetFirstSelected()
+        while index != -1:
+            direname = self.view.listFiles_listCtrl.GetItem(index, 0).GetText()
+            basename = self.view.listFiles_listCtrl.GetItem(index, 1).GetText()
+            path = os.path.join(direname, basename)
+            pathlist.append(path)
+            index = self.view.listFiles_listCtrl.GetNextSelected(index)
+        self.model.RemoveFiles(pathlist)
         event.Skip()
     
+    
+    def OnRemoveAllListFiles(self, event):
+        '''
+        Supprimer tous les fichiers
+        @param event: Événement
+        @author: Julien
+        '''
+        print "OnRemoveAllListFiles"
+        self.model.RemoveAllFiles()
+        event.Skip()
+        
     
     def FilelistChanged(self):
         '''
@@ -260,7 +392,8 @@ class Controller(object):
         self.view.listFiles_listCtrl.DeleteAllItems()
         for path in self.model.filelist:
             (head, tail) = os.path.split(path)
-            index = self.view.listFiles_listCtrl.InsertStringItem(0, label=head)
+            index = self.view.listFiles_listCtrl.GetItemCount()
+            self.view.listFiles_listCtrl.InsertStringItem(index, label=head)
             self.view.listFiles_listCtrl.SetStringItem(index, 1, tail)
             self.view.listFiles_listCtrl.SetStringItem(index, 2, "TODO")
     
