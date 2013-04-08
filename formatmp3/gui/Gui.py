@@ -3,18 +3,19 @@
 
 
 
-import os.path
-import wx
-from wx.lib.pubsub import pub as Publisher
-
-
-
 '''
 Interface graphique de l'application
 @author: Julien
 @todo: Log
 '''
 
+
+
+import os.path
+import wx
+from wx.lib.pubsub import pub as Publisher
+from formatmp3.action.Action import *
+from formatmp3.gui.ActionGui import *
 
 
 FILELIST_CHANGED = "FILELIST_CHANGED"
@@ -158,7 +159,7 @@ class View(wx.Frame):
         '''
         # Fenêtre
         minSize = (600,600)
-        wx.Frame.__init__ (self, None, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
+        wx.Frame.__init__(self, None, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
         self.SetMinSize(minSize)
         self.CenterOnScreen()
         
@@ -264,7 +265,7 @@ class View(wx.Frame):
         removeAllActions_image = wx.Image("icons/remove_all.png")
         removeAllActions_image.Rescale(16,16)
         removeAllActions_bitmap = wx.BitmapFromImage(removeAllActions_image)
-        self.removeAllAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. tout", bitmap=removeAllActions_bitmap, shortHelp="Supprimer toutes les actions de la liste")
+        self.removeAllActions_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. tout", bitmap=removeAllActions_bitmap, shortHelp="Supprimer toutes les actions de la liste")
         #             .
         listActions_toolbar.AddSeparator()
         #                 Monter l'action
@@ -318,6 +319,7 @@ class Controller(object):
         @author: Julien
         '''
         self.model = Model()
+        
         self.view = View()
         # Bindings
         #     Barre d'outils principale
@@ -327,15 +329,21 @@ class Controller(object):
         self.view.Bind(wx.EVT_TOOL, self.OnAddFolder, self.view.addFolder_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedListFiles, self.view.removeSelectedListFiles_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllListFiles, self.view.removeAllListFiles_tool)
-        self.view.Show()
         #     Barre d'outils de la liste des actions
-        
+        self.view.Bind(wx.EVT_TOOL, self.OnAddAction, self.view.addAction_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedAction, self.view.removeSelectedAction_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllActions, self.view.removeAllActions_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnUpSelectedAction, self.view.upSelectedAction_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnDownSelectedAction, self.view.downSelectedAction_tool)
         # Événements du modèle
         Publisher.subscribe(self.FilelistChanged, FILELIST_CHANGED)
         Publisher.subscribe(self.ActionlistChanged, ACTIONLIST_CHANGED)
-        self.view.listActionsToDo_listBox.Insert("toto", 0)
-        self.view.listActionsToDo_listBox.Insert("toto", 1)
         
+        self.view.Show()
+        
+        self.view.listActionsToDo_listBox.Insert("toto", 0) # tmp
+        self.view.listActionsToDo_listBox.Insert("toto", 1) # tmp
+        self.i = 0 # tmp
     
     
     def OnAddFiles(self, event):
@@ -419,6 +427,55 @@ class Controller(object):
             self.view.listFiles_listCtrl.SetStringItem(index, 2, "TODO")
     
     
+    def OnAddAction(self, event):
+        '''
+        Ajout d'une action
+        @author: Julien
+        @todo: Implémenter
+        '''
+        print "OnAddAction"
+    
+    
+    def OnRemoveSelectedAction(self, event):
+        '''
+        Supprimer l'action sélectionné
+        @param event: Événement
+        @author: Julien
+        @todo: Implémenter
+        '''
+        print "OnRemoveSelectedAction"
+    
+    
+    def OnRemoveAllActions(self, event):
+        '''
+        Supprimer toutes les actions
+        @param event: Événement
+        @author: Julien
+        @todo: Implémenter
+        '''
+        print "OnRemoveAllActions"
+    
+    
+    def OnUpSelectedAction(self, event):
+        '''
+        Monter l'action sélectionnée
+        @param event: Événement
+        @author: Julien
+        @todo: Implémenter
+        '''
+        print "OnUpSelectedAction"
+    
+    
+    def OnDownSelectedAction(self, event):
+        '''
+        Descendre l'action sélectionnée
+        @param event: Événement
+        @author: Julien
+        @todo: Implémenter
+        '''
+        print "OnDownSelectedAction"
+    
+    
     def ActionlistChanged(self):
         '''
         Rafraichir la liste des actions
@@ -434,7 +491,14 @@ class Controller(object):
     
     def OnTest(self, event):
         print "self.OnTest"
-        Publisher.sendMessage(ACTIONLIST_CHANGED)
+        
+        list = [CaseChange]
+        self.i = (self.i+1)%len(list)
+        action = list[self.i]
+        classAction = action.__name__
+        classActionGui = classAction + "Gui"
+        classActionGuiObj = eval(classActionGui)(self)
+        print classActionGuiObj
 
 
 

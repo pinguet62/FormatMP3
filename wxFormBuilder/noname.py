@@ -150,3 +150,136 @@ class MyFrame1 ( wx.Frame ):
 		self.splitter.Unbind( wx.EVT_IDLE )
 	
 
+###########################################################################
+## Class CaseChangeGui_panel
+###########################################################################
+
+class CaseChangeGui_panel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 275,75 ), style = wx.TAB_TRAVERSAL )
+		
+		boxSizer = wx.BoxSizer( wx.VERTICAL )
+		
+		self.title = wx.StaticText( self, wx.ID_ANY, u"Changement de case", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title.Wrap( -1 )
+		self.title.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		boxSizer.Add( self.title, 0, wx.ALL, 5 )
+		
+		self.sousTitle = wx.StaticText( self, wx.ID_ANY, u"1ère lettre en majuscule, le reste en minuscule", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.sousTitle.Wrap( -1 )
+		boxSizer.Add( self.sousTitle, 0, wx.ALL, 5 )
+		
+		
+		self.SetSizer( boxSizer )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class ReplaceStringGui_panel
+###########################################################################
+
+class ReplaceStringGui_panel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 275,125 ), style = wx.TAB_TRAVERSAL )
+		
+		boxSizer = wx.BoxSizer( wx.VERTICAL )
+		
+		self.title = wx.StaticText( self, wx.ID_ANY, u"Remplacement de chaîne", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title.Wrap( -1 )
+		self.title.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		boxSizer.Add( self.title, 0, wx.ALL, 5 )
+		
+		parameters_gridSizer = wx.GridSizer( 2, 2, 0, 0 )
+		
+		self.m_staticText7 = wx.StaticText( self, wx.ID_ANY, u"Remplacer : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText7.Wrap( -1 )
+		parameters_gridSizer.Add( self.m_staticText7, 0, wx.ALL, 5 )
+		
+		self.m_textCtrl1 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		parameters_gridSizer.Add( self.m_textCtrl1, 0, wx.ALL, 5 )
+		
+		self.m_staticText8 = wx.StaticText( self, wx.ID_ANY, u"Par : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText8.Wrap( -1 )
+		parameters_gridSizer.Add( self.m_staticText8, 0, wx.ALL, 5 )
+		
+		self.m_textCtrl2 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		parameters_gridSizer.Add( self.m_textCtrl2, 0, wx.ALL, 5 )
+		
+		
+		boxSizer.Add( parameters_gridSizer, 0, wx.ALL, 5 )
+		
+		
+		self.SetSizer( boxSizer )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class CutGui_panel
+###########################################################################
+
+class CutGui_panel ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 375,150 ), style = wx.TAB_TRAVERSAL )
+		
+		bSizer10 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.title = wx.StaticText( self, wx.ID_ANY, u"Couper le nom du fichier", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title.Wrap( -1 )
+		self.title.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		bSizer10.Add( self.title, 0, wx.ALL, 5 )
+		
+		gridSizer = wx.GridSizer( 3, 2, 0, 0 )
+		
+		self.nomber_staticText = wx.StaticText( self, wx.ID_ANY, u"Nombre de caractères à supprimer : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.nomber_staticText.Wrap( -1 )
+		gridSizer.Add( self.nomber_staticText, 0, wx.ALL, 5 )
+		
+		self.number_spinCtrl = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 999, 0 )
+		gridSizer.Add( self.number_spinCtrl, 0, wx.ALL, 5 )
+		
+		self.position_staticText = wx.StaticText( self, wx.ID_ANY, u"A partir de la position : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.position_staticText.Wrap( -1 )
+		gridSizer.Add( self.position_staticText, 0, wx.ALL, 5 )
+		
+		self.m_spinCtrl2 = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10, 0 )
+		gridSizer.Add( self.m_spinCtrl2, 0, wx.ALL, 5 )
+		
+		self.sens_staticText = wx.StaticText( self, wx.ID_ANY, u"En partant : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.sens_staticText.Wrap( -1 )
+		gridSizer.Add( self.sens_staticText, 0, wx.ALL, 5 )
+		
+		sens_boxSizer = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.debutSens_radioButton = wx.RadioButton( self, wx.ID_ANY, u"du début", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.debutSens_radioButton.SetValue( True ) 
+		sens_boxSizer.Add( self.debutSens_radioButton, 0, wx.ALL, 5 )
+		
+		self.finSens_radioButton = wx.RadioButton( self, wx.ID_ANY, u"de la fin", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sens_boxSizer.Add( self.finSens_radioButton, 0, wx.ALL, 5 )
+		
+		
+		gridSizer.Add( sens_boxSizer, 0, 0, 5 )
+		
+		
+		bSizer10.Add( gridSizer, 0, wx.ALL, 5 )
+		
+		
+		self.SetSizer( bSizer10 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
