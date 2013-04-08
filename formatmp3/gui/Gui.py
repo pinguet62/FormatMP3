@@ -130,6 +130,16 @@ class Model(object):
         if self.filelist != []:
             self.filelist = []
             Publisher.sendMessage(FILELIST_CHANGED)
+    
+    
+    def AddAction(self, action):
+        '''
+        Ajouter une action
+        @param action: Action
+        @author: Julien
+        '''
+        self.actionlist.append(action)
+        Publisher.sendMessage(ACTIONLIST_CHANGED)
 
 
 
@@ -238,16 +248,11 @@ class View(wx.Frame):
         #             Barre d'outils
         listActions_toolbar = wx.ToolBar(listActions_panel, style=wx.TB_FLAT|wx.TB_TEXT)
         listActions_boxSizer.Add(listActions_toolbar, flag=wx.EXPAND)
-        #                 Monter l'action
-        upSelectedAction_image = wx.Image("icons/up.png")
-        upSelectedAction_image.Rescale(16,16)
-        upSelectedAction_bitmap = wx.BitmapFromImage(upSelectedAction_image)
-        self.upSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Monter", bitmap=upSelectedAction_bitmap, shortHelp="Monter l'action sélectionnée dans la liste")
-        #                 Descendre l'action
-        downSelectedAction_image = wx.Image("icons/down.png")
-        downSelectedAction_image.Rescale(16,16)
-        downSelectedAction_bitmap = wx.BitmapFromImage(downSelectedAction_image)
-        self.downSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Descendre", bitmap=downSelectedAction_bitmap, shortHelp="Descendre l'action sélectionnée dans la liste")
+        #                 Ajouter
+        addAction_image = wx.Image("icons/add.png")
+        addAction_image.Rescale(16,16)
+        addAction_bitmap = wx.BitmapFromImage(addAction_image)
+        self.addAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter", bitmap=addAction_bitmap, shortHelp="Ajouter une action à la liste")
         #             .
         listActions_toolbar.AddSeparator()
         #                 Supprimer la sélection
@@ -259,7 +264,19 @@ class View(wx.Frame):
         removeAllActions_image = wx.Image("icons/remove_all.png")
         removeAllActions_image.Rescale(16,16)
         removeAllActions_bitmap = wx.BitmapFromImage(removeAllActions_image)
-        self.removeSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. tout", bitmap=removeAllActions_bitmap, shortHelp="Supprimer toutes les actions de la liste")
+        self.removeAllAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. tout", bitmap=removeAllActions_bitmap, shortHelp="Supprimer toutes les actions de la liste")
+        #             .
+        listActions_toolbar.AddSeparator()
+        #                 Monter l'action
+        upSelectedAction_image = wx.Image("icons/up.png")
+        upSelectedAction_image.Rescale(16,16)
+        upSelectedAction_bitmap = wx.BitmapFromImage(upSelectedAction_image)
+        self.upSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Monter", bitmap=upSelectedAction_bitmap, shortHelp="Monter l'action sélectionnée dans la liste")
+        #                 Descendre l'action
+        downSelectedAction_image = wx.Image("icons/down.png")
+        downSelectedAction_image.Rescale(16,16)
+        downSelectedAction_bitmap = wx.BitmapFromImage(downSelectedAction_image)
+        self.downSelectedAction_tool = listActions_toolbar.AddLabelTool(wx.ID_ANY, label="Descendre", bitmap=downSelectedAction_bitmap, shortHelp="Descendre l'action sélectionnée dans la liste")
         #             .
         listActions_toolbar.Realize()
         #             Liste
@@ -311,9 +328,14 @@ class Controller(object):
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedListFiles, self.view.removeSelectedListFiles_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllListFiles, self.view.removeAllListFiles_tool)
         self.view.Show()
+        #     Barre d'outils de la liste des actions
+        
         # Événements du modèle
         Publisher.subscribe(self.FilelistChanged, FILELIST_CHANGED)
-        #Publisher.subscribe(self.ActionlistChanged, ACTIONLIST_CHANGED)
+        Publisher.subscribe(self.ActionlistChanged, ACTIONLIST_CHANGED)
+        self.view.listActionsToDo_listBox.Insert("toto", 0)
+        self.view.listActionsToDo_listBox.Insert("toto", 1)
+        
     
     
     def OnAddFiles(self, event):
@@ -385,7 +407,6 @@ class Controller(object):
     def FilelistChanged(self):
         '''
         Rafraichir la liste des fichiers
-        @param filelist: Liste des fichiers
         @author: Julien
         '''
         print "FilelistChanged"
@@ -398,8 +419,22 @@ class Controller(object):
             self.view.listFiles_listCtrl.SetStringItem(index, 2, "TODO")
     
     
+    def ActionlistChanged(self):
+        '''
+        Rafraichir la liste des actions
+        @author: Julien
+        '''
+        print "ActionlistChanged"
+        while self.view.listActionsToDo_listBox.GetCount() != 0:
+            self.view.listActionsToDo_listBox.Delete(0)
+        for action in self.model.actionlist:
+            index = self.view.listActionsToDo_listBox.Count()
+            self.view.listActionsToDo_listBox.Insert("TODO", index)
+    
+    
     def OnTest(self, event):
         print "self.OnTest"
+        Publisher.sendMessage(ACTIONLIST_CHANGED)
 
 
 

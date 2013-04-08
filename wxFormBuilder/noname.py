@@ -82,9 +82,7 @@ class MyFrame1 ( wx.Frame ):
 		
 		self.m_toolBar4 = wx.ToolBar( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_HORIZONTAL )
 		self.m_toolBar4.SetToolBitmapSize( wx.Size( 16,16 ) )
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"Up", wx.Bitmap( u"../formatmp3/gui/icons/up.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"Down", wx.Bitmap( u"../formatmp3/gui/icons/down.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.Bitmap( u"../formatmp3/gui/icons/add.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
 		
 		self.m_toolBar4.AddSeparator()
 		
@@ -92,38 +90,19 @@ class MyFrame1 ( wx.Frame ):
 		
 		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.Bitmap( u"../formatmp3/gui/icons/remove_all.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
 		
+		self.m_toolBar4.AddSeparator()
+		
+		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"Up", wx.Bitmap( u"../formatmp3/gui/icons/up.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		
+		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"Down", wx.Bitmap( u"../formatmp3/gui/icons/down.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		
 		self.m_toolBar4.Realize() 
 		
 		listActions_boxSizer.Add( self.m_toolBar4, 0, wx.EXPAND, 5 )
 		
-		bSizer6 = wx.BoxSizer( wx.HORIZONTAL )
-		
 		listActionsToDo_listBoxChoices = []
 		self.listActionsToDo_listBox = wx.ListBox( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, listActionsToDo_listBoxChoices, 0 )
-		bSizer6.Add( self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5 )
-		
-		bSizer7 = wx.BoxSizer( wx.VERTICAL )
-		
-		self.m_button3 = wx.Button( self.listActions_panel, wx.ID_ANY, u"Monter", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.m_button3, 0, wx.ALL, 5 )
-		
-		
-		bSizer7.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
-		
-		self.m_button4 = wx.Button( self.listActions_panel, wx.ID_ANY, u"Supprimer", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.m_button4, 0, wx.ALL, 5 )
-		
-		
-		bSizer7.AddSpacer( ( 0, 0), 1, wx.EXPAND, 5 )
-		
-		self.m_button5 = wx.Button( self.listActions_panel, wx.ID_ANY, u"Descendre", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.m_button5, 0, wx.ALL, 5 )
-		
-		
-		bSizer6.Add( bSizer7, 0, wx.EXPAND, 5 )
-		
-		
-		listActions_boxSizer.Add( bSizer6, 1, wx.EXPAND, 5 )
+		listActions_boxSizer.Add( self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		listActions_action_sizer = wx.BoxSizer( wx.HORIZONTAL )
 		
