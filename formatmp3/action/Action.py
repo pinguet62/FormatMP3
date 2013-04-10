@@ -28,6 +28,17 @@ class Action(object):
         self._path = ""
     
     
+    @staticmethod
+    def getTitle():
+        '''
+        Obtenir le titre de l'action
+        @return: Titre
+        @raise: NotImplementedError Méthode non surchargée
+        @author: Julien
+        '''
+        raise NotImplementedError
+    
+    
     def get_path(self):
         '''
         Obtenir le chemin du fichier
@@ -117,6 +128,16 @@ class CaseChange(Action):
         Action.__init__(self)
     
     
+    @staticmethod
+    def getTitle():
+        '''
+        Obtenir le titre de l'action
+        @return: Titre
+        @author: Julien
+        '''
+        return "Changement de case"
+    
+    
     def execute(self):
         '''
         Exécuter la modification
@@ -150,6 +171,16 @@ class ReplaceString(Action):
         Action.__init__(self)
         self._oldStr = ""
         self._newStr = ""
+    
+    
+    @staticmethod
+    def getTitle():
+        '''
+        Obtenir le titre de l'action
+        @return: Titre
+        @author: Julien
+        '''
+        return "Remplacement de chaîne"
     
     
     def get_oldStr(self):
@@ -227,6 +258,16 @@ class Cut(Action):
         self._nombre = 0
         self._position = 0
         self._sens = Cut.A_PARTIR_DEBUT
+    
+    
+    @staticmethod
+    def getTitle():
+        '''
+        Obtenir le titre de l'action
+        @return: Titre
+        @author: Julien
+        '''
+        return "Couper le nom de fichier"
     
     
     def get_nombre(self):
@@ -337,6 +378,16 @@ class InsertString(Action):
         self._sens = InsertString.A_PARTIR_DEBUT
     
     
+    @staticmethod
+    def getTitle():
+        '''
+        Obtenir le titre de l'action
+        @return: Titre
+        @author: Julien
+        '''
+        return "Insertion d'un chaîne"
+    
+    
     def get_position(self):
         '''
         Obtenir la position d'insertion
@@ -422,6 +473,16 @@ class UpdateTags(Action):
         self.album = None
         self.genre = None
         self.annee = None
+    
+    
+    @staticmethod
+    def getTitle():
+        '''
+        Obtenir le titre de l'action
+        @return: Titre
+        @author: Julien
+        '''
+        return "Modification des tags"
     
     
     def execute(self):

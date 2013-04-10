@@ -104,29 +104,8 @@ class MyFrame1 ( wx.Frame ):
 		self.listActionsToDo_listBox = wx.ListBox( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, listActionsToDo_listBoxChoices, 0 )
 		listActions_boxSizer.Add( self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5 )
 		
-		listActions_action_sizer = wx.BoxSizer( wx.HORIZONTAL )
-		
-		listActions_options_boxSizer = wx.BoxSizer( wx.VERTICAL )
-		
-		listAvailableActions_choiceChoices = []
-		self.listAvailableActions_choice = wx.Choice( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, listAvailableActions_choiceChoices, 0 )
-		self.listAvailableActions_choice.SetSelection( 0 )
-		listActions_options_boxSizer.Add( self.listAvailableActions_choice, 0, wx.ALL, 5 )
-		
-		self.addChosenAction_button = wx.Button( self.listActions_panel, wx.ID_ANY, u"Ajouter", wx.DefaultPosition, wx.DefaultSize, 0 )
-		listActions_options_boxSizer.Add( self.addChosenAction_button, 0, wx.ALL, 5 )
-		
-		self.deleteSelectedAction_button = wx.Button( self.listActions_panel, wx.ID_ANY, u"Supprimer", wx.DefaultPosition, wx.DefaultSize, 0 )
-		listActions_options_boxSizer.Add( self.deleteSelectedAction_button, 0, wx.ALL, 5 )
-		
-		
-		listActions_action_sizer.Add( listActions_options_boxSizer, 0, wx.ALL, 0 )
-		
 		self.selectedAction_panel = wx.Panel( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		listActions_action_sizer.Add( self.selectedAction_panel, 0, wx.EXPAND |wx.ALL, 5 )
-		
-		
-		listActions_boxSizer.Add( listActions_action_sizer, 0, wx.ALL|wx.EXPAND, 0 )
+		listActions_boxSizer.Add( self.selectedAction_panel, 0, wx.EXPAND |wx.ALL, 5 )
 		
 		
 		self.listActions_panel.SetSizer( listActions_boxSizer )
@@ -277,6 +256,60 @@ class CutGui_panel ( wx.Panel ):
 		
 		
 		self.SetSizer( bSizer10 )
+		self.Layout()
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class MyPanel4
+###########################################################################
+
+class MyPanel4 ( wx.Panel ):
+	
+	def __init__( self, parent ):
+		wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 275,175 ), style = wx.TAB_TRAVERSAL )
+		
+		boxSizer = wx.BoxSizer( wx.VERTICAL )
+		
+		self.title = wx.StaticText( self, wx.ID_ANY, u"Tags", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title.Wrap( -1 )
+		self.title.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		boxSizer.Add( self.title, 0, wx.ALL, 5 )
+		
+		gSizer3 = wx.GridSizer( 0, 2, 0, 0 )
+		
+		self.artiste_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Artiste : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer3.Add( self.artiste_checkBox, 0, wx.ALL, 5 )
+		
+		self.artiste_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer3.Add( self.artiste_textCtrl, 0, wx.ALL, 5 )
+		
+		self.album_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Album : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer3.Add( self.album_checkBox, 0, wx.ALL, 5 )
+		
+		self.album_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer3.Add( self.album_textCtrl, 0, wx.ALL, 5 )
+		
+		self.genre_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Genre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer3.Add( self.genre_checkBox, 0, wx.ALL, 5 )
+		
+		self.genre_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer3.Add( self.genre_textCtrl, 0, wx.ALL, 5 )
+		
+		self.annee_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Année : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer3.Add( self.annee_checkBox, 0, wx.ALL, 5 )
+		
+		self.m_textCtrl6 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer3.Add( self.m_textCtrl6, 0, wx.ALL, 5 )
+		
+		
+		boxSizer.Add( gSizer3, 0, wx.ALL, 5 )
+		
+		
+		self.SetSizer( boxSizer )
 		self.Layout()
 	
 	def __del__( self ):

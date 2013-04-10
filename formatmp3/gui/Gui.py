@@ -7,6 +7,7 @@
 Interface graphique de l'application
 @author: Julien
 @todo: Log
+@todo: Hauteur max des paramètres, ou scrollbar
 '''
 
 
@@ -20,6 +21,8 @@ from formatmp3.gui.ActionGui import *
 
 FILELIST_CHANGED = "FILELIST_CHANGED"
 ACTIONLIST_CHANGED = "ACTIONLIST_CHANGED"
+
+actions = [CaseChange, ReplaceString, Cut, InsertString]
 
 
 
@@ -238,17 +241,17 @@ class View(wx.Frame):
         self.listFiles_listCtrl.InsertColumn(2, "Nouveau nom", width=125)
         listFiles_boxSizer.Add(self.listFiles_listCtrl, 1, wx.ALL|wx.EXPAND, 5)
         #         Liste des actions
-        listActions_panel = wx.Panel(splitter)
-        listActions_boxSizer = wx.BoxSizer(wx.VERTICAL)
-        listActions_panel.SetSizer(listActions_boxSizer)
+        self.listActions_panel = wx.Panel(splitter)
+        self.listActions_boxSizer = wx.BoxSizer(wx.VERTICAL)
+        self.listActions_panel.SetSizer(self.listActions_boxSizer)
         #             Titre
-        listActions_title_staticText = wx.StaticText(listActions_panel, label="Actions à réaliser")
+        listActions_title_staticText = wx.StaticText(self.listActions_panel, label="Actions à réaliser")
         listActions_title_font = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString)
         listActions_title_staticText.SetFont(listActions_title_font)
-        listActions_boxSizer.Add(listActions_title_staticText, flag=wx.ALL, border=5)
+        self.listActions_boxSizer.Add(listActions_title_staticText, flag=wx.ALL, border=5)
         #             Barre d'outils
-        listActions_toolbar = wx.ToolBar(listActions_panel, style=wx.TB_FLAT|wx.TB_TEXT)
-        listActions_boxSizer.Add(listActions_toolbar, flag=wx.EXPAND)
+        listActions_toolbar = wx.ToolBar(self.listActions_panel, style=wx.TB_FLAT|wx.TB_TEXT)
+        self.listActions_boxSizer.Add(listActions_toolbar, flag=wx.EXPAND)
         #                 Ajouter
         addAction_image = wx.Image("icons/add.png")
         addAction_image.Rescale(16,16)
@@ -281,28 +284,13 @@ class View(wx.Frame):
         #             .
         listActions_toolbar.Realize()
         #             Liste
-        self.listActionsToDo_listBox = wx.ListBox(listActions_panel)
-        listActions_boxSizer.Add(self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5)
-        #             Nouvelle action ou action sélectionnée
-        listActions_action_sizer = wx.BoxSizer()
-        listActions_boxSizer.Add(listActions_action_sizer, flag=wx.ALL|wx.EXPAND)
-        #                 Options
-        listActions_options_sizer = wx.BoxSizer(wx.VERTICAL)
-        listActions_action_sizer.Add(listActions_options_sizer, flag=wx.ALL)
-        #                     Liste des actions disponibles
-        self.listAvailableActions_choice = wx.Choice(listActions_panel)
-        listActions_options_sizer.Add(self.listAvailableActions_choice, flag=wx.ALL, border=5)
-        #                     Ajouter l'action choisie
-        self.addChosenAction_button = wx.Button(listActions_panel, label="Ajouter")
-        listActions_options_sizer.Add(self.addChosenAction_button, flag=wx.ALL, border=5)
-        #                     Supprimer l'action sélectionnée
-        self.deleteSelectedAction_button = wx.Button(listActions_panel, label="Supprimer")
-        listActions_options_sizer.Add(self.deleteSelectedAction_button, flag=wx.ALL, border=5)
-        #                 Paramètres
-        self.selectedAction_panel = wx.Panel(listActions_panel, style=wx.TAB_TRAVERSAL)
-        listActions_action_sizer.Add(self.selectedAction_panel, flag=wx.EXPAND |wx.ALL, border=5)
+        self.listActionsToDo_listBox = wx.ListBox(self.listActions_panel)
+        self.listActions_boxSizer.Add(self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5)
+        #             Paramètres
+        self.selectedAction_panel = wx.Panel(self.listActions_panel, size=wx.Size(-1,50), style=wx.TAB_TRAVERSAL)
+        self.listActions_boxSizer.Add(self.selectedAction_panel, flag=wx.ALL|wx.EXPAND, border=5)
         #     .
-        splitter.SplitHorizontally(listFiles_panel, listActions_panel, 150) # TODO: Proportion initiale
+        splitter.SplitHorizontally(listFiles_panel, self.listActions_panel, 150) # TODO: Proportion initiale
 
 
 
@@ -330,25 +318,27 @@ class Controller(object):
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedListFiles, self.view.removeSelectedListFiles_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllListFiles, self.view.removeAllListFiles_tool)
         #     Barre d'outils de la liste des actions
+        self.view.Bind(wx.EVT_LISTBOX, self.OnSelectedAction, self.view.listActionsToDo_listBox)
         self.view.Bind(wx.EVT_TOOL, self.OnAddAction, self.view.addAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedAction, self.view.removeSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllActions, self.view.removeAllActions_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnUpSelectedAction, self.view.upSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnDownSelectedAction, self.view.downSelectedAction_tool)
         # Événements du modèle
-        Publisher.subscribe(self.FilelistChanged, FILELIST_CHANGED)
-        Publisher.subscribe(self.ActionlistChanged, ACTIONLIST_CHANGED)
+        Publisher.subscribe(self._filelistChanged, FILELIST_CHANGED)
+        Publisher.subscribe(self._actionlistChanged, ACTIONLIST_CHANGED)
         
         self.view.Show()
         
-        self.view.listActionsToDo_listBox.Insert("toto", 0) # tmp
-        self.view.listActionsToDo_listBox.Insert("toto", 1) # tmp
-        self.i = 0 # tmp
+        self.model.AddAction(CaseChange())
+        self.model.AddAction(ReplaceString())
+        self.model.AddAction(Cut())
+        self.model.AddAction(InsertString())
     
     
     def OnAddFiles(self, event):
         '''
-        Ajout de fichiers
+        Clic sur le bouton "Ajouter des fichiers"
         @param event: Événement
         @author: Julien
         @todo: Répertoire par défaut
@@ -368,10 +358,9 @@ class Controller(object):
     
     def OnAddFolder(self, event):
         '''
-        Ajout d'un répertoire
+        Clic sur le bouton "Ajouter un répertoire"
         @param event: Événement
         @author: Julien
-        @todo: Impélmenter
         '''
         print "OnAddFolder"
         dDialog = wx.DirDialog(self.view, "Répertoire source", style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
@@ -384,7 +373,7 @@ class Controller(object):
     
     def OnRemoveSelectedListFiles(self, event):
         '''
-        Supprimer la liste des fichiers sélectionnés
+        Clic sur le bouton "Supprimer les fichiers sélectionnés"
         @param event: Événement
         @author: Julien
         '''
@@ -403,7 +392,7 @@ class Controller(object):
     
     def OnRemoveAllListFiles(self, event):
         '''
-        Supprimer tous les fichiers
+        Clic sur le bouton "Supprimer tous les fichiers"
         @param event: Événement
         @author: Julien
         '''
@@ -412,12 +401,13 @@ class Controller(object):
         event.Skip()
         
     
-    def FilelistChanged(self):
+    def _filelistChanged(self):
         '''
         Rafraichir la liste des fichiers
+        @param event: Événement
         @author: Julien
         '''
-        print "FilelistChanged"
+        print "_filelistChanged"
         self.view.listFiles_listCtrl.DeleteAllItems()
         for path in self.model.filelist:
             (head, tail) = os.path.split(path)
@@ -427,18 +417,54 @@ class Controller(object):
             self.view.listFiles_listCtrl.SetStringItem(index, 2, "TODO")
     
     
+    def OnSelectedAction(self, event):
+        '''
+        Sélection d'une action dans la liste
+        @param event: Événement
+        @author: Julien
+        '''
+        print "OnSelectedAction"
+        index = self.view.listActionsToDo_listBox.Selection
+        self._showAction(index)
+    
+    
+    def _onAddAction(self, event, action):
+        '''
+        Clic sur un sous-menu du bouton "Ajouter une action"
+        @param event: Événement
+        @param action: Action
+        @author: Julien
+        @todo: Implémenter
+        '''
+        print "_onAddAction"
+        lastIndex = self.view.listActionsToDo_listBox.Count
+        self.model.AddAction(action)
+        self.view.listActionsToDo_listBox.Selection = lastIndex
+        self._showAction(lastIndex)
+    
+    
     def OnAddAction(self, event):
         '''
-        Ajout d'une action
+        Clic sur le bouton "Ajouter une action"
+        @param event: Événement
         @author: Julien
         @todo: Implémenter
         '''
         print "OnAddAction"
+        menu = wx.Menu()
+        for actionClass in actions:
+            menuItem = wx.MenuItem(menu, wx.NewId(), actionClass.getTitle())
+            self.view.Bind(wx.EVT_MENU,
+                           lambda event, actionClass=actionClass:
+                               self._onAddAction(event, actionClass()),
+                           menuItem)
+            menu.AppendItem(menuItem)
+        self.view.PopupMenu(menu)
     
     
     def OnRemoveSelectedAction(self, event):
         '''
-        Supprimer l'action sélectionné
+        Clic sur le bouton "Supprimer l'action sélectionnée"
         @param event: Événement
         @author: Julien
         @todo: Implémenter
@@ -448,7 +474,7 @@ class Controller(object):
     
     def OnRemoveAllActions(self, event):
         '''
-        Supprimer toutes les actions
+        Clic sur le bouton "Supprimer toutes les actions"
         @param event: Événement
         @author: Julien
         @todo: Implémenter
@@ -458,7 +484,7 @@ class Controller(object):
     
     def OnUpSelectedAction(self, event):
         '''
-        Monter l'action sélectionnée
+        Clic sur le bouton "Monter l'action sélectionnée"
         @param event: Événement
         @author: Julien
         @todo: Implémenter
@@ -468,7 +494,7 @@ class Controller(object):
     
     def OnDownSelectedAction(self, event):
         '''
-        Descendre l'action sélectionnée
+        Clic sur le bouton "Descendre l'action sélectionnée"
         @param event: Événement
         @author: Julien
         @todo: Implémenter
@@ -476,21 +502,37 @@ class Controller(object):
         print "OnDownSelectedAction"
     
     
-    def ActionlistChanged(self):
+    def _actionlistChanged(self):
         '''
         Rafraichir la liste des actions
         @author: Julien
         '''
-        print "ActionlistChanged"
-        while self.view.listActionsToDo_listBox.GetCount() != 0:
+        print "_actionlistChanged"
+        while self.view.listActionsToDo_listBox.Count != 0:
             self.view.listActionsToDo_listBox.Delete(0)
         for action in self.model.actionlist:
-            index = self.view.listActionsToDo_listBox.Count()
-            self.view.listActionsToDo_listBox.Insert("TODO", index)
+            index = self.view.listActionsToDo_listBox.Count
+            self.view.listActionsToDo_listBox.Insert(action.__class__.getTitle(), index)
+    
+    
+    def _showAction(self, index):
+        '''
+        Afficher l'action
+        @param index: Index
+        @author: Julien
+        '''
+        print "_showAction"
+        action = self.model.actionlist[index]
+        newActionGui = createGui(self.view.listActions_panel, action)
+        oldActionGui = self.view.selectedAction_panel
+        self.view.listActions_boxSizer.Replace(oldActionGui, newActionGui)
+        self.view.selectedAction_panel = newActionGui
+        oldActionGui.Destroy()
+        self.view.listActions_boxSizer.Layout()
     
     
     def OnTest(self, event):
-        print "self.OnTest"
+        print "OnTest"
         
         list = [CaseChange]
         self.i = (self.i+1)%len(list)
@@ -499,6 +541,8 @@ class Controller(object):
         classActionGui = classAction + "Gui"
         classActionGuiObj = eval(classActionGui)(self)
         print classActionGuiObj
+        toto = InsertString
+        
 
 
 
