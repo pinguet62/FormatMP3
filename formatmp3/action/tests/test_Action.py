@@ -86,7 +86,7 @@ class TestCut(unittest.TestCase):
     
     def test_setX_valeursIncorrectes(self):
         action = Cut()
-        self.assertRaises(ValueError, action.set_nombre, -1)
+        self.assertRaises(ValueError, action.set_nomber, -1)
         self.assertRaises(ValueError, action.set_position, -1)
     
     
@@ -112,10 +112,10 @@ class TestCut(unittest.TestCase):
                       # caractère hors du nom
                       [0, 10, InsertString.A_PARTIR_DEBUT, "0123456789"],
                       [1, 10, InsertString.A_PARTIR_DEBUT, "0123456789"]]
-        for nombre, position, sens, resultat in listParams:
+        for nomber, position, sens, resultat in listParams:
             action = Cut()
             action.path = "C:\\PATH\\0123456789.EXT"
-            action.nombre = nombre
+            action.nomber = nomber
             action.position = position
             action.sens = sens
             action.execute()

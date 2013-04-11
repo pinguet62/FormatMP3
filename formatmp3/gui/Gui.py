@@ -19,9 +19,14 @@ from formatmp3.action.Action import *
 from formatmp3.gui.ActionGui import *
 
 
+
+# Messages de l'interface graphique
 FILELIST_CHANGED = "FILELIST_CHANGED"
 ACTIONLIST_CHANGED = "ACTIONLIST_CHANGED"
 
+
+
+# Liste des actions de l'application
 actions = [CaseChange, ReplaceString, Cut, InsertString]
 
 
@@ -41,18 +46,6 @@ class Model(object):
         '''
         self.filelist = []
         self.actionlist = []
-    
-    
-    #def AddFile(self, path):
-    #    '''
-    #    Ajouter un fichier
-    #    @param path: Chemin du fichier
-    #    @author: Julien
-    #    '''
-    #    if path not in self.filelist:
-    #        self.filelist.append(path)
-    #        self.filelist.sort()
-    #        Publisher.sendMessage(FILELIST_CHANGED)
     
     
     def AddFiles(self, pathlist=[]):
@@ -98,17 +91,6 @@ class Model(object):
         if oldCount < newCount:
             self.filelist.sort()
             Publisher.sendMessage(FILELIST_CHANGED)
-    
-    
-    #def RemoveFile(self, path):
-    #    '''
-    #    Retirer un fichier
-    #    @param path: Chemin du fichier
-    #    @author: Julien
-    #    '''
-    #    if path in self.filelist:
-    #        self.filelist.remove(path)
-    #        Publisher.sendMessage(FILELIST_CHANGED)
     
     
     def RemoveFiles(self, pathlist=[]):

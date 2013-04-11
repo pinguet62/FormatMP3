@@ -39,6 +39,17 @@ class Action(object):
         raise NotImplementedError
     
     
+    @staticmethod
+    def getDescription():
+        '''
+        Obtenir le titre de l'action
+        @return: Titre
+        @raise: NotImplementedError Méthode non surchargée
+        @author: Julien
+        '''
+        return "todo"
+    
+    
     def get_path(self):
         '''
         Obtenir le chemin du fichier
@@ -255,7 +266,7 @@ class Cut(Action):
         @author: Julien
         '''
         Action.__init__(self)
-        self._nombre = 0
+        self._nomber = 0
         self._position = 0
         self._sens = Cut.A_PARTIR_DEBUT
     
@@ -270,25 +281,25 @@ class Cut(Action):
         return "Couper le nom de fichier"
     
     
-    def get_nombre(self):
+    def get_nomber(self):
         '''
         Obtenir le nombre de caractères à couper
         @return: Nombre de caractères
         @author: Julien
         '''
-        return self._nombre
+        return self._nomber
     
     
-    def set_nombre(self, nombre):
+    def set_nomber(self, nomber):
         '''
         Spécifier le nombre de caractères à couper
         @param nombre: Nombre de cractères
         @raise ValueError: valeuVr incorrecte
         @author: Julien
         '''
-        if nombre < 0:
+        if nomber < 0:
             raise ValueError("Valeur incorrecte")
-        self._nombre = int(nombre)
+        self._nomber = int(nomber)
     
     
     def get_position(self):
@@ -334,7 +345,7 @@ class Cut(Action):
     
     
     # Propriétés
-    nombre = property(fget = get_nombre, fset = set_nombre)
+    nomber = property(fget = get_nomber, fset = set_nomber)
     position = property(fget = get_position, fset = set_position)
     sens = property(fget = get_sens, fset = set_sens)
     
@@ -348,9 +359,9 @@ class Cut(Action):
         # Nouveau nom de fichier
         newFilename = self.filename
         if self.sens is Cut.A_PARTIR_DEBUT:
-            newFilename = newFilename[:self.position] + newFilename[self.position+self.nombre:]
+            newFilename = newFilename[:self.position] + newFilename[self.position+self.nomber:]
         elif self.sens is Cut.A_PARTIR_FIN:
-            newFilename = newFilename[:self.position-self.nombre] + newFilename[self.position:]
+            newFilename = newFilename[:self.position-self.nomber] + newFilename[self.position:]
         # Renommer le fichier
         self.rename(newFilename)
 
@@ -385,7 +396,7 @@ class InsertString(Action):
         @return: Titre
         @author: Julien
         '''
-        return "Insertion d'un chaîne"
+        return "Insertion d'une chaîne"
     
     
     def get_position(self):
@@ -492,19 +503,3 @@ class UpdateTags(Action):
         @author: Julien
         '''
         pass # TODO
-
-
-
-if __name__ == "__main__":
-    path = "0123456789"
-    print path
-    
-    nombre = 2
-    position = 9
-    sens = True
-    
-    size = len(path)
-    if sens:
-        print path[:position] + "_" + path[position+nombre:]
-    else:
-        print path[:position-nombre] + "_" + path[position:]
