@@ -15,7 +15,7 @@ Interface graphique de l'application
 import os.path
 import wx
 from wx.lib.pubsub import pub as Publisher
-from formatmp3.action.Action import *
+from formatmp3.actions.Action import *
 from formatmp3.gui.ActionGui import *
 
 

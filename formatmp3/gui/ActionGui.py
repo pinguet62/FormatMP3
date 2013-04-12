@@ -13,7 +13,7 @@ Permettent de paramétrer les actions
 
 import wx
 from wx.lib.pubsub import pub as Publisher
-from formatmp3.action.Action import *
+from formatmp3.actions.Action import *
 
 
 
@@ -183,7 +183,7 @@ class CutGui(ActionGui):
         nomber_staticText = wx.StaticText(self, label="Nombre de caractères à supprimer : ")
         gridSizer.Add(nomber_staticText, flag=wx.ALL, border=5)
         #     Valeur
-        self.number_spinCtrl = wx.SpinCtrl(self, value=str(self.action.nombre))
+        self.number_spinCtrl = wx.SpinCtrl(self, value=str(self.action.nomber))
         self.number_spinCtrl.Bind(wx.EVT_SPINCTRL, self.OnNomberChanged)
         gridSizer.Add(self.number_spinCtrl, flag=wx.ALL, border=5)
         # Position
@@ -219,7 +219,7 @@ class CutGui(ActionGui):
         @param event: Événement
         @author: Julien
         '''
-        self.action.nombre = self.number_spinCtrl.Value
+        self.action.nomber = self.number_spinCtrl.Value
         Publisher.sendMessage(ACTION_CHANGED)
     
     

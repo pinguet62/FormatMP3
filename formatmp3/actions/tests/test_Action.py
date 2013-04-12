@@ -10,7 +10,7 @@ Tests unitaire du module formatmp3.action.Action
 
 
 
-from formatmp3.action.Action import *
+from formatmp3.actions.Action import *
 import unittest
 
 
