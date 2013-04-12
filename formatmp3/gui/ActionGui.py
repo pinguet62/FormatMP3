@@ -55,12 +55,14 @@ class ActionGui(wx.Panel):
         self.boxSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.boxSizer)
         # Title
-        title = wx.StaticText(self, label=action.__class__.getTitle())
+        title = wx.StaticText(self, label=str(action.__class__.getTitle()))
         font_title = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 90, 92)
         title.SetFont(font_title)
         self.boxSizer.Add(title)
         # Description
-        description = wx.StaticText(self, label=action.__class__.getDescription())
+        description = wx.StaticText(self, label=str(action.__class__.getDescription()))
+        font_description = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 93, 90)
+        description.SetFont(font_description)
         self.boxSizer.Add(description)
     
     

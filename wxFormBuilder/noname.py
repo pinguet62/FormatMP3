@@ -148,7 +148,7 @@ class CaseChangeGui_panel ( wx.Panel ):
 		
 		self.description = wx.StaticText( self, wx.ID_ANY, u"1ère lettre en majuscule, le reste en minuscule", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.description.Wrap( -1 )
-		self.description.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 90, False, wx.EmptyString ) )
+		self.description.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
 		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
@@ -180,6 +180,8 @@ class ReplaceStringGui_panel ( wx.Panel ):
 		
 		self.description = wx.StaticText( self, wx.ID_ANY, u"todo", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.description.Wrap( -1 )
+		self.description.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
+		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
 		gridSizer = wx.GridSizer( 0, 2, 0, 0 )
@@ -229,6 +231,8 @@ class CutGui_panel ( wx.Panel ):
 		
 		self.description = wx.StaticText( self, wx.ID_ANY, u"todo", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.description.Wrap( -1 )
+		self.description.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
+		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
 		gridSizer = wx.GridSizer( 3, 2, 0, 0 )
@@ -294,6 +298,8 @@ class InsertStringGui_panel ( wx.Panel ):
 		
 		self.description = wx.StaticText( self, wx.ID_ANY, u"Insérer une chaîne de caractères dans le nom du fichier", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.description.Wrap( -1 )
+		self.description.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
+		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
 		gridSizer = wx.GridSizer( 0, 2, 0, 0 )
@@ -358,6 +364,8 @@ class UpdateTagsGui_panel ( wx.Panel ):
 		
 		self.description = wx.StaticText( self, wx.ID_ANY, u"todo", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.description.Wrap( -1 )
+		self.description.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
+		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
 		gridSizer = wx.GridSizer( 0, 2, 0, 0 )

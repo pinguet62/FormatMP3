@@ -36,18 +36,18 @@ class Action(object):
         @raise: NotImplementedError Méthode non surchargée
         @author: Julien
         '''
-        raise NotImplementedError
+        raise NotImplementedError()
     
     
     @staticmethod
     def getDescription():
         '''
-        Obtenir le titre de l'action
-        @return: Titre
+        Obtenir la description de l'action
+        @return: Description
         @raise: NotImplementedError Méthode non surchargée
         @author: Julien
         '''
-        return "todo"
+        return NotImplementedError()
     
     
     def get_path(self):
@@ -119,7 +119,7 @@ class Action(object):
         @raise: NotImplementedError Méthode non surchargée
         @author: Julien
         '''
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 
@@ -147,6 +147,16 @@ class CaseChange(Action):
         @author: Julien
         '''
         return "Changement de case"
+    
+    
+    @staticmethod
+    def getDescription():
+        '''
+        Obtenir la description de l'action
+        @return: Description
+        @author: Julien
+        '''
+        return "Mettre en minuscule, majuscule, ... le nom du fichier"
     
     
     def execute(self):
@@ -192,6 +202,16 @@ class ReplaceString(Action):
         @author: Julien
         '''
         return "Remplacement de chaîne"
+    
+    
+    @staticmethod
+    def getDescription():
+        '''
+        Obtenir la description de l'action
+        @return: Description
+        @author: Julien
+        '''
+        return "Remplacer une chaîne de caractères par une autre"
     
     
     def get_oldStr(self):
@@ -278,7 +298,17 @@ class Cut(Action):
         @return: Titre
         @author: Julien
         '''
-        return "Couper le nom de fichier"
+        return "Suppression de caractères"
+    
+    
+    @staticmethod
+    def getDescription():
+        '''
+        Obtenir la description de l'action
+        @return: Description
+        @author: Julien
+        '''
+        return "Supprimer des caractères du nom de fichier"
     
     
     def get_nomber(self):
@@ -396,7 +426,17 @@ class InsertString(Action):
         @return: Titre
         @author: Julien
         '''
-        return "Insertion d'une chaîne"
+        return "Insertion de chaîne"
+    
+    
+    @staticmethod
+    def getDescription():
+        '''
+        Obtenir la description de l'action
+        @return: Description
+        @author: Julien
+        '''
+        return "Insérer une chaîne de caractères dans le nom du fichier"
     
     
     def get_position(self):
@@ -493,7 +533,17 @@ class UpdateTags(Action):
         @return: Titre
         @author: Julien
         '''
-        return "Modification des tags"
+        return "Tags MP3"
+    
+    
+    @staticmethod
+    def getDescription():
+        '''
+        Obtenir la description de l'action
+        @return: Description
+        @author: Julien
+        '''
+        return "Modifier les tags musicaux d'un fichier MP3"
     
     
     def execute(self):
