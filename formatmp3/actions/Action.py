@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from argparse import ArgumentTypeError
 
 
 
@@ -11,13 +12,14 @@ Action sur les fichiers
 
 
 import os
+from formatmp3.actions.Path import *
 
 
 
 class Action(object):
     '''
-     Définition des méthodes du pattern stratégie.
-     @author: Julien
+    Définition des méthodes du pattern stratégie.
+    @author: Julien
     '''
     
     def __init__(self):
@@ -25,7 +27,6 @@ class Action(object):
         Constructeur
         @author: Julien
         '''
-        self._path = ""
     
     
     @staticmethod
@@ -50,72 +51,21 @@ class Action(object):
         return NotImplementedError()
     
     
-    def get_path(self):
+    def getOverview(self, oldPath):
         '''
-        Obtenir le chemin du fichier
-        @return: Chemin du fichier
+        Obtenir l'aperçu de la modification
+        @param oldPath: Chemin du fichier
+        @return: Chemin du fichier modifié
+        @raise: NotImplementedError Méthode non surchargée
         @author: Julien
         '''
-        return self._path
+        raise NotImplementedError()
     
     
-    def set_path(self, path):
-        '''
-        Spécifier le chemin du fichier
-        @param path: Chemin du fichier
-        @author: Julien
-        '''
-        self._path = path
-    
-    
-    def get_filename(self):
-        '''
-        Obtenir le nom du fichier (sans extension)
-        @return: Nom du fichier
-        @author: Julien
-        '''
-        basename = os.path.basename(self._path)
-        return os.path.splitext(basename)[0]
-    
-    
-    def set_filename(self, filename):
-        '''
-        Spécifier le nom du fichier (sans extension)
-        @param path: Nom du fichier
-        @author: Julien
-        '''
-        direname = os.path.dirname(self._path)
-        basename = os.path.basename(self._path)
-        extension = os.path.splitext(basename)[1]
-        self._path = os.path.join(direname, filename) + extension
-    
-    
-    # Propriétés
-    path = property(fget = get_path, fset = set_path)
-    filename = property(fget = get_filename, fset = set_filename)
-    
-    
-    def rename(self, newFilename):
-        '''
-        Renommer le fichier
-        Les changements ne sont pas appliqués en cas d'échec
-        @param newFilename: Nouveau nom de fichier
-        @raise BaseException: Exception levée
-        @author: Julien
-        '''
-        oldPath = self.path
-        try:
-            self.filename = newFilename
-            newPath = self.path
-            pass #TODO os.rename(oldPath, newPath)
-        except BaseException as err:
-            self.path = oldPath
-            raise err
-    
-    
-    def execute(self):
+    def execute(self, path):
         '''
         Exécuter la modification
+        @param path: Chemin du fichier
         @raise: NotImplementedError Méthode non surchargée
         @author: Julien
         '''
@@ -131,12 +81,22 @@ class CaseChange(Action):
     '''
     
     
+    # Modifications possibles
+    LOWER = 1
+    FIRST_MAJ = 2
+    TITLE = 4
+    UPPER = 8
+    
+    
     def __init__(self):
         '''
         Constructeur
         @author: Julien
         '''
         Action.__init__(self)
+        
+        self.range = PathModification.FILENAME
+        self.modification = CaseChange.FIRST_MAJ
     
     
     @staticmethod
@@ -159,20 +119,45 @@ class CaseChange(Action):
         return "Mettre en minuscule, majuscule, ... le nom du fichier"
     
     
-    def execute(self):
+    def getOverview(self, oldPath):
+        '''
+        Obtenir l'aperçu de la modification
+        @param oldPath: Chemin du fichier
+        @return: Chemin du fichier modifié
+        @raise: NotImplementedError Méthode non surchargée
+        @author: Julien
+        '''
+        # Partie à modifier
+        pModif = PathModification()
+        pModif.path = oldPath
+        pModif.range = self.range
+        newStr = pModif.get()
+        # Modification
+        if self.modification is CaseChange.LOWER:
+            newStr = newStr.lower()
+        elif self.modification is CaseChange.FIRST_MAJ:
+            if len(newStr) is not 0:
+                newStr = newStr[0].upper() + newStr[1:].lower()
+        elif self.modification is CaseChange.TITLE:
+            newStr = newStr.title()
+        elif self.modification is CaseChange.UPPER:
+            newStr = newStr.upper()
+        else:
+            pass
+        # Appliquer la modification
+        pModif.set(newStr)
+        return pModif.path
+    
+    
+    def execute(self, oldPath):
         '''
         Exécuter la modification
+        @param oldPath: Chemin du fichier
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        # Nouveau nom de fichier
-        newFilename = self.filename
-        newFilename = newFilename.lower()
-        listNewFilename = list(newFilename)
-        listNewFilename[0] = listNewFilename[0].upper()
-        newFilename = ''.join(listNewFilename)
-        # Renommer le fichier
-        self.rename(newFilename)
+        newPath = self.getOverview(oldPath)
+        #TODO os.rename(oldPath.get(), newPath.get())
 
 
 
@@ -190,6 +175,8 @@ class ReplaceString(Action):
         @author: Julien
         '''
         Action.__init__(self)
+        
+        self.range = PathModification.FILENAME
         self._oldStr = ""
         self._newStr = ""
     
@@ -214,58 +201,35 @@ class ReplaceString(Action):
         return "Remplacer une chaîne de caractères par une autre"
     
     
-    def get_oldStr(self):
+    def getOverview(self, oldPath):
         '''
-        Obtenir la chaine à remplacer
-        @return: Chaine à remplacer
+        Obtenir l'aperçu de la modification
+        @param oldPath: Chemin du fichier
+        @return: Chemin du fichier modifié
+        @raise: NotImplementedError Méthode non surchargée
         @author: Julien
         '''
-        return self._oldStr
+        # Partie à modifier
+        pModif = PathModification()
+        pModif.path = oldPath
+        pModif.range = self.range
+        new = pModif.get()
+        # Modification
+        new = new.replace(self.oldStr, self.newStr)
+        # Appliquer la modification
+        pModif.set(new)
+        return pModif.path
     
     
-    def set_oldStr(self, oldStr):
-        '''
-        Spécifier la chaine à remplacer
-        @param oldStr: Chaine à remplacer
-        @author: Julien
-        '''
-        self._oldStr = oldStr
-    
-    
-    def get_newStr(self):
-        '''
-        Obtenir la nouvelle chaine
-        @return: Nouvelle chaine
-        @author: Julien
-        '''
-        return self._newStr
-    
-    
-    def set_newStr(self, newStr):
-        '''
-        Spécifier la nouvelle chaine
-        @param newStr: Nouvelle chaine
-        @author: Julien
-        '''
-        self._newStr = newStr
-    
-    
-    # Propriétés
-    oldStr = property(fget = get_oldStr, fset = set_oldStr)
-    newStr = property(fget = get_newStr, fset = set_newStr)
-    
-    
-    def execute(self):
+    def execute(self, oldPath):
         '''
         Exécuter la modification
+        @param oldPath: Chemin du fichier
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        # Nouveau nom de fichier
-        newFilename = self.filename
-        newFilename = newFilename.replace(self.oldStr, self.newStr)
-        # Renommer le fichier
-        self.rename(newFilename)
+        newPath = self.getOverview(oldPath)
+        #TODO os.rename(oldPath.get(), newPath.get())
 
 
 
@@ -286,9 +250,11 @@ class Cut(Action):
         @author: Julien
         '''
         Action.__init__(self)
-        self._nomber = 0
+        
+        self.range = PathModification.FILENAME
         self._position = 0
-        self._sens = Cut.A_PARTIR_DEBUT
+        self._nomber = 0
+        self.sens = Cut.A_PARTIR_DEBUT
     
     
     @staticmethod
@@ -309,27 +275,6 @@ class Cut(Action):
         @author: Julien
         '''
         return "Supprimer des caractères du nom de fichier"
-    
-    
-    def get_nomber(self):
-        '''
-        Obtenir le nombre de caractères à couper
-        @return: Nombre de caractères
-        @author: Julien
-        '''
-        return self._nomber
-    
-    
-    def set_nomber(self, nomber):
-        '''
-        Spécifier le nombre de caractères à couper
-        @param nombre: Nombre de cractères
-        @raise ValueError: valeuVr incorrecte
-        @author: Julien
-        '''
-        if nomber < 0:
-            raise ValueError("Valeur incorrecte")
-        self._nomber = int(nomber)
     
     
     def get_position(self):
@@ -353,47 +298,64 @@ class Cut(Action):
         self._position = int(position)
     
     
-    def get_sens(self):
+    def get_nomber(self):
         '''
-        Obtenir le sens de parcours
-        @return: Sens
+        Obtenir le nombre de caractères à couper
+        @return: Nombre de caractères
         @author: Julien
         '''
-        return self._sens
+        return self._nomber
     
     
-    def set_sens(self, sens):
+    def set_nomber(self, nomber):
         '''
-        Spécifier le sens de parcours
-        @param sens: Sens (A_PARTIR_DEBUT ou A_PARTIR_FIN)
-        @raise ValueError: Valeur incorrecte
+        Spécifier le nombre de caractères à couper
+        @param nombre: Nombre de cractères
+        @raise ValueError: valeuVr incorrecte
         @author: Julien
         '''
-        if sens not in [Cut.A_PARTIR_DEBUT, Cut.A_PARTIR_FIN]:
+        if nomber < 0:
             raise ValueError("Valeur incorrecte")
-        self._sens = sens
+        self._nomber = int(nomber)
     
     
     # Propriétés
-    nomber = property(fget = get_nomber, fset = set_nomber)
     position = property(fget = get_position, fset = set_position)
-    sens = property(fget = get_sens, fset = set_sens)
+    nomber = property(fget = get_nomber, fset = set_nomber)
     
     
-    def execute(self):
+    def getOverview(self, oldPath):
+        '''
+        Obtenir l'aperçu de la modification
+        @param oldPath: Chemin du fichier
+        @return: Chemin du fichier modifié
+        @author: Julien
+        '''
+        # Partie à modifier
+        pModif = PathModification()
+        pModif.path = oldPath
+        pModif.range = self.range
+        newStr = pModif.get()
+        # Modification
+        if self.nomber is not 0:
+            if self.sens is Cut.A_PARTIR_DEBUT:
+                newStr = newStr[:self.position] + newStr[self.position+self.nomber:]
+            elif self.sens is Cut.A_PARTIR_FIN:
+                newStr = newStr[:-(self.position+self.nomber)] + newStr[len(newStr)-self.position:]
+        # Appliquer la modification
+        pModif.set(newStr)
+        return pModif.path
+    
+    
+    def execute(self, oldPath):
         '''
         Exécuter la modification
+        @param oldPath: Chemin du fichier
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        # Nouveau nom de fichier
-        newFilename = self.filename
-        if self.sens is Cut.A_PARTIR_DEBUT:
-            newFilename = newFilename[:self.position] + newFilename[self.position+self.nomber:]
-        elif self.sens is Cut.A_PARTIR_FIN:
-            newFilename = newFilename[:self.position-self.nomber] + newFilename[self.position:]
-        # Renommer le fichier
-        self.rename(newFilename)
+        newPath = self.getOverview(oldPath)
+        #TODO os.rename(oldPath.get(), newPath.get())
 
 
 
@@ -414,6 +376,7 @@ class InsertString(Action):
         @author: Julien
         '''
         Action.__init__(self)
+        
         self.string = ""
         self._position = 0
         self._sens = InsertString.A_PARTIR_DEBUT
@@ -460,47 +423,42 @@ class InsertString(Action):
         self._position = position
     
     
-    def get_sens(self):
-        '''
-        Obtenir le sens de parcours
-        @return: Sens
-        @author: Julien
-        '''
-        return self._sens
-    
-    
-    def set_sens(self, sens):
-        '''
-        Spécifier le sens de parcours
-        @param sens: Sens (A_PARTIR_DEBUT ou A_PARTIR_FIN)
-        @raise ValueError: Valeur incorrecte
-        @author: Julien
-        '''
-        if sens not in [InsertString.A_PARTIR_DEBUT, InsertString.A_PARTIR_FIN]:
-            raise ValueError("Valeur incorrecte")
-        self._sens = sens
-    
-    
     # Propriétés
     position = property(fget = get_position, fset = set_position)
-    sens = property(fget = get_sens, fset = set_sens)
     
     
-    def execute(self):
+    def getOverview(self, oldPath):
+        '''
+        Obtenir l'aperçu de la modification
+        @param oldPath: Chemin du fichier
+        @return: Chemin du fichier modifié
+        @author: Julien
+        '''
+        # Partie à modifier
+        pModif = PathModification()
+        pModif.path = oldPath
+        pModif.range = self.range
+        newStr = pModif.get()
+        # Modification
+        if self.sens is InsertString.A_PARTIR_DEBUT:
+            newStr = newStr[:self.position] + self.string + newStr[self.position:]
+        elif self.sens is InsertString.A_PARTIR_FIN:
+            size = len(newStr)
+            newStr = newStr[:max(size-self.position,0)] + self.string + newStr[max(size-self.position,0):]
+        # Appliquer la modification
+        pModif.set(newStr)
+        return pModif.path
+    
+    
+    def execute(self, oldPath):
         '''
         Exécuter la modification
+        @param oldPath: Chemin du fichier
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        # Nouveau nom de fichier
-        newFilename = self.filename
-        if self.sens is InsertString.A_PARTIR_DEBUT:
-            newFilename = newFilename[:self.position] + self.string + newFilename[self.position:]
-        elif self.sens is InsertString.A_PARTIR_FIN:
-            size = len(newFilename)
-            newFilename = newFilename[:max(size-self.position,0)] + self.string + newFilename[max(size-self.position,0):]
-        # Renommer le fichier
-        self.rename(newFilename)
+        newPath = self.getOverview(oldPath)
+        #TODO os.rename(oldPath.get(), newPath.get())
 
 
 
@@ -520,6 +478,7 @@ class UpdateTags(Action):
         @author: Julien
         '''
         Action.__init__(self)
+        
         self.artiste = None
         self.album = None
         self.genre = None
@@ -553,3 +512,8 @@ class UpdateTags(Action):
         @author: Julien
         '''
         pass # TODO
+
+
+
+if __name__ == "__main__":
+    pass

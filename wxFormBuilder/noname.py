@@ -241,7 +241,7 @@ class CutGui_panel ( wx.Panel ):
 		self.nomber_staticText.Wrap( -1 )
 		gridSizer.Add( self.nomber_staticText, 0, wx.ALL, 5 )
 		
-		self.number_spinCtrl = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 999, 0 )
+		self.number_spinCtrl = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0, 0, 999, 0 )
 		gridSizer.Add( self.number_spinCtrl, 0, wx.ALL, 5 )
 		
 		self.position_staticText = wx.StaticText( self, wx.ID_ANY, u"A partir de la position : ", wx.DefaultPosition, wx.DefaultSize, 0 )
