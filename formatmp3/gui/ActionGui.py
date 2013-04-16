@@ -7,6 +7,7 @@
 Interface graphique de chacune des actions
 Permettent de paramétrer les actions
 @author: Julien
+@todo: Mettre ne commun "Appliquer à"
 '''
 
 
@@ -49,7 +50,7 @@ class ActionGui(wx.Panel):
         @param action: Action
         @author: Julien
         '''
-        self._action = action
+        self.action = action
         
         wx.Panel.__init__(self, parent)
         self.boxSizer = wx.BoxSizer(wx.VERTICAL)
@@ -64,28 +65,6 @@ class ActionGui(wx.Panel):
         font_description = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 93, 90)
         description.SetFont(font_description)
         self.boxSizer.Add(description)
-    
-    
-    def get_action(self):
-        '''
-        Obtenir l'action
-        @return: Action
-        @author: Julien
-        '''
-        return self._action
-    
-    
-    def set_action(self, action):
-        '''
-        Spécifier l'action
-        @param action: Action
-        @author: Julien
-        '''
-        self._action = action
-    
-    
-    # Propriétés
-    action = property(fget = get_action, fset = set_action)
 
 
 
@@ -104,6 +83,81 @@ class CaseChangeGui(ActionGui):
         @author: Julien
         '''
         ActionGui.__init__(self, parent, action)
+        
+        # Options
+        options_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
+        self.boxSizer.Add(options_staticBoxSizer)
+        #     LOWER
+        lower_radioButton = wx.RadioButton(self, label="Tout en minuscule", style=wx.RB_GROUP)
+        lower_radioButton.Value = (self.action.modification is CaseChange.LOWER)
+        lower_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                               lambda event, modification=CaseChange.LOWER:
+                                   self.OnModificationChanged(event, modification)
+                               )
+        options_staticBoxSizer.Add(lower_radioButton, flag=wx.ALL, border=5)
+        #     FIRST_MAJ
+        firstMaj_radioButton = wx.RadioButton(self, label="Majuscule la première lettre du nom")
+        firstMaj_radioButton.Value = (self.action.modification is CaseChange.FIRST_MAJ)
+        firstMaj_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                  lambda event, modification=CaseChange.FIRST_MAJ:
+                                      self.OnModificationChanged(event, modification)
+                                  )
+        options_staticBoxSizer.Add(firstMaj_radioButton, flag=wx.ALL, border=5)
+        #     TITLE
+        title_radioButton = wx.RadioButton(self, label="Majuscule la première lettre de chaque mot")
+        title_radioButton.Value = (self.action.modification is CaseChange.TITLE)
+        title_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                   lambda event, modification=CaseChange.TITLE:
+                                       self.OnModificationChanged(event, modification)
+                               )
+        options_staticBoxSizer.Add(title_radioButton, flag=wx.ALL, border=5)
+        #     UPPER
+        upper_radioButton = wx.RadioButton(self, label="Tout en majuscule")
+        upper_radioButton.Value = (self.action.modification is CaseChange.UPPER)
+        upper_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                    lambda event, modification=CaseChange.UPPER:
+                                        self.OnModificationChanged(event, modification)
+                               )
+        options_staticBoxSizer.Add(upper_radioButton, flag=wx.ALL, border=5)
+        # Appliquer à
+        appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
+        self.boxSizer.Add(appliquerA_staticBoxSizer)
+        #     FILENAME
+        filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
+        filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
+        filename_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                      lambda event, range=PathModification.FILENAME:
+                                          self.OnRangeChanged(event, range)
+                                  )
+        appliquerA_staticBoxSizer.Add(filename_radioButton, flag=wx.ALL, border=5)
+        #     EXTENSION
+        extension_radioButton = wx.RadioButton(self, label="Extension")
+        extension_radioButton.Value = (self.action.range is PathModification.EXTENSION)
+        extension_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                       lambda event, range=PathModification.EXTENSION:
+                                           self.OnRangeChanged(event, range)
+                                   )
+        appliquerA_staticBoxSizer.Add(extension_radioButton, flag=wx.ALL, border=5)
+    
+    
+    def OnModificationChanged(self, event, modification):
+        '''
+        Modification de la modification
+        @param event: Événement
+        @param modification: Modification
+        '''
+        self.action.modification = modification
+        Publisher.sendMessage(ACTION_CHANGED)
+    
+    
+    def OnRangeChanged(self, event, range):
+        '''
+        Modification de la partie à modifier
+        @param event: Événement
+        @param range: Partie
+        '''
+        self.action.range = range
+        Publisher.sendMessage(ACTION_CHANGED)
 
 
 
@@ -122,24 +176,48 @@ class ReplaceStringGui(ActionGui):
         @author: Julien
         '''
         ActionGui.__init__(self, parent, action)
-        gridSizer = wx.GridSizer(0, 2)
-        self.boxSizer.Add(gridSizer)
-        # Remplacer...
-        #     Title
+        
+        # Options
+        options_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
+        self.boxSizer.Add(options_staticBoxSizer)
+        # Sous-Sizer
+        options_gridSizer = wx.GridSizer(0, 2)
+        options_staticBoxSizer.Add(options_gridSizer, flag=wx.ALL)
+        #     Remplacer...
+        #         Title
         remplacer_title = wx.StaticText(self, label="Remplacer : ")
-        gridSizer.Add(remplacer_title, flag=wx.ALL, border=5)
-        #     Valeur
+        options_gridSizer.Add(remplacer_title, flag=wx.ALL, border=5)
+        #         Valeur
         self.oldStr_textCtrl = wx.TextCtrl(self, value=self.action.oldStr)
         self.oldStr_textCtrl.Bind(wx.EVT_TEXT, self.OnOldStrChanged)
-        gridSizer.Add(self.oldStr_textCtrl, flag=wx.ALL, border=5)
-        # ...Par
-        #     Title
+        options_gridSizer.Add(self.oldStr_textCtrl, flag=wx.ALL, border=5)
+        #     ...Par
+        #         Title
         newStr_title = wx.StaticText(self, label="Par : ")
-        gridSizer.Add(newStr_title, flag=wx.ALL, border=5)
-        #     Valeur
+        options_gridSizer.Add(newStr_title, flag=wx.ALL, border=5)
+        #         Valeur
         self.newStr_textCtrl = wx.TextCtrl(self, value=self.action.newStr)
         self.newStr_textCtrl.Bind(wx.EVT_TEXT, self.OnNewStrChanged)
-        gridSizer.Add(self.newStr_textCtrl, flag=wx.ALL, border=5)
+        options_gridSizer.Add(self.newStr_textCtrl, flag=wx.ALL, border=5)
+        # Appliquer à
+        appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
+        self.boxSizer.Add(appliquerA_staticBoxSizer)
+        #     FILENAME
+        filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
+        filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
+        filename_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                      lambda event, range=PathModification.FILENAME:
+                                          self.OnRangeChanged(event, range)
+                                  )
+        appliquerA_staticBoxSizer.Add(filename_radioButton, flag=wx.ALL, border=5)
+        #     EXTENSION
+        extension_radioButton = wx.RadioButton(self, label="Extension")
+        extension_radioButton.Value = (self.action.range is PathModification.EXTENSION)
+        extension_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                       lambda event, range=PathModification.EXTENSION:
+                                           self.OnRangeChanged(event, range)
+                                   )
+        appliquerA_staticBoxSizer.Add(extension_radioButton, flag=wx.ALL, border=5)
     
     
     def OnOldStrChanged(self, event):
@@ -160,6 +238,16 @@ class ReplaceStringGui(ActionGui):
         '''
         self.action.newStr = self.newStr_textCtrl.Value
         Publisher.sendMessage(ACTION_CHANGED)
+    
+    
+    def OnRangeChanged(self, event, range):
+        '''
+        Modification de la partie à modifier
+        @param event: Événement
+        @param range: Partie
+        '''
+        self.action.range = range
+        Publisher.sendMessage(ACTION_CHANGED)
 
 
 
@@ -178,33 +266,38 @@ class CutGui(ActionGui):
         @author: Julien
         '''
         ActionGui.__init__(self, parent, action)
-        gridSizer = wx.GridSizer(0, 2)
-        self.boxSizer.Add(gridSizer)
+        
+        # Options
+        options_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
+        self.boxSizer.Add(options_staticBoxSizer)
+        # Sous-Sizer
+        options_gridSizer = wx.GridSizer(0, 2)
+        options_staticBoxSizer.Add(options_gridSizer, flag=wx.ALL)
         # Nombre de caractères
         #     Title
         nomber_staticText = wx.StaticText(self, label="Nombre de caractères à supprimer : ")
-        gridSizer.Add(nomber_staticText, flag=wx.ALL, border=5)
+        options_gridSizer.Add(nomber_staticText, flag=wx.ALL, border=5)
         #     Valeur
         self.number_spinCtrl = wx.SpinCtrl(self, value=str(self.action.nomber))
         self.number_spinCtrl.Bind(wx.EVT_SPINCTRL, self.OnNomberChanged)
-        gridSizer.Add(self.number_spinCtrl, flag=wx.ALL, border=5)
+        options_gridSizer.Add(self.number_spinCtrl, flag=wx.ALL, border=5)
         # Position
         #     Title
         position_staticText = wx.StaticText(self, label="A partir de la position : ")
-        gridSizer.Add(position_staticText, flag=wx.ALL, border=5)
+        options_gridSizer.Add(position_staticText, flag=wx.ALL, border=5)
         #     Valeur
         self.position_spinCtrl = wx.SpinCtrl(self, value=str(self.action.position))
         self.position_spinCtrl.Bind(wx.EVT_SPINCTRL, self.OnPositionChanged)
-        gridSizer.Add(self.position_spinCtrl, flag=wx.ALL, border=5)
+        options_gridSizer.Add(self.position_spinCtrl, flag=wx.ALL, border=5)
         # Sens
         #     Title
         sens_staticText = wx.StaticText(self, label="En partant : ")
-        gridSizer.Add(sens_staticText, flag=wx.ALL, border=5)
+        options_gridSizer.Add(sens_staticText, flag=wx.ALL, border=5)
         #     Valeur
         sens_boxSizer = wx.BoxSizer()
-        gridSizer.Add(sens_boxSizer, flag=wx.ALL)
+        options_gridSizer.Add(sens_boxSizer, flag=wx.ALL)
         #         Début
-        self.beginSens_radioButton = wx.RadioButton(self, label="du début")
+        self.beginSens_radioButton = wx.RadioButton(self, label="du début", style=wx.RB_GROUP)
         self.beginSens_radioButton.Value = self.action.sens
         self.beginSens_radioButton.Bind(wx.EVT_RADIOBUTTON, self.OnSensChanged)
         sens_boxSizer.Add(self.beginSens_radioButton, flag=wx.ALL, border=5)
@@ -213,6 +306,25 @@ class CutGui(ActionGui):
         endSens_radioButton.Value = not self.action.sens
         endSens_radioButton.Bind(wx.EVT_RADIOBUTTON, self.OnSensChanged)
         sens_boxSizer.Add(endSens_radioButton, flag=wx.ALL, border=5)
+        # Appliquer à
+        appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
+        self.boxSizer.Add(appliquerA_staticBoxSizer)
+        #     FILENAME
+        filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
+        filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
+        filename_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                      lambda event, range=PathModification.FILENAME:
+                                          self.OnRangeChanged(event, range)
+                                  )
+        appliquerA_staticBoxSizer.Add(filename_radioButton, flag=wx.ALL, border=5)
+        #     EXTENSION
+        extension_radioButton = wx.RadioButton(self, label="Extension")
+        extension_radioButton.Value = (self.action.range is PathModification.EXTENSION)
+        extension_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                       lambda event, range=PathModification.EXTENSION:
+                                           self.OnRangeChanged(event, range)
+                                   )
+        appliquerA_staticBoxSizer.Add(extension_radioButton, flag=wx.ALL, border=5)
     
     
     def OnNomberChanged(self, event):
@@ -243,6 +355,16 @@ class CutGui(ActionGui):
         '''
         self.action.sens = self.beginSens_radioButton.Value
         Publisher.sendMessage(ACTION_CHANGED)
+    
+    
+    def OnRangeChanged(self, event, range):
+        '''
+        Modification de la partie à modifier
+        @param event: Événement
+        @param range: Partie
+        '''
+        self.action.range = range
+        Publisher.sendMessage(ACTION_CHANGED)
 
 
 
@@ -261,31 +383,36 @@ class InsertStringGui(ActionGui):
         @author: Julien
         '''
         ActionGui.__init__(self, parent, action)
-        gridSizer = wx.GridSizer(0, 2)
-        self.boxSizer.Add(gridSizer)
+        
+        # Options
+        options_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
+        self.boxSizer.Add(options_staticBoxSizer)
+        # Sous-Sizer
+        options_gridSizer = wx.GridSizer(0, 2)
+        options_staticBoxSizer.Add(options_gridSizer, flag=wx.ALL)
         # Chaîne à insérer
         #     Title
         string_staticText = wx.StaticText(self, label="Chaîne à insérer : ")
-        gridSizer.Add(string_staticText, flag=wx.ALL, border=5)
+        options_gridSizer.Add(string_staticText, flag=wx.ALL, border=5)
         #     Valeur
         self.string_textCtrl = wx.TextCtrl(self, value=self.action.string)
         self.string_textCtrl.Bind(wx.EVT_TEXT, self.OnStringChanged)
-        gridSizer.Add(self.string_textCtrl, flag=wx.ALL, border=5)
+        options_gridSizer.Add(self.string_textCtrl, flag=wx.ALL, border=5)
         # Position
         #     Title
         position_staticText = wx.StaticText(self, label="A partir de la position : ")
-        gridSizer.Add(position_staticText, flag=wx.ALL, border=5)
+        options_gridSizer.Add(position_staticText, flag=wx.ALL, border=5)
         #     Valeur
         self.position_spinCtrl = wx.SpinCtrl(self, value=str(self.action.position))
         self.position_spinCtrl.Bind(wx.EVT_SPINCTRL, self.OnPositionChanged)
-        gridSizer.Add(self.position_spinCtrl, flag=wx.ALL, border=5)
+        options_gridSizer.Add(self.position_spinCtrl, flag=wx.ALL, border=5)
         # Sens
         #     Title
         sens_staticText = wx.StaticText(self, label="A partir : ")
-        gridSizer.Add(sens_staticText, flag=wx.ALL, border=5)
+        options_gridSizer.Add(sens_staticText, flag=wx.ALL, border=5)
         #     Valeur
         sens_boxSizer = wx.BoxSizer()
-        gridSizer.Add(sens_boxSizer, flag=wx.ALL)
+        options_gridSizer.Add(sens_boxSizer, flag=wx.ALL)
         #         Début
         self.beginSens_radioButton = wx.RadioButton(self, label="du début")
         self.beginSens_radioButton.Value = self.action.sens
@@ -296,6 +423,25 @@ class InsertStringGui(ActionGui):
         endSens_radioButton.Value = not self.action.sens
         endSens_radioButton.Bind(wx.EVT_RADIOBUTTON, self.OnSensChanged)
         sens_boxSizer.Add(endSens_radioButton, flag=wx.ALL, border=5)
+        # Appliquer à
+        appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
+        self.boxSizer.Add(appliquerA_staticBoxSizer)
+        #     FILENAME
+        filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
+        filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
+        filename_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                      lambda event, range=PathModification.FILENAME:
+                                          self.OnRangeChanged(event, range)
+                                  )
+        appliquerA_staticBoxSizer.Add(filename_radioButton, flag=wx.ALL, border=5)
+        #     EXTENSION
+        extension_radioButton = wx.RadioButton(self, label="Extension")
+        extension_radioButton.Value = (self.action.range is PathModification.EXTENSION)
+        extension_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                       lambda event, range=PathModification.EXTENSION:
+                                           self.OnRangeChanged(event, range)
+                                   )
+        appliquerA_staticBoxSizer.Add(extension_radioButton, flag=wx.ALL, border=5)
     
     
     def OnStringChanged(self, event):
@@ -325,4 +471,14 @@ class InsertStringGui(ActionGui):
         @author: Julien
         '''
         self.action.sens = self.beginSens_radioButton.Value
+        Publisher.sendMessage(ACTION_CHANGED)
+    
+    
+    def OnRangeChanged(self, event, range):
+        '''
+        Modification de la partie à modifier
+        @param event: Événement
+        @param range: Partie
+        '''
+        self.action.range = range
         Publisher.sendMessage(ACTION_CHANGED)

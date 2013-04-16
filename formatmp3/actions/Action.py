@@ -75,8 +75,7 @@ class Action(object):
 
 class CaseChange(Action):
     '''
-    Modifier le nom du fichier :
-    1ère lettre en majuscule puis minuscules
+    Modifier le nom du fichier : mettre en majuscule, minuscules, ...
     @author: Julien
     '''
     
@@ -163,9 +162,10 @@ class CaseChange(Action):
 
 class ReplaceString(Action):
     '''
-    Modifier le nom du fichier :
-    Remplacer un caractère par un autre
+    Modifier le nom du fichier : remplacer un caractère par un autre
     @author: Julien
+    @todo: Case sensitive
+    @todo: Toutes les occurrence
     '''
     
     
@@ -177,8 +177,8 @@ class ReplaceString(Action):
         Action.__init__(self)
         
         self.range = PathModification.FILENAME
-        self._oldStr = ""
-        self._newStr = ""
+        self.oldStr = ""
+        self.newStr = ""
     
     
     @staticmethod
@@ -235,7 +235,7 @@ class ReplaceString(Action):
 
 class Cut(Action):
     '''
-    Couper le nom du fichier
+    Modifier le nom du fichier : couper un morceau
     @author: Julien
     '''
     
@@ -361,7 +361,7 @@ class Cut(Action):
 
 class InsertString(Action):
     '''
-    Insérer une chaine dans le nom du fichier
+    Modifier le nom du fichier : insérer une chaine de caractères
     @author: Julien
     '''
     
@@ -377,9 +377,10 @@ class InsertString(Action):
         '''
         Action.__init__(self)
         
+        self.range = PathModification.FILENAME
         self.string = ""
         self._position = 0
-        self._sens = InsertString.A_PARTIR_DEBUT
+        self.sens = InsertString.A_PARTIR_DEBUT
     
     
     @staticmethod

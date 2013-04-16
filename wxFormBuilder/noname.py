@@ -152,6 +152,24 @@ class CaseChangeGui_panel ( wx.Panel ):
 		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
+		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Options" ), wx.VERTICAL )
+		
+		self.m_radioBtn7 = wx.RadioButton( self, wx.ID_ANY, u"Tout en minuscule", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.m_radioBtn7, 0, wx.ALL, 5 )
+		
+		self.m_radioBtn5 = wx.RadioButton( self, wx.ID_ANY, u"Majuscule la première lettre du nom", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_radioBtn5.SetValue( True ) 
+		sbSizer3.Add( self.m_radioBtn5, 0, wx.ALL, 5 )
+		
+		self.m_radioBtn6 = wx.RadioButton( self, wx.ID_ANY, u"Majuscule la première lettre de chaque mot", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.m_radioBtn6, 0, wx.ALL, 5 )
+		
+		self.m_radioBtn8 = wx.RadioButton( self, wx.ID_ANY, u"Tout en majuscule", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.m_radioBtn8, 0, wx.ALL, 5 )
+		
+		
+		boxSizer.Add( sbSizer3, 0, wx.ALL, 5 )
+		
 		
 		self.SetSizer( boxSizer )
 		self.Layout()
@@ -184,24 +202,40 @@ class ReplaceStringGui_panel ( wx.Panel ):
 		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
-		gridSizer = wx.GridSizer( 0, 2, 0, 0 )
+		options_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Options" ), wx.VERTICAL )
+		
+		options_gridSizer = wx.GridSizer( 0, 2, 0, 0 )
 		
 		self.oldStr_staticText = wx.StaticText( self, wx.ID_ANY, u"Remplacer : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.oldStr_staticText.Wrap( -1 )
-		gridSizer.Add( self.oldStr_staticText, 0, wx.ALL, 5 )
+		options_gridSizer.Add( self.oldStr_staticText, 0, wx.ALL, 5 )
 		
 		self.oldStr_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.oldStr_textCtrl, 0, wx.ALL, 5 )
+		options_gridSizer.Add( self.oldStr_textCtrl, 0, wx.ALL, 5 )
 		
 		self.newStr_staticText = wx.StaticText( self, wx.ID_ANY, u"Par : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.newStr_staticText.Wrap( -1 )
-		gridSizer.Add( self.newStr_staticText, 0, wx.ALL, 5 )
+		options_gridSizer.Add( self.newStr_staticText, 0, wx.ALL, 5 )
 		
 		self.newStr_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.newStr_textCtrl, 0, wx.ALL, 5 )
+		options_gridSizer.Add( self.newStr_textCtrl, 0, wx.ALL, 5 )
 		
 		
-		boxSizer.Add( gridSizer, 0, wx.ALL, 5 )
+		options_staticBoxSizer.Add( options_gridSizer, 0, wx.ALL, 0 )
+		
+		
+		boxSizer.Add( options_staticBoxSizer, 0, wx.ALL, 5 )
+		
+		appliquerA_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Appliquer à" ), wx.VERTICAL )
+		
+		self.m_radioBtn9 = wx.RadioButton( self, wx.ID_ANY, u"Nom du fichier", wx.DefaultPosition, wx.DefaultSize, 0 )
+		appliquerA_staticBoxSizer.Add( self.m_radioBtn9, 0, wx.ALL, 5 )
+		
+		self.m_radioBtn10 = wx.RadioButton( self, wx.ID_ANY, u"Extension", wx.DefaultPosition, wx.DefaultSize, 0 )
+		appliquerA_staticBoxSizer.Add( self.m_radioBtn10, 0, wx.ALL, 5 )
+		
+		
+		boxSizer.Add( appliquerA_staticBoxSizer, 0, wx.ALL, 5 )
 		
 		
 		self.SetSizer( boxSizer )
