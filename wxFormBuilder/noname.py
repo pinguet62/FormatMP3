@@ -17,7 +17,7 @@ import wx.xrc
 class MyFrame1 ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 820,761 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 634,771 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
@@ -35,87 +35,145 @@ class MyFrame1 ( wx.Frame ):
 		
 		self.toolBar.Realize() 
 		
-		mainSizer = wx.BoxSizer( wx.VERTICAL )
+		main_boxSizer = wx.BoxSizer( wx.VERTICAL )
 		
-		self.splitter = wx.SplitterWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_3D|wx.SP_NO_XP_THEME )
-		self.splitter.Bind( wx.EVT_IDLE, self.splitterOnIdle )
+		self.main_splitterWindow = wx.SplitterWindow( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_3D|wx.SP_NO_XP_THEME )
+		self.main_splitterWindow.Bind( wx.EVT_IDLE, self.main_splitterWindowOnIdle )
 		
-		self.listFiles_panel = wx.Panel( self.splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		listFiles_boxSizer = wx.BoxSizer( wx.VERTICAL )
+		self.files_panel = wx.Panel( self.main_splitterWindow, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		files_boxSizer = wx.BoxSizer( wx.VERTICAL )
 		
-		self.listFiles_title_staticText = wx.StaticText( self.listFiles_panel, wx.ID_ANY, u"Fichiers", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.listFiles_title_staticText.Wrap( -1 )
-		self.listFiles_title_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		self.title_files_staticText = wx.StaticText( self.files_panel, wx.ID_ANY, u"Fichiers", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title_files_staticText.Wrap( -1 )
+		self.title_files_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
 		
-		listFiles_boxSizer.Add( self.listFiles_title_staticText, 0, wx.ALL, 5 )
+		files_boxSizer.Add( self.title_files_staticText, 0, wx.ALL, 5 )
 		
-		self.listFiles_toolbar = wx.ToolBar( self.listFiles_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT|wx.TB_TEXT ) 
-		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Ajouter un fichier", wx.Bitmap( u"../formatmp3/gui/icons/add_file.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Ajouter un fichier dans la liste", wx.EmptyString, None ) 
+		self.files_toolbar = wx.ToolBar( self.files_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_FLAT|wx.TB_TEXT ) 
+		self.files_toolbar.Realize() 
 		
-		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Ajouter un répertoire", wx.Bitmap( u"../formatmp3/gui/icons/add_folder.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Ajouter une répertoire dans la liste", wx.EmptyString, None ) 
+		files_boxSizer.Add( self.files_toolbar, 0, wx.ALL|wx.EXPAND, 0 )
 		
-		self.listFiles_toolbar.AddSeparator()
-		
-		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Supprimer la sélection", wx.Bitmap( u"../formatmp3/gui/icons/remove_selected.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Supprimer les fichiers sélectionnés de la liste", wx.EmptyString, None ) 
-		
-		self.listFiles_toolbar.AddLabelTool( wx.ID_ANY, u"Supprimer tous les fichiers de la liste", wx.Bitmap( u"../formatmp3/gui/icons/remove_all.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, u"Supprimer tous les fichiers de la liste", wx.EmptyString, None ) 
-		
-		self.listFiles_toolbar.Realize() 
-		
-		listFiles_boxSizer.Add( self.listFiles_toolbar, 0, wx.ALL|wx.EXPAND, 0 )
-		
-		self.listFiles_listCtrl = wx.ListCtrl( self.listFiles_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
-		listFiles_boxSizer.Add( self.listFiles_listCtrl, 1, wx.ALL|wx.EXPAND, 5 )
+		self.listFiles_listCtrl = wx.ListCtrl( self.files_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LC_REPORT )
+		files_boxSizer.Add( self.listFiles_listCtrl, 1, wx.ALL|wx.EXPAND, 5 )
 		
 		
-		self.listFiles_panel.SetSizer( listFiles_boxSizer )
-		self.listFiles_panel.Layout()
-		listFiles_boxSizer.Fit( self.listFiles_panel )
-		self.listActions_panel = wx.Panel( self.splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.files_panel.SetSizer( files_boxSizer )
+		self.files_panel.Layout()
+		files_boxSizer.Fit( self.files_panel )
+		self.actions_panel = wx.Panel( self.main_splitterWindow, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		actions_boxSizer = wx.BoxSizer( wx.VERTICAL )
+		
+		self.title_actions_staticText = wx.StaticText( self.actions_panel, wx.ID_ANY, u"Actions à réaliser", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title_actions_staticText.Wrap( -1 )
+		self.title_actions_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		actions_boxSizer.Add( self.title_actions_staticText, 0, wx.ALL, 5 )
+		
+		self.actions_toolBar = wx.ToolBar( self.actions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_HORIZONTAL )
+		self.actions_toolBar.SetToolBitmapSize( wx.Size( 16,16 ) )
+		self.actions_toolBar.Realize() 
+		
+		actions_boxSizer.Add( self.actions_toolBar, 0, wx.EXPAND, 5 )
+		
+		self.actions_splitter = wx.SplitterWindow( self.actions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.SP_3D )
+		self.actions_splitter.Bind( wx.EVT_IDLE, self.actions_splitterOnIdle )
+		
+		self.listActions_panel = wx.Panel( self.actions_splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		listActions_boxSizer = wx.BoxSizer( wx.VERTICAL )
-		
-		self.listActions_title_staticText = wx.StaticText( self.listActions_panel, wx.ID_ANY, u"Actions à réaliser", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.listActions_title_staticText.Wrap( -1 )
-		self.listActions_title_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
-		
-		listActions_boxSizer.Add( self.listActions_title_staticText, 0, wx.ALL, 5 )
-		
-		self.m_toolBar4 = wx.ToolBar( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TB_HORIZONTAL )
-		self.m_toolBar4.SetToolBitmapSize( wx.Size( 16,16 ) )
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.Bitmap( u"../formatmp3/gui/icons/add.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_toolBar4.AddSeparator()
-		
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.Bitmap( u"../formatmp3/gui/icons/remove_selected.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"tool", wx.Bitmap( u"../formatmp3/gui/icons/remove_all.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_toolBar4.AddSeparator()
-		
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"Up", wx.Bitmap( u"../formatmp3/gui/icons/up.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_toolBar4.AddLabelTool( wx.ID_ANY, u"Down", wx.Bitmap( u"../formatmp3/gui/icons/down.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
-		
-		self.m_toolBar4.Realize() 
-		
-		listActions_boxSizer.Add( self.m_toolBar4, 0, wx.EXPAND, 5 )
 		
 		listActionsToDo_listBoxChoices = []
 		self.listActionsToDo_listBox = wx.ListBox( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, listActionsToDo_listBoxChoices, 0 )
 		listActions_boxSizer.Add( self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5 )
 		
-		self.selectedAction_panel = wx.Panel( self.listActions_panel, wx.ID_ANY, wx.DefaultPosition, wx.Size( -1,50 ), wx.TAB_TRAVERSAL )
-		listActions_boxSizer.Add( self.selectedAction_panel, 0, wx.EXPAND |wx.ALL, 5 )
-		
 		
 		self.listActions_panel.SetSizer( listActions_boxSizer )
 		self.listActions_panel.Layout()
 		listActions_boxSizer.Fit( self.listActions_panel )
-		self.splitter.SplitHorizontally( self.listFiles_panel, self.listActions_panel, 301 )
-		mainSizer.Add( self.splitter, 1, wx.ALL|wx.EXPAND, 0 )
+		self.selectedAction_scrolledWindow = wx.ScrolledWindow( self.actions_splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
+		self.selectedAction_scrolledWindow.SetScrollRate( 5, 5 )
+		boxSizer2 = wx.BoxSizer( wx.VERTICAL )
+		
+		self.title = wx.StaticText( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Couper le nom du fichier", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title.Wrap( -1 )
+		self.title.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		boxSizer2.Add( self.title, 0, wx.ALL, 5 )
+		
+		self.description = wx.StaticText( self.selectedAction_scrolledWindow, wx.ID_ANY, u"todo", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.description.Wrap( -1 )
+		self.description.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
+		
+		boxSizer2.Add( self.description, 0, wx.ALL, 5 )
+		
+		options_gridSizer = wx.StaticBoxSizer( wx.StaticBox( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Options" ), wx.VERTICAL )
+		
+		gridSizer = wx.GridSizer( 3, 2, 0, 0 )
+		
+		self.nomber_staticText = wx.StaticText( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Nombre de caractères à supprimer : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.nomber_staticText.Wrap( -1 )
+		gridSizer.Add( self.nomber_staticText, 0, wx.ALL, 5 )
+		
+		self.number_spinCtrl = wx.SpinCtrl( self.selectedAction_scrolledWindow, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0, 0, 999, 0 )
+		gridSizer.Add( self.number_spinCtrl, 0, wx.ALL, 5 )
+		
+		self.position_staticText = wx.StaticText( self.selectedAction_scrolledWindow, wx.ID_ANY, u"A partir de la position : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.position_staticText.Wrap( -1 )
+		gridSizer.Add( self.position_staticText, 0, wx.ALL, 5 )
+		
+		self.position_spinCtrl = wx.SpinCtrl( self.selectedAction_scrolledWindow, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10, 0 )
+		gridSizer.Add( self.position_spinCtrl, 0, wx.ALL, 5 )
+		
+		self.sens_staticText = wx.StaticText( self.selectedAction_scrolledWindow, wx.ID_ANY, u"En partant : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.sens_staticText.Wrap( -1 )
+		gridSizer.Add( self.sens_staticText, 0, wx.ALL, 5 )
+		
+		sens_boxSizer = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.beginSens_radioButton = wx.RadioButton( self.selectedAction_scrolledWindow, wx.ID_ANY, u"du début", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
+		self.beginSens_radioButton.SetValue( True ) 
+		sens_boxSizer.Add( self.beginSens_radioButton, 0, wx.ALL, 5 )
+		
+		self.endSens_radioButton = wx.RadioButton( self.selectedAction_scrolledWindow, wx.ID_ANY, u"de la fin", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sens_boxSizer.Add( self.endSens_radioButton, 0, wx.ALL, 5 )
 		
 		
-		self.SetSizer( mainSizer )
+		gridSizer.Add( sens_boxSizer, 0, wx.ALL, 0 )
+		
+		
+		options_gridSizer.Add( gridSizer, 0, wx.ALL, 0 )
+		
+		
+		boxSizer2.Add( options_gridSizer, 0, wx.ALL, 5 )
+		
+		appliquerA_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Appliquer à" ), wx.VERTICAL )
+		
+		self.filename_radioButton = wx.RadioButton( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Nom du fichier", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
+		self.filename_radioButton.SetValue( True ) 
+		appliquerA_staticBoxSizer.Add( self.filename_radioButton, 0, wx.ALL, 5 )
+		
+		self.extension_radioButton = wx.RadioButton( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Extension", wx.DefaultPosition, wx.DefaultSize, 0 )
+		appliquerA_staticBoxSizer.Add( self.extension_radioButton, 0, wx.ALL, 5 )
+		
+		
+		boxSizer2.Add( appliquerA_staticBoxSizer, 0, wx.ALL, 5 )
+		
+		
+		self.selectedAction_scrolledWindow.SetSizer( boxSizer2 )
+		self.selectedAction_scrolledWindow.Layout()
+		boxSizer2.Fit( self.selectedAction_scrolledWindow )
+		self.actions_splitter.SplitVertically( self.listActions_panel, self.selectedAction_scrolledWindow, 50 )
+		actions_boxSizer.Add( self.actions_splitter, 1, wx.ALL|wx.EXPAND, 0 )
+		
+		
+		self.actions_panel.SetSizer( actions_boxSizer )
+		self.actions_panel.Layout()
+		actions_boxSizer.Fit( self.actions_panel )
+		self.main_splitterWindow.SplitHorizontally( self.files_panel, self.actions_panel, 301 )
+		main_boxSizer.Add( self.main_splitterWindow, 1, wx.ALL|wx.EXPAND, 0 )
+		
+		
+		self.SetSizer( main_boxSizer )
 		self.Layout()
 		self.statusBar = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
 		
@@ -124,9 +182,13 @@ class MyFrame1 ( wx.Frame ):
 	def __del__( self ):
 		pass
 	
-	def splitterOnIdle( self, event ):
-		self.splitter.SetSashPosition( 301 )
-		self.splitter.Unbind( wx.EVT_IDLE )
+	def main_splitterWindowOnIdle( self, event ):
+		self.main_splitterWindow.SetSashPosition( 301 )
+		self.main_splitterWindow.Unbind( wx.EVT_IDLE )
+	
+	def actions_splitterOnIdle( self, event ):
+		self.actions_splitter.SetSashPosition( 50 )
+		self.actions_splitter.Unbind( wx.EVT_IDLE )
 	
 
 ###########################################################################
@@ -154,18 +216,18 @@ class CaseChangeGui_panel ( wx.Panel ):
 		
 		sbSizer3 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Options" ), wx.VERTICAL )
 		
-		self.m_radioBtn7 = wx.RadioButton( self, wx.ID_ANY, u"Tout en minuscule", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer3.Add( self.m_radioBtn7, 0, wx.ALL, 5 )
+		self.lower_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Tout en minuscule", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
+		sbSizer3.Add( self.lower_radioButton, 0, wx.ALL, 5 )
 		
-		self.m_radioBtn5 = wx.RadioButton( self, wx.ID_ANY, u"Majuscule la première lettre du nom", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_radioBtn5.SetValue( True ) 
-		sbSizer3.Add( self.m_radioBtn5, 0, wx.ALL, 5 )
+		self.firstMaj_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Majuscule la première lettre du nom", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.firstMaj_radioButton.SetValue( True ) 
+		sbSizer3.Add( self.firstMaj_radioButton, 0, wx.ALL, 5 )
 		
-		self.m_radioBtn6 = wx.RadioButton( self, wx.ID_ANY, u"Majuscule la première lettre de chaque mot", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer3.Add( self.m_radioBtn6, 0, wx.ALL, 5 )
+		self.title_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Majuscule la première lettre de chaque mot", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.title_radioButton, 0, wx.ALL, 5 )
 		
-		self.m_radioBtn8 = wx.RadioButton( self, wx.ID_ANY, u"Tout en majuscule", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer3.Add( self.m_radioBtn8, 0, wx.ALL, 5 )
+		self.upper_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Tout en majuscule", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer3.Add( self.upper_radioButton, 0, wx.ALL, 5 )
 		
 		
 		boxSizer.Add( sbSizer3, 0, wx.ALL, 5 )
@@ -228,11 +290,12 @@ class ReplaceStringGui_panel ( wx.Panel ):
 		
 		appliquerA_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Appliquer à" ), wx.VERTICAL )
 		
-		self.m_radioBtn9 = wx.RadioButton( self, wx.ID_ANY, u"Nom du fichier", wx.DefaultPosition, wx.DefaultSize, 0 )
-		appliquerA_staticBoxSizer.Add( self.m_radioBtn9, 0, wx.ALL, 5 )
+		self.filename_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Nom du fichier", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
+		self.filename_radioButton.SetValue( True ) 
+		appliquerA_staticBoxSizer.Add( self.filename_radioButton, 0, wx.ALL, 5 )
 		
-		self.m_radioBtn10 = wx.RadioButton( self, wx.ID_ANY, u"Extension", wx.DefaultPosition, wx.DefaultSize, 0 )
-		appliquerA_staticBoxSizer.Add( self.m_radioBtn10, 0, wx.ALL, 5 )
+		self.extension_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Extension", wx.DefaultPosition, wx.DefaultSize, 0 )
+		appliquerA_staticBoxSizer.Add( self.extension_radioButton, 0, wx.ALL, 5 )
 		
 		
 		boxSizer.Add( appliquerA_staticBoxSizer, 0, wx.ALL, 5 )
@@ -269,6 +332,8 @@ class CutGui_panel ( wx.Panel ):
 		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
+		options_gridSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Options" ), wx.VERTICAL )
+		
 		gridSizer = wx.GridSizer( 3, 2, 0, 0 )
 		
 		self.nomber_staticText = wx.StaticText( self, wx.ID_ANY, u"Nombre de caractères à supprimer : ", wx.DefaultPosition, wx.DefaultSize, 0 )
@@ -291,7 +356,7 @@ class CutGui_panel ( wx.Panel ):
 		
 		sens_boxSizer = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.beginSens_radioButton = wx.RadioButton( self, wx.ID_ANY, u"du début", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.beginSens_radioButton = wx.RadioButton( self, wx.ID_ANY, u"du début", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
 		self.beginSens_radioButton.SetValue( True ) 
 		sens_boxSizer.Add( self.beginSens_radioButton, 0, wx.ALL, 5 )
 		
@@ -302,7 +367,22 @@ class CutGui_panel ( wx.Panel ):
 		gridSizer.Add( sens_boxSizer, 0, wx.ALL, 0 )
 		
 		
-		boxSizer.Add( gridSizer, 0, wx.ALL, 5 )
+		options_gridSizer.Add( gridSizer, 0, wx.ALL, 0 )
+		
+		
+		boxSizer.Add( options_gridSizer, 0, wx.ALL, 5 )
+		
+		appliquerA_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Appliquer à" ), wx.VERTICAL )
+		
+		self.filename_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Nom du fichier", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
+		self.filename_radioButton.SetValue( True ) 
+		appliquerA_staticBoxSizer.Add( self.filename_radioButton, 0, wx.ALL, 5 )
+		
+		self.extension_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Extension", wx.DefaultPosition, wx.DefaultSize, 0 )
+		appliquerA_staticBoxSizer.Add( self.extension_radioButton, 0, wx.ALL, 5 )
+		
+		
+		boxSizer.Add( appliquerA_staticBoxSizer, 0, wx.ALL, 5 )
 		
 		
 		self.SetSizer( boxSizer )
