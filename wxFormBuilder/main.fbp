@@ -152,7 +152,7 @@
                     </object>
                 </object>
             </object>
-            <object class="wxToolBar" expanded="0">
+            <object class="wxToolBar" expanded="1">
                 <property name="BottomDockable">1</property>
                 <property name="LeftDockable">1</property>
                 <property name="RightDockable">1</property>
@@ -346,8 +346,8 @@
                         <event name="OnSplitterSashPosChanging"></event>
                         <event name="OnSplitterUnsplit"></event>
                         <event name="OnUpdateUI"></event>
-                        <object class="splitteritem" expanded="1">
-                            <object class="wxPanel" expanded="1">
+                        <object class="splitteritem" expanded="0">
+                            <object class="wxPanel" expanded="0">
                                 <property name="BottomDockable">1</property>
                                 <property name="LeftDockable">1</property>
                                 <property name="RightDockable">1</property>
@@ -1288,7 +1288,7 @@
                                                     <event name="OnUpdateUI"></event>
                                                     <object class="wxBoxSizer" expanded="0">
                                                         <property name="minimum_size"></property>
-                                                        <property name="name">boxSizer2</property>
+                                                        <property name="name">boxSizer</property>
                                                         <property name="orient">wxVERTICAL</property>
                                                         <property name="permission">none</property>
                                                         <object class="sizeritem" expanded="0">

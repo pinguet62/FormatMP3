@@ -12,6 +12,7 @@ Action sur les fichiers
 
 
 import os
+import copy
 from formatmp3.actions.Path import *
 
 
@@ -128,7 +129,7 @@ class CaseChange(Action):
         '''
         # Partie à modifier
         pModif = PathModification()
-        pModif.path = oldPath
+        pModif.path = copy.deepcopy(oldPath)
         pModif.range = self.range
         newStr = pModif.get()
         # Modification
@@ -211,7 +212,7 @@ class ReplaceString(Action):
         '''
         # Partie à modifier
         pModif = PathModification()
-        pModif.path = oldPath
+        pModif.path = copy.deepcopy(oldPath)
         pModif.range = self.range
         new = pModif.get()
         # Modification
@@ -333,7 +334,7 @@ class Cut(Action):
         '''
         # Partie à modifier
         pModif = PathModification()
-        pModif.path = oldPath
+        pModif.path = copy.deepcopy(oldPath)
         pModif.range = self.range
         newStr = pModif.get()
         # Modification
@@ -437,7 +438,7 @@ class InsertString(Action):
         '''
         # Partie à modifier
         pModif = PathModification()
-        pModif.path = oldPath
+        pModif.path = copy.deepcopy(oldPath)
         pModif.range = self.range
         newStr = pModif.get()
         # Modification

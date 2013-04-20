@@ -86,8 +86,24 @@ class Path(object):
         @param path: Path
         @author: Julien
         '''
-        self._path = path
+        self._path = ""
+        self.set(path)
     
+    # Opérateurs
+    
+    def __eq__(self, other):
+        return self._path == other._path
+    
+    def __lt__(self, other):
+        return self._path < other._path
+    
+    def __gt__(self, other):
+        return self._path > other._path
+    
+    def __str__(self):
+        return self._path
+    
+    # Accesseurs
     
     def get(self):
         '''
@@ -104,8 +120,11 @@ class Path(object):
         @param newPath: Chemin
         @author: Julien
         '''
+        while newPath[:-1] == '\\':
+            newPath = newPath[:-1]
         self._path = newPath
     
+    # Propriétés d'accès aux nom du répertoire, du fichier ou de l'extension
     
     def get_dirname(self):
         '''
@@ -188,3 +207,8 @@ class Path(object):
     basename = property(fget = get_basename, fset = set_basename)
     filename = property(fget = get_filename, fset = set_filename)
     extension = property(fget = get_extension, fset = set_extension)
+
+
+
+if __name__ == "__main__":
+    pass

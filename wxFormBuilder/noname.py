@@ -92,19 +92,19 @@ class MyFrame1 ( wx.Frame ):
 		listActions_boxSizer.Fit( self.listActions_panel )
 		self.selectedAction_scrolledWindow = wx.ScrolledWindow( self.actions_splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
 		self.selectedAction_scrolledWindow.SetScrollRate( 5, 5 )
-		boxSizer2 = wx.BoxSizer( wx.VERTICAL )
+		boxSizer = wx.BoxSizer( wx.VERTICAL )
 		
 		self.title = wx.StaticText( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Couper le nom du fichier", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.title.Wrap( -1 )
 		self.title.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
 		
-		boxSizer2.Add( self.title, 0, wx.ALL, 5 )
+		boxSizer.Add( self.title, 0, wx.ALL, 5 )
 		
 		self.description = wx.StaticText( self.selectedAction_scrolledWindow, wx.ID_ANY, u"todo", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.description.Wrap( -1 )
 		self.description.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 93, 90, False, wx.EmptyString ) )
 		
-		boxSizer2.Add( self.description, 0, wx.ALL, 5 )
+		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
 		options_gridSizer = wx.StaticBoxSizer( wx.StaticBox( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Options" ), wx.VERTICAL )
 		
@@ -144,7 +144,7 @@ class MyFrame1 ( wx.Frame ):
 		options_gridSizer.Add( gridSizer, 0, wx.ALL, 0 )
 		
 		
-		boxSizer2.Add( options_gridSizer, 0, wx.ALL, 5 )
+		boxSizer.Add( options_gridSizer, 0, wx.ALL, 5 )
 		
 		appliquerA_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self.selectedAction_scrolledWindow, wx.ID_ANY, u"Appliquer à" ), wx.VERTICAL )
 		
@@ -156,12 +156,12 @@ class MyFrame1 ( wx.Frame ):
 		appliquerA_staticBoxSizer.Add( self.extension_radioButton, 0, wx.ALL, 5 )
 		
 		
-		boxSizer2.Add( appliquerA_staticBoxSizer, 0, wx.ALL, 5 )
+		boxSizer.Add( appliquerA_staticBoxSizer, 0, wx.ALL, 5 )
 		
 		
-		self.selectedAction_scrolledWindow.SetSizer( boxSizer2 )
+		self.selectedAction_scrolledWindow.SetSizer( boxSizer )
 		self.selectedAction_scrolledWindow.Layout()
-		boxSizer2.Fit( self.selectedAction_scrolledWindow )
+		boxSizer.Fit( self.selectedAction_scrolledWindow )
 		self.actions_splitter.SplitVertically( self.listActions_panel, self.selectedAction_scrolledWindow, 50 )
 		actions_boxSizer.Add( self.actions_splitter, 1, wx.ALL|wx.EXPAND, 0 )
 		

@@ -53,6 +53,41 @@ class TestPath(unittest.TestCase):
     @author: Julien
     '''
     
+    
+    def test_operators(self):
+        # __eq__
+        str111 = "C:\\chemin\\du\\repertoire\\fichier.ext"
+        str112 = "C:\\chemin\\du\\repertoire\\fichier.ext"
+        self.assertEqual(Path(str111), Path(str112))
+        str121 = "C:\\chemin\\repertoire\\fichier.ext"
+        str122 = "C:\\chemin\\différent\\fichier.eXt"
+        self.assertNotEqual(Path(str121), Path(str122))
+        # __str__
+        str2 = "C:\\chemin\\du\\repertoire\\fichier.ext"
+        self.assertEqual(str(Path(str2)), str2)
+        # list.sort()
+        list1 = [Path("C:\\path5"), Path("C:\\path3"), Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path4")]
+        list1.sort()
+        self.assertListEqual(list1, [Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path3"), Path("C:\\path4"), Path("C:\\path5")])
+        # in list
+        list21 = [Path("C:\\path1"), Path("C:\\path2")]
+        self.assertIn(Path("C:\\path1"), list21)
+        list22 = [Path("C:\\path1"), Path("C:\\path2")]
+        self.assertNotIn(Path("C:\\toto"), list22)
+    
+    
+    def test_swap(self):
+        listUp = [Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path3")]
+        i1 = 1
+        listUp[i1], listUp[i1-1] = listUp[i1-1], listUp[i1]
+        self.assertListEqual(listUp, [Path("C:\\path2"), Path("C:\\path1"), Path("C:\\path3")])
+        
+        listDown = [Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path3")]
+        i1 = 1
+        listDown[i1], listDown[i1+1] = listDown[i1+1], listDown[i1]
+        self.assertListEqual(listDown, [Path("C:\\path1"), Path("C:\\path3"), Path("C:\\path2")])
+    
+    
     def test_get_basename(self):
         self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier.ext").basename, "fichier.ext")
         self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier").basename, "fichier")

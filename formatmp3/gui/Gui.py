@@ -48,41 +48,64 @@ class Model(object):
         self.actionlist = []
     
     
-    def AddFiles(self, pathlist=[]):
+    def _addFile(self, path):
         '''
-        Ajouter des fichiers
-        @param pathlist: Liste des chemins des fichiers
+        Ajouter un fichier
+        @param path: path
         @author: Julien
         '''
-        filesAdded = False
-        for path in pathlist:
-            if path not in self.filelist:
-                self.filelist.append(path)
-                filesAdded = True
-        if filesAdded:
+        if path not in self.filelist:
+            self.filelist.append(path)
+    
+    
+    def AddFile(self, path):
+        '''
+        Ajouter un fichier
+        @param path: path
+        @author: Julien
+        '''
+        oldCount = len(self.filelist)
+        self._addFile(path)
+        newCount = len(self.filelist)
+        if oldCount < newCount:
             self.filelist.sort()
             Publisher.sendMessage(FILELIST_CHANGED)
     
     
-    def _addFolder(self, dirname):
+    def AddFiles(self, pathlist=[]):
         '''
-        Ajout de chacun des fichiers contenus dans le répertoire de manière récursive
-        @param dirname: Chemin du répertoire
+        Ajouter des fichiers
+        @param pathlist: Liste des path
         @author: Julien
         '''
-        for basename in os.listdir(dirname):
-            path = os.path.join(dirname, basename)
-            if os.path.isdir(path):
-                self._addFolder(path)
-            elif os.path.isfile(path):
-                if path not in self.filelist:
-                    self.filelist.append(path)
+        oldCount = len(self.filelist)
+        for path in pathlist:
+            self._addFile(path)
+        newCount = len(self.filelist)
+        if oldCount < newCount:
+            self.filelist.sort()
+            Publisher.sendMessage(FILELIST_CHANGED)
+    
+    
+    def _addFolder(self, strDirname):
+        '''
+        Ajout de chacun des fichiers contenus dans le répertoire de manière récursive
+        @param strDirname: Path du répertoire
+        @author: Julien
+        '''
+        for basename in os.listdir(strDirname):
+            strPath = os.path.join(strDirname, basename)
+            if os.path.isdir(strPath):
+                self._addFolder(strPath)
+            elif os.path.isfile(strPath):
+                path = Path(strPath)
+                self._addFile(path)
     
     
     def AddFolder(self, path):
         '''
         Ajouter un répertoire
-        @param path: Chemin du répertoire
+        @param path: Path du répertoire
         @author: Julien
         '''
         oldCount = len(self.filelist)
@@ -113,7 +136,7 @@ class Model(object):
         Retirer tous les fichiers
         @author: Julien
         '''
-        if self.filelist != []:
+        if self.filelist:
             self.filelist = []
             Publisher.sendMessage(FILELIST_CHANGED)
     
@@ -126,6 +149,53 @@ class Model(object):
         '''
         self.actionlist.append(action)
         Publisher.sendMessage(ACTIONLIST_CHANGED)
+    
+    
+    def getOverviewFilelist(self):
+        '''
+        Obtenir la liste des fichiers avec l'aperçu des modifications
+        @return: Liste des fichiers
+        @author: Julien
+        '''
+        overviews = []
+        for path in self.filelist:
+            copyPath = path
+            for action in self.actionlist:
+                copyPath = action.getOverview(copyPath)
+            overviews.append(copyPath)
+        return overviews
+    
+    
+    def SwapActions(self, i1, i2):
+        '''
+        Echanger 2 actions
+        @param i1: Indice
+        @param i2: Indice
+        @author: Julien
+        '''
+        self.actionlist[i1], self.actionlist[i2] = self.actionlist[i2], self.actionlist[i1]
+        Publisher.sendMessage(ACTIONLIST_CHANGED)
+    
+    
+    def RemoveAction(self, action):
+        '''
+        Retirer des fichiers
+        @param action: Action
+        @author: Julien
+        '''
+        if action in self.actionlist:
+            self.actionlist.remove(action)
+            Publisher.sendMessage(ACTIONLIST_CHANGED)
+    
+    
+    def RemoveAllActions(self):
+        '''
+        Retirer toutes les actions
+        @author: Julien
+        '''
+        if self.actionlist:
+            self.actionlist = []
+            Publisher.sendMessage(ACTIONLIST_CHANGED)
 
 
 
@@ -281,6 +351,18 @@ class View(wx.Frame):
         self.actions_splitter.SplitVertically(listActions_panel, self.selectedAction_panel, 250)
         #     .
         main_splitterWindow.SplitHorizontally(files_panel, actions_panel, 200)
+    
+    
+    def setSelectedActionPanel(self, newPanel):
+        '''
+        Spéficier le panel de l'action sélectionnée
+        @param newPanel: Panel
+        @author: Julien
+        '''
+        oldPanel = self.selectedAction_panel
+        self.actions_splitter.ReplaceWindow(oldPanel, newPanel)
+        self.selectedAction_panel = newPanel
+        oldPanel.Destroy()
 
 
 
@@ -314,9 +396,10 @@ class Controller(object):
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllActions, self.view.removeAllActions_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnUpSelectedAction, self.view.upSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnDownSelectedAction, self.view.downSelectedAction_tool)
-        # Événements du modèle
-        Publisher.subscribe(self._filelistChanged, FILELIST_CHANGED)
-        Publisher.subscribe(self._actionlistChanged, ACTIONLIST_CHANGED)
+        # Événements
+        Publisher.subscribe(self.RefreshFilelist, FILELIST_CHANGED)
+        Publisher.subscribe(self.RefreshActionlist, ACTIONLIST_CHANGED)
+        Publisher.subscribe(self.RefreshFilelist, ACTION_CHANGED)
         
         self.view.Show()
         
@@ -325,6 +408,7 @@ class Controller(object):
         self.model.AddAction(Cut())
         self.model.AddAction(InsertString())
     
+    # Manipulation des fichiers
     
     def OnAddFiles(self, event):
         '''
@@ -333,14 +417,14 @@ class Controller(object):
         @author: Julien
         @todo: Répertoire par défaut
         '''
-        print "OnAddFiles"
         fDialog = wx.FileDialog(self.view, "Sélectionnez les fichiers", style=wx.FD_MULTIPLE)
-        if fDialog.ShowModal() != wx.ID_OK :
+        if fDialog.ShowModal() != wx.ID_OK:
             return
         pathlist = []
         direname = fDialog.GetDirectory()
         for basename in fDialog.GetFilenames():
-            path = os.path.join(direname, basename)
+            strPath = os.path.join(direname, basename)
+            path = Path(strPath)
             pathlist.append(path)
         self.model.AddFiles(pathlist)
         event.Skip()
@@ -352,9 +436,8 @@ class Controller(object):
         @param event: Événement
         @author: Julien
         '''
-        print "OnAddFolder"
         dDialog = wx.DirDialog(self.view, "Répertoire source", style=wx.DD_DEFAULT_STYLE|wx.DD_DIR_MUST_EXIST)
-        if dDialog.ShowModal() != wx.ID_OK :
+        if dDialog.ShowModal() != wx.ID_OK:
             return
         path = dDialog.GetPath()
         self.model.AddFolder(path)
@@ -367,7 +450,6 @@ class Controller(object):
         @param event: Événement
         @author: Julien
         '''
-        print "OnRemoveSelectedListFiles"
         pathlist = []
         index = self.view.listFiles_listCtrl.GetFirstSelected()
         while index != -1:
@@ -386,26 +468,10 @@ class Controller(object):
         @param event: Événement
         @author: Julien
         '''
-        print "OnRemoveAllListFiles"
         self.model.RemoveAllFiles()
         event.Skip()
-        
     
-    def _filelistChanged(self):
-        '''
-        Rafraichir la liste des fichiers
-        @param event: Événement
-        @author: Julien
-        '''
-        print "_filelistChanged"
-        self.view.listFiles_listCtrl.DeleteAllItems()
-        for path in self.model.filelist:
-            (head, tail) = os.path.split(path)
-            index = self.view.listFiles_listCtrl.GetItemCount()
-            self.view.listFiles_listCtrl.InsertStringItem(index, label=head)
-            self.view.listFiles_listCtrl.SetStringItem(index, 1, tail)
-            self.view.listFiles_listCtrl.SetStringItem(index, 2, "TODO")
-    
+    # Manipulation des actions
     
     def OnSelectedAction(self, event):
         '''
@@ -413,9 +479,13 @@ class Controller(object):
         @param event: Événement
         @author: Julien
         '''
-        print "OnSelectedAction"
         index = self.view.listActionsToDo_listBox.Selection
-        self._showAction(index)
+        self._showActionGui(index)
+        # Toolbar : monter/descendre action
+        if index == 0:
+            pass
+        elif index == self.view.listActionsToDo_listBox.Count-1:
+            pass
     
     
     def _onAddAction(self, event, action):
@@ -424,13 +494,11 @@ class Controller(object):
         @param event: Événement
         @param action: Action
         @author: Julien
-        @todo: Implémenter
         '''
-        print "_onAddAction"
         lastIndex = self.view.listActionsToDo_listBox.Count
         self.model.AddAction(action)
         self.view.listActionsToDo_listBox.Selection = lastIndex
-        self._showAction(lastIndex)
+        self._showActionGui(lastIndex)
     
     
     def OnAddAction(self, event):
@@ -438,9 +506,7 @@ class Controller(object):
         Clic sur le bouton "Ajouter une action"
         @param event: Événement
         @author: Julien
-        @todo: Implémenter
         '''
-        print "OnAddAction"
         menu = wx.Menu()
         for actionClass in actions:
             menuItem = wx.MenuItem(menu, wx.NewId(), actionClass.getTitle())
@@ -459,7 +525,10 @@ class Controller(object):
         @author: Julien
         @todo: Implémenter
         '''
-        print "OnRemoveSelectedAction"
+        index = self.view.listActionsToDo_listBox.GetSelection()
+        action = self.model.actionlist[index]
+        self.model.RemoveAction(action)
+        self.view.listActionsToDo_listBox.Selection = index-1
     
     
     def OnRemoveAllActions(self, event):
@@ -467,9 +536,8 @@ class Controller(object):
         Clic sur le bouton "Supprimer toutes les actions"
         @param event: Événement
         @author: Julien
-        @todo: Implémenter
         '''
-        print "OnRemoveAllActions"
+        self.model.RemoveAllActions()
     
     
     def OnUpSelectedAction(self, event):
@@ -477,9 +545,12 @@ class Controller(object):
         Clic sur le bouton "Monter l'action sélectionnée"
         @param event: Événement
         @author: Julien
-        @todo: Implémenter
         '''
-        print "OnUpSelectedAction"
+        index = self.view.listActionsToDo_listBox.GetSelection()
+        if index != 0:
+            self.model.SwapActions(index, index-1)
+            self.view.listActionsToDo_listBox.Selection = index-1
+        
     
     
     def OnDownSelectedAction(self, event):
@@ -487,43 +558,57 @@ class Controller(object):
         Clic sur le bouton "Descendre l'action sélectionnée"
         @param event: Événement
         @author: Julien
-        @todo: Implémenter
         '''
-        print "OnDownSelectedAction"
+        index = self.view.listActionsToDo_listBox.GetSelection()
+        if index != self.view.listActionsToDo_listBox.Count-1:
+            self.model.SwapActions(index, index+1)
+            self.view.listActionsToDo_listBox.Selection = index+1
+    
+    # Affichage des éléments
+    
+    def RefreshFilelist(self):
+        '''
+        Rafraichir la liste des fichiers
+        @param event: Événement
+        @author: Julien
+        '''
+        self.view.listFiles_listCtrl.DeleteAllItems()
+        files = self.model.filelist
+        overviews = self.model.getOverviewFilelist()
+        for i in xrange(0, len(files)):
+            index = self.view.listFiles_listCtrl.GetItemCount()
+            self.view.listFiles_listCtrl.InsertStringItem(index, label=files[i].dirname)
+            self.view.listFiles_listCtrl.SetStringItem(index, 1, files[i].basename)
+            self.view.listFiles_listCtrl.SetStringItem(index, 2, overviews[i].basename)
     
     
-    def _actionlistChanged(self):
+    def RefreshActionlist(self):
         '''
         Rafraichir la liste des actions
         @author: Julien
         '''
-        print "_actionlistChanged"
+        # Liste des actions
         while self.view.listActionsToDo_listBox.Count != 0:
             self.view.listActionsToDo_listBox.Delete(0)
         for action in self.model.actionlist:
             index = self.view.listActionsToDo_listBox.Count
             self.view.listActionsToDo_listBox.Insert(action.__class__.getTitle(), index)
+        # Liste des fichiers
+        self.RefreshFilelist()
     
     
-    def _showAction(self, index):
+    def _showActionGui(self, index):
         '''
         Afficher l'action
         @param index: Index
         @author: Julien
         '''
-        print "_showAction"
         action = self.model.actionlist[index]
         newActionGui = createGui(self.view.actions_splitter, action)
-        oldActionGui = self.view.selectedAction_panel
-        self.view.actions_splitter.ReplaceWindow(oldActionGui, newActionGui)
-        self.view.selectedAction_panel = newActionGui
-        oldActionGui.Destroy()
-        #self.view.listActions_boxSizer.Layout()
+        self.view.setSelectedActionPanel(newActionGui)
     
     
     def OnTest(self, event):
-        print "OnTest"
-        
         list = [CaseChange]
         self.i = (self.i+1)%len(list)
         action = list[self.i]
