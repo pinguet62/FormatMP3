@@ -89,59 +89,91 @@ class TestPath(unittest.TestCase):
     
     
     def test_get_basename(self):
-        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier.ext").basename, "fichier.ext")
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\").basename, "repertoire")
         self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier").basename, "fichier")
-        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier\\").basename, "")
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\.ext").basename, ".ext")
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier.ext").basename, "fichier.ext")
     
     
     def test_set_basename(self):
+        # "fichier"
+        path = Path("C:\\chemin\\du\\repertoire\\fichier")
+        path.basename = "toto"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\toto")
+        
+        path = Path("C:\\chemin\\du\\repertoire\\.ext")
+        path.basename = "toto"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\toto")
+        
+        path = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
+        path.basename = "toto"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\toto")
+        
+        # ".ext"
+        path = Path("C:\\chemin\\du\\repertoire\\fichier")
+        path.basename = ".con"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\.con")
+        
+        path = Path("C:\\chemin\\du\\repertoire\\.ext")
+        path.basename = ".con"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\.con")
+        
+        path = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
+        path.basename = ".con"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\.con")
+        
+        # "fichier.ext"
+        path = Path("C:\\chemin\\du\\repertoire\\fichier")
+        path.basename = "toto.con"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\toto.con")
+        
+        path = Path("C:\\chemin\\du\\repertoire\\.ext")
+        path.basename = "toto.con"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\toto.con")
+        
         path = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
         path.basename = "toto.con"
-        self.assertEqual(path.basename, "toto.con")
         self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\toto.con")
+        
     
     
     def test_get_filename(self):
-        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier.ext").filename, "fichier")
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\").filename, "repertoire")
         self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier").filename, "fichier")
-        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier\\").filename, "")
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\.ext").filename, "")
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier.ext").filename, "fichier")
     
     
     def test_set_filename(self):
+        path = Path("C:\\chemin\\du\\repertoire\\fichier")
+        self.assertRaises(ValueError, path.set_filename, "")
+        
+        path = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
+        path.filename = ""
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\.ext")
+        
         path = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
         path.filename = "toto"
-        self.assertEqual(path.filename, "toto")
         self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\toto.ext")
     
     
     def test_get_extension(self):
-        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier.ext").extension, "ext")
         self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier").extension, "")
-        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier\\").extension, "")
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\.ext").extension, "ext")
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier.ext").extension, "ext")
     
     
     def test_set_extension(self):
-        path1 = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
-        path1.extension = "toto"
-        self.assertEqual(path1.extension, "toto")
-        self.assertEqual(path1.get(), "C:\\chemin\\du\\repertoire\\fichier.toto")
+        path = Path("C:\\chemin\\du\\repertoire\\.ext")
+        self.assertRaises(ValueError, path.set_extension, "")
         
-        path2 = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
-        path2.extension = ".toto"
-        self.assertEqual(path2.extension, "toto")
-        self.assertEqual(path2.get(), "C:\\chemin\\du\\repertoire\\fichier.toto")
-        
-        path3 = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
-        path3.extension = "."
-        self.assertEqual(path3.extension, "")
-        self.assertEqual(path3.get(), "C:\\chemin\\du\\repertoire\\fichier")
+        path = Path("C:\\chemin\\du\\repertoire\\fichier")
+        path.extension = "con"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\fichier.con")
         
         path4 = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
-        path4.extension = ""
-        self.assertEqual(path4.extension, "")
-        self.assertEqual(path4.get(), "C:\\chemin\\du\\repertoire\\fichier")
-        
-        
+        path4.extension = "con"
+        self.assertEqual(path4.get(), "C:\\chemin\\du\\repertoire\\fichier.con")
 
 
 

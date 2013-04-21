@@ -120,7 +120,7 @@ class Path(object):
         @param newPath: Chemin
         @author: Julien
         '''
-        while newPath[:-1] == '\\':
+        while newPath[-1] == '\\':
             newPath = newPath[:-1]
         self._path = newPath
     
@@ -135,13 +135,16 @@ class Path(object):
         return os.path.dirname(self._path)
     
     
-    def set_dirname(self, newDirname):
-        '''
-        Spécifier le répertoire du fichier
-        @param newDirname: Répertoire
-        @author: Julien
-        '''
-        self._path = os.path.join(newDirname, self.basename)
+    #def set_dirname(self, newDirname):
+    #    '''
+    #    Spécifier le répertoire du fichier
+    #    @param newDirname: Répertoire
+    #    @raise ValueError: Valeur incorrecte
+    #    @author: Julien
+    #    '''
+    #    if newDirname == "" or newDirname[-1] == ".":
+    #        raise ValueError
+    #    self._path = os.path.join(newDirname, self.basename)
     
     
     def get_basename(self):
@@ -157,8 +160,12 @@ class Path(object):
         '''
         Spécifier le nom simple du fichier (avec extension)
         @param newBasename: Nom simple
+        @raise ValueError: Valeur incorrecte
         @author: Julien
         '''
+        if newBasename == "" or newBasename[-1] == ".":
+            raise ValueError
+        
         self._path = os.path.join(self.dirname, newBasename)
     
     
@@ -168,15 +175,23 @@ class Path(object):
         @return: Nom
         @author: Julien
         '''
+        # format ".ext"
+        if len(self.basename) != 0 and self.basename[0] == '.' and '.' not in self.basename[1:]:
+            return ""
+        
         return os.path.splitext(self.basename)[0]
     
     
     def set_filename(self, newFilename):
         '''
         Spécifier le nom du fichier (sans extension)
-        @param newFilename: Nom
+        @param newFilename: Nom du fichier
+        @raise ValueError: Valeur incorrecte
         @author: Julien
         '''
+        if self.extension == "":
+            raise ValueError
+        
         self._path = os.path.join(self.dirname, newFilename) + "." + self.extension
     
     
@@ -186,6 +201,10 @@ class Path(object):
         @return: Extension
         @author: Julien
         '''
+        # format ".ext"
+        if len(self.basename) != 0 and self.basename[0] == '.' and '.' not in self.basename[1:]:
+            return self.basename[1:]
+        
         return os.path.splitext(self._path)[1][1:]
     
     
@@ -193,17 +212,20 @@ class Path(object):
         '''
         Spécifier l'extension du fichier
         @param extension: Extension
+        @raise ValueError: Valeur incorrecte
         @author: Julien
         '''
-        if newExtension in ['', '.']:
-            newExtension = ''
-        elif newExtension[0] is not '.':
-            newExtension = "." + newExtension
-        self._path = os.path.join(self.dirname, self.filename) + newExtension
+        if self.filename == "":
+            raise ValueError
+        
+        if newExtension == "":
+            self._path = os.path.join(self.dirname, self.filename)
+        else:
+            self._path = os.path.join(self.dirname, self.filename) + "." + newExtension
     
     
     # Propriétés
-    dirname = property(fget = get_dirname, fset = set_dirname)
+    dirname = property(fget = get_dirname)
     basename = property(fget = get_basename, fset = set_basename)
     filename = property(fget = get_filename, fset = set_filename)
     extension = property(fget = get_extension, fset = set_extension)

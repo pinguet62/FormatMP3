@@ -482,3 +482,8 @@ class InsertStringGui(ActionGui):
         '''
         self.action.range = range
         Publisher.sendMessage(ACTION_CHANGED)
+
+
+
+if __name__ == "__main__":
+    pass

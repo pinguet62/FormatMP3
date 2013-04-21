@@ -522,4 +522,4 @@ class UpdateTags(Action):
 
 
 if __name__ == "__main__":
-    print os.path.splitext("C:\\repertoire\\.ext")
+    pass
