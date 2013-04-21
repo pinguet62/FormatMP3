@@ -66,7 +66,7 @@ class Action(object):
     def execute(self, path):
         '''
         Exécuter la modification
-        @param path: Chemin du fichier
+        @param path: Chemin du fichier (modifié après exécution)
         @raise: NotImplementedError Méthode non surchargée
         @author: Julien
         '''
@@ -149,15 +149,16 @@ class CaseChange(Action):
         return pModif.path
     
     
-    def execute(self, oldPath):
+    def execute(self, path):
         '''
         Exécuter la modification
-        @param oldPath: Chemin du fichier
+        @param path: Chemin du fichier (modifié après exécution)
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        newPath = self.getOverview(oldPath)
+        newPath = self.getOverview(path)
         #TODO os.rename(oldPath.get(), newPath.get())
+        path.set(newPath.get())
 
 
 
@@ -222,15 +223,16 @@ class ReplaceString(Action):
         return pModif.path
     
     
-    def execute(self, oldPath):
+    def execute(self, path):
         '''
         Exécuter la modification
-        @param oldPath: Chemin du fichier
+        @param path: Chemin du fichier (modifié après exécution)
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        newPath = self.getOverview(oldPath)
+        newPath = self.getOverview(path)
         #TODO os.rename(oldPath.get(), newPath.get())
+        path.set(newPath.get())
 
 
 
@@ -348,15 +350,16 @@ class Cut(Action):
         return pModif.path
     
     
-    def execute(self, oldPath):
+    def execute(self, path):
         '''
         Exécuter la modification
-        @param oldPath: Chemin du fichier
+        @param path: Chemin du fichier (modifié après exécution)
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        newPath = self.getOverview(oldPath)
+        newPath = self.getOverview(path)
         #TODO os.rename(oldPath.get(), newPath.get())
+        path.set(newPath.get())
 
 
 
@@ -452,15 +455,16 @@ class InsertString(Action):
         return pModif.path
     
     
-    def execute(self, oldPath):
+    def execute(self, path):
         '''
         Exécuter la modification
-        @param oldPath: Chemin du fichier
+        @param path: Chemin du fichier (modifié après exécution)
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        newPath = self.getOverview(oldPath)
+        newPath = self.getOverview(path)
         #TODO os.rename(oldPath.get(), newPath.get())
+        path.set(newPath.get())
 
 
 
@@ -518,4 +522,4 @@ class UpdateTags(Action):
 
 
 if __name__ == "__main__":
-    pass
+    print os.path.splitext("C:\\repertoire\\.ext")

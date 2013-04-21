@@ -159,10 +159,9 @@ class Model(object):
         '''
         overviews = []
         for path in self.filelist:
-            copyPath = path
             for action in self.actionlist:
-                copyPath = action.getOverview(copyPath)
-            overviews.append(copyPath)
+                path = action.getOverview(path)
+            overviews.append(path)
         return overviews
     
     
@@ -196,6 +195,20 @@ class Model(object):
         if self.actionlist:
             self.actionlist = []
             Publisher.sendMessage(ACTIONLIST_CHANGED)
+    
+    
+    def Execute(self):
+        '''
+        Exécuter les actions sur les fichiers
+        @author: Julien
+        '''
+        for path in self.filelist:
+            try:
+                for action in self.actionlist:
+                    action.execute(path)
+            except BaseException, err:
+                print err
+        Publisher.sendMessage(FILELIST_CHANGED)
 
 
 
@@ -334,6 +347,13 @@ class View(wx.Frame):
         downSelectedAction_bitmap = wx.BitmapFromImage(downSelectedAction_image)
         self.downSelectedAction_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Descendre", bitmap=downSelectedAction_bitmap, shortHelp="Descendre l'action sélectionnée dans la liste")
         #             .
+        actions_toolbar.AddSeparator()
+        #                 Exécuter
+        executeActions_image = wx.Image("icons/execute.png")
+        executeActions_image.Rescale(16,16)
+        executeActions_bitmap = wx.BitmapFromImage(executeActions_image)
+        self.executeActions_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Exécuter", bitmap=executeActions_bitmap, shortHelp="Exécuter les actions sur les fichiers")
+        #             .
         actions_toolbar.Realize()
         #             Splitter
         self.actions_splitter = wx.SplitterWindow(actions_panel, style=wx.SP_3D|wx.SP_NO_XP_THEME)
@@ -346,7 +366,7 @@ class View(wx.Frame):
         self.listActionsToDo_listBox = wx.ListBox(listActions_panel)
         listActions_boxSizer.Add(self.listActionsToDo_listBox, 1, wx.ALL|wx.EXPAND, 5)
         #                 Action sélectionnée
-        self.selectedAction_panel = wx.Panel(self.actions_splitter, size=wx.Size(-1,-1), style=wx.TAB_TRAVERSAL)
+        self.selectedAction_panel = wx.Panel(self.actions_splitter)
         #             .
         self.actions_splitter.SplitVertically(listActions_panel, self.selectedAction_panel, 250)
         #     .
@@ -363,6 +383,14 @@ class View(wx.Frame):
         self.actions_splitter.ReplaceWindow(oldPanel, newPanel)
         self.selectedAction_panel = newPanel
         oldPanel.Destroy()
+    
+    
+    def hideSelectedAction(self):
+        '''
+        Effacer le panel de l'action sélectionnée
+        @author: Julien
+        '''
+        self.setSelectedActionPanel(wx.Panel(self.actions_splitter))
 
 
 
@@ -396,6 +424,7 @@ class Controller(object):
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllActions, self.view.removeAllActions_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnUpSelectedAction, self.view.upSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnDownSelectedAction, self.view.downSelectedAction_tool)
+        self.view.Bind(wx.EVT_TOOL, self.OnExecuteActions, self.view.executeActions_tool)
         # Événements
         Publisher.subscribe(self.RefreshFilelist, FILELIST_CHANGED)
         Publisher.subscribe(self.RefreshActionlist, ACTIONLIST_CHANGED)
@@ -427,7 +456,6 @@ class Controller(object):
             path = Path(strPath)
             pathlist.append(path)
         self.model.AddFiles(pathlist)
-        event.Skip()
     
     
     def OnAddFolder(self, event):
@@ -441,7 +469,6 @@ class Controller(object):
             return
         path = dDialog.GetPath()
         self.model.AddFolder(path)
-        event.Skip()
     
     
     def OnRemoveSelectedListFiles(self, event):
@@ -459,7 +486,6 @@ class Controller(object):
             pathlist.append(path)
             index = self.view.listFiles_listCtrl.GetNextSelected(index)
         self.model.RemoveFiles(pathlist)
-        event.Skip()
     
     
     def OnRemoveAllListFiles(self, event):
@@ -469,7 +495,6 @@ class Controller(object):
         @author: Julien
         '''
         self.model.RemoveAllFiles()
-        event.Skip()
     
     # Manipulation des actions
     
@@ -523,12 +548,22 @@ class Controller(object):
         Clic sur le bouton "Supprimer l'action sélectionnée"
         @param event: Événement
         @author: Julien
-        @todo: Implémenter
         '''
         index = self.view.listActionsToDo_listBox.GetSelection()
+        if index == -1:
+            return
         action = self.model.actionlist[index]
         self.model.RemoveAction(action)
-        self.view.listActionsToDo_listBox.Selection = index-1
+        # Sélectionner le précédent
+        if self.view.listActionsToDo_listBox.Count == 0:
+            self.view.hideSelectedAction()
+        else:
+            if index == 0:
+                self.view.listActionsToDo_listBox.Selection = 0
+                self._showActionGui(0)
+            else:
+                self.view.listActionsToDo_listBox.Selection = index-1
+                self._showActionGui(index-1)
     
     
     def OnRemoveAllActions(self, event):
@@ -538,6 +573,7 @@ class Controller(object):
         @author: Julien
         '''
         self.model.RemoveAllActions()
+        self.view.hideSelectedAction()
     
     
     def OnUpSelectedAction(self, event):
@@ -547,6 +583,8 @@ class Controller(object):
         @author: Julien
         '''
         index = self.view.listActionsToDo_listBox.GetSelection()
+        if index == -1:
+            return
         if index != 0:
             self.model.SwapActions(index, index-1)
             self.view.listActionsToDo_listBox.Selection = index-1
@@ -560,9 +598,21 @@ class Controller(object):
         @author: Julien
         '''
         index = self.view.listActionsToDo_listBox.GetSelection()
+        if index == -1:
+            return
         if index != self.view.listActionsToDo_listBox.Count-1:
             self.model.SwapActions(index, index+1)
             self.view.listActionsToDo_listBox.Selection = index+1
+    
+    
+    def OnExecuteActions(self, event):
+        '''
+        Exécuter les actions sur les fichiers
+        @param event: Événement
+        @author: Julien
+        '''
+        self.model.Execute()
+    
     
     # Affichage des éléments
     
