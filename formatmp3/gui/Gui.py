@@ -45,9 +45,11 @@ class Model(object):
         Constructeur
         @author: Julien
         '''
+        self._stop = False
         self.filelist = []
         self.actionlist = []
     
+    # Ajout/Suppression de fichiers/répertoire
     
     def _addFile(self, path):
         '''
@@ -59,7 +61,7 @@ class Model(object):
             self.filelist.append(path)
     
     
-    def AddFile(self, path):
+    def addFile(self, path):
         '''
         Ajouter un fichier
         @param path: path
@@ -73,7 +75,7 @@ class Model(object):
             Publisher.sendMessage(FILELIST_CHANGED)
     
     
-    def AddFiles(self, pathlist=[]):
+    def addFiles(self, pathlist=[]):
         '''
         Ajouter des fichiers
         @param pathlist: Liste des path
@@ -103,7 +105,7 @@ class Model(object):
                 self._addFile(path)
     
     
-    def AddFolder(self, path):
+    def addFolder(self, path):
         '''
         Ajouter un répertoire
         @param path: Path du répertoire
@@ -117,7 +119,7 @@ class Model(object):
             Publisher.sendMessage(FILELIST_CHANGED)
     
     
-    def RemoveFiles(self, pathlist=[]):
+    def removeFiles(self, pathlist=[]):
         '''
         Retirer des fichiers
         @param pathlist: Liste des chemins des fichiers
@@ -132,7 +134,7 @@ class Model(object):
             Publisher.sendMessage(FILELIST_CHANGED)
     
     
-    def RemoveAllFiles(self):
+    def removeAllFiles(self):
         '''
         Retirer tous les fichiers
         @author: Julien
@@ -177,7 +179,7 @@ class Model(object):
         Publisher.sendMessage(ACTIONLIST_CHANGED)
     
     
-    def RemoveAction(self, action):
+    def removeAction(self, action):
         '''
         Retirer des fichiers
         @param action: Action
@@ -188,7 +190,7 @@ class Model(object):
             Publisher.sendMessage(ACTIONLIST_CHANGED)
     
     
-    def RemoveAllActions(self):
+    def removeAllActions(self):
         '''
         Retirer toutes les actions
         @author: Julien
@@ -196,6 +198,15 @@ class Model(object):
         if self.actionlist:
             self.actionlist = []
             Publisher.sendMessage(ACTIONLIST_CHANGED)
+    
+    # Exécution
+    
+    def stop(self):
+        '''
+        Arrêter l'exécution
+        @author: Julien
+        '''
+        self._stop = True
     
     
     def Execute(self):
@@ -206,10 +217,14 @@ class Model(object):
         for path in self.filelist:
             try:
                 for action in self.actionlist:
+                    if self._stop:
+                        Publisher.sendMessage(FILELIST_CHANGED)
+                        return
                     action.execute(path)
             except BaseException, err:
                 Publisher.sendMessage(ERROR, error=err)
         Publisher.sendMessage(FILELIST_CHANGED)
+        self._stop = True
 
 
 
@@ -227,7 +242,7 @@ class View(wx.Frame):
         @author: Julien
         '''
         # Fenêtre
-        minSize = (600,700)
+        minSize = (675,700)
         wx.Frame.__init__(self, None, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
         #self.SetMinSize(minSize)
         self.CenterOnScreen()
@@ -251,7 +266,10 @@ class View(wx.Frame):
         # Barre d'outils
         toolBar = self.CreateToolBar()
         #     Quitter
-        self.quitter_tool = toolBar.AddLabelTool(wx.ID_ANY, "Quitter", wx.Bitmap('icons/exit.png'))
+        exit_image = wx.Image("icons/exit.png")
+        exit_image.Rescale(16,16)
+        exit_bitmap = wx.BitmapFromImage(exit_image)
+        self.exit_tool = toolBar.AddLabelTool(wx.ID_ANY, "Quitter", exit_bitmap)
         # .
         toolBar.Realize()
         
@@ -354,6 +372,11 @@ class View(wx.Frame):
         executeActions_image.Rescale(16,16)
         executeActions_bitmap = wx.BitmapFromImage(executeActions_image)
         self.executeActions_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Exécuter", bitmap=executeActions_bitmap, shortHelp="Exécuter les actions sur les fichiers")
+        #                 Stoper
+        stopActions_image = wx.Image("icons/stop.png")
+        stopActions_image.Rescale(16,16)
+        stopActions_bitmap = wx.BitmapFromImage(stopActions_image)
+        self.stopActions_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Stop", bitmap=stopActions_bitmap, shortHelp="Arrêter l'exécution")
         #             .
         actions_toolbar.Realize()
         #             Splitter
@@ -407,12 +430,19 @@ class Controller(object):
         Constructeur
         @author: Julien
         '''
+        self.execute_thread = None
+        
         self.model = Model()
         
         self.view = View()
-        # Bindings
+        # Binding de la vue
+        self.view.Bind(event=wx.EVT_CLOSE, handler=self.OnClose)
+        # Binding des éléments de la vue
         #     Barre d'outils principale
-        self.view.Bind(wx.EVT_TOOL, self.OnTest, self.view.quitter_tool)
+        self.view.Bind(wx.EVT_TOOL,
+                       lambda event:
+                           self.view.Close(),
+                       self.view.exit_tool)
         #     Barre d'outils de la liste des fichiers
         self.view.Bind(wx.EVT_TOOL, self.OnAddFiles, self.view.addFile_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnAddFolder, self.view.addFolder_tool)
@@ -426,7 +456,11 @@ class Controller(object):
         self.view.Bind(wx.EVT_TOOL, self.OnUpSelectedAction, self.view.upSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnDownSelectedAction, self.view.downSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnExecuteActions, self.view.executeActions_tool)
-        # Événements
+        self.view.Bind(wx.EVT_TOOL,
+                       lambda event:
+                           self.model.stop(),
+                       self.view.stopActions_tool)
+        # Événements du modèle
         Publisher.subscribe(self.Error, ERROR)
         Publisher.subscribe(self.RefreshFilelist, FILELIST_CHANGED)
         Publisher.subscribe(self.RefreshActionlist, ACTIONLIST_CHANGED)
@@ -438,10 +472,6 @@ class Controller(object):
         self.model.AddAction(ReplaceString())
         self.model.AddAction(Cut())
         self.model.AddAction(InsertString())
-    
-    
-    def OnTest(self, event):
-        Publisher.sendMessage(ERROR, error="toto")
     
     # Erreur
     
@@ -470,7 +500,7 @@ class Controller(object):
             strPath = os.path.join(direname, basename)
             path = Path(strPath)
             pathlist.append(path)
-        self.model.AddFiles(pathlist)
+        self.model.addFiles(pathlist)
     
     
     def OnAddFolder(self, event):
@@ -483,7 +513,7 @@ class Controller(object):
         if dDialog.ShowModal() != wx.ID_OK:
             return
         path = dDialog.GetPath()
-        self.model.AddFolder(path)
+        self.model.addFolder(path)
     
     
     def OnRemoveSelectedListFiles(self, event):
@@ -500,7 +530,7 @@ class Controller(object):
             path = os.path.join(direname, basename)
             pathlist.append(path)
             index = self.view.listFiles_listCtrl.GetNextSelected(index)
-        self.model.RemoveFiles(pathlist)
+        self.model.removeFiles(pathlist)
     
     
     def OnRemoveAllListFiles(self, event):
@@ -509,7 +539,7 @@ class Controller(object):
         @param event: Événement
         @author: Julien
         '''
-        self.model.RemoveAllFiles()
+        self.model.removeAllFiles()
     
     # Manipulation des actions
     
@@ -568,7 +598,7 @@ class Controller(object):
         if index == -1:
             return
         action = self.model.actionlist[index]
-        self.model.RemoveAction(action)
+        self.model.removeAction(action)
         # Sélectionner le précédent
         if self.view.listActionsToDo_listBox.Count == 0:
             self.view.hideSelectedAction()
@@ -587,7 +617,7 @@ class Controller(object):
         @param event: Événement
         @author: Julien
         '''
-        self.model.RemoveAllActions()
+        self.model.removeAllActions()
         self.view.hideSelectedAction()
     
     
@@ -671,6 +701,18 @@ class Controller(object):
         action = self.model.actionlist[index]
         newActionGui = createGui(self.view.actions_splitter, action)
         self.view.setSelectedActionPanel(newActionGui)
+    
+    # Événements de la vue
+    
+    def OnClose(self, event):
+        '''
+        Quitter
+        @param event: Événement
+        @author: Julien
+        '''
+        if self.execute_thread is not None:
+            return
+        event.Skip()
 
 
 
