@@ -211,17 +211,17 @@ class Path(object):
     def set_extension(self, newExtension):
         '''
         Spécifier l'extension du fichier
-        @param extension: Extension
+        @param extension: Extension (sans point)
         @raise ValueError: Valeur incorrecte
         @author: Julien
         '''
         if self.filename == "":
             raise ValueError
         
-        if newExtension == "":
-            self._path = os.path.join(self.dirname, self.filename)
-        else:
-            self._path = os.path.join(self.dirname, self.filename) + "." + newExtension
+        if newExtension != "":
+            newExtension = "." + newExtension
+        
+        self._path = os.path.join(self.dirname, self.filename + newExtension)
     
     
     # Propriétés

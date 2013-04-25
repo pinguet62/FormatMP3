@@ -56,35 +56,34 @@ class TestPath(unittest.TestCase):
     
     def test_operators(self):
         # __eq__
-        str111 = "C:\\chemin\\du\\repertoire\\fichier.ext"
-        str112 = "C:\\chemin\\du\\repertoire\\fichier.ext"
-        self.assertEqual(Path(str111), Path(str112))
-        str121 = "C:\\chemin\\repertoire\\fichier.ext"
-        str122 = "C:\\chemin\\différent\\fichier.eXt"
-        self.assertNotEqual(Path(str121), Path(str122))
+        self.assertEqual(Path("C:\\chemin\\du\\repertoire\\fichier.ext"), Path("C:\\chemin\\du\\repertoire\\fichier.ext"))
+        self.assertNotEqual(Path("C:\\chemin\\repertoire\\fichier.ext"), Path("C:\\chemin\\différent\\fichier.eXt"))
+        
         # __str__
-        str2 = "C:\\chemin\\du\\repertoire\\fichier.ext"
-        self.assertEqual(str(Path(str2)), str2)
+        string = "C:\\chemin\\du\\repertoire\\fichier.ext"
+        self.assertEqual(str(Path(string)), string)
+        
         # list.sort()
-        list1 = [Path("C:\\path5"), Path("C:\\path3"), Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path4")]
-        list1.sort()
-        self.assertListEqual(list1, [Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path3"), Path("C:\\path4"), Path("C:\\path5")])
+        liste = [Path("C:\\path5"), Path("C:\\path3"), Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path4")]
+        liste.sort()
+        self.assertListEqual(liste, [Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path3"), Path("C:\\path4"), Path("C:\\path5")])
+        
         # in list
-        list21 = [Path("C:\\path1"), Path("C:\\path2")]
-        self.assertIn(Path("C:\\path1"), list21)
-        list22 = [Path("C:\\path1"), Path("C:\\path2")]
-        self.assertNotIn(Path("C:\\toto"), list22)
+        liste = [Path("C:\\path1"), Path("C:\\path2")]
+        self.assertIn(Path("C:\\path1"), liste)
+        liste = [Path("C:\\path1"), Path("C:\\path2")]
+        self.assertNotIn(Path("C:\\toto"), liste)
     
     
     def test_swap(self):
         listUp = [Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path3")]
-        i1 = 1
-        listUp[i1], listUp[i1-1] = listUp[i1-1], listUp[i1]
+        i = 1
+        listUp[i], listUp[i-1] = listUp[i-1], listUp[i]
         self.assertListEqual(listUp, [Path("C:\\path2"), Path("C:\\path1"), Path("C:\\path3")])
         
         listDown = [Path("C:\\path1"), Path("C:\\path2"), Path("C:\\path3")]
-        i1 = 1
-        listDown[i1], listDown[i1+1] = listDown[i1+1], listDown[i1]
+        i = 1
+        listDown[i], listDown[i+1] = listDown[i+1], listDown[i]
         self.assertListEqual(listDown, [Path("C:\\path1"), Path("C:\\path3"), Path("C:\\path2")])
     
     
@@ -171,9 +170,9 @@ class TestPath(unittest.TestCase):
         path.extension = "con"
         self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\fichier.con")
         
-        path4 = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
-        path4.extension = "con"
-        self.assertEqual(path4.get(), "C:\\chemin\\du\\repertoire\\fichier.con")
+        path = Path("C:\\chemin\\du\\repertoire\\fichier.ext")
+        path.extension = "con"
+        self.assertEqual(path.get(), "C:\\chemin\\du\\repertoire\\fichier.con")
 
 
 

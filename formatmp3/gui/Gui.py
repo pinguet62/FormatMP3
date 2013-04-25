@@ -21,6 +21,7 @@ from formatmp3.gui.ActionGui import *
 
 
 # Messages de l'interface graphique
+ERROR = "ERROR"
 FILELIST_CHANGED = "FILELIST_CHANGED"
 ACTIONLIST_CHANGED = "ACTIONLIST_CHANGED"
 
@@ -207,7 +208,7 @@ class Model(object):
                 for action in self.actionlist:
                     action.execute(path)
             except BaseException, err:
-                print err
+                Publisher.sendMessage(ERROR, error=err)
         Publisher.sendMessage(FILELIST_CHANGED)
 
 
@@ -426,6 +427,7 @@ class Controller(object):
         self.view.Bind(wx.EVT_TOOL, self.OnDownSelectedAction, self.view.downSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnExecuteActions, self.view.executeActions_tool)
         # Événements
+        Publisher.subscribe(self.Error, ERROR)
         Publisher.subscribe(self.RefreshFilelist, FILELIST_CHANGED)
         Publisher.subscribe(self.RefreshActionlist, ACTIONLIST_CHANGED)
         Publisher.subscribe(self.RefreshFilelist, ACTION_CHANGED)
@@ -437,6 +439,20 @@ class Controller(object):
         self.model.AddAction(Cut())
         self.model.AddAction(InsertString())
     
+    
+    def OnTest(self, event):
+        Publisher.sendMessage(ERROR, error="toto")
+    
+    # Erreur
+    
+    def Error(self, err):
+        '''
+        Erreur dans l'application
+        @param err: Erreur
+        @author: Julien
+        '''
+        print err
+    
     # Manipulation des fichiers
     
     def OnAddFiles(self, event):
@@ -444,7 +460,6 @@ class Controller(object):
         Clic sur le bouton "Ajouter des fichiers"
         @param event: Événement
         @author: Julien
-        @todo: Répertoire par défaut
         '''
         fDialog = wx.FileDialog(self.view, "Sélectionnez les fichiers", style=wx.FD_MULTIPLE)
         if fDialog.ShowModal() != wx.ID_OK:
@@ -656,18 +671,6 @@ class Controller(object):
         action = self.model.actionlist[index]
         newActionGui = createGui(self.view.actions_splitter, action)
         self.view.setSelectedActionPanel(newActionGui)
-    
-    
-    def OnTest(self, event):
-        list = [CaseChange]
-        self.i = (self.i+1)%len(list)
-        action = list[self.i]
-        classAction = action.__name__
-        classActionGui = classAction + "Gui"
-        classActionGuiObj = eval(classActionGui)(self)
-        print classActionGuiObj
-        toto = InsertString
-        
 
 
 
