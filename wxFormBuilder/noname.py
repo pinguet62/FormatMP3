@@ -23,6 +23,17 @@ class MyFrame1 ( wx.Frame ):
 		
 		self.menubar = wx.MenuBar( 0 )
 		self.menu_fichier = wx.Menu()
+		self.menu_fichier_ouvrir = wx.MenuItem( self.menu_fichier, wx.ID_ANY, u"Ouvrir", wx.EmptyString, wx.ITEM_NORMAL )
+		self.menu_fichier.AppendItem( self.menu_fichier_ouvrir )
+		
+		self.menu_fichier_enregistrer = wx.MenuItem( self.menu_fichier, wx.ID_ANY, u"Enregistrer", wx.EmptyString, wx.ITEM_NORMAL )
+		self.menu_fichier.AppendItem( self.menu_fichier_enregistrer )
+		
+		self.menu_fichier_enregistrerSous = wx.MenuItem( self.menu_fichier, wx.ID_ANY, u"Enregistrer sous", wx.EmptyString, wx.ITEM_NORMAL )
+		self.menu_fichier.AppendItem( self.menu_fichier_enregistrerSous )
+		
+		self.menu_fichier.AppendSeparator()
+		
 		self.menu_fichier_quitter = wx.MenuItem( self.menu_fichier, wx.ID_ANY, u"Quitter", wx.EmptyString, wx.ITEM_NORMAL )
 		self.menu_fichier.AppendItem( self.menu_fichier_quitter )
 		
@@ -31,7 +42,7 @@ class MyFrame1 ( wx.Frame ):
 		self.SetMenuBar( self.menubar )
 		
 		self.toolBar = self.CreateToolBar( 0, wx.ID_ANY ) 
-		self.toolBar.AddLabelTool( wx.ID_ANY, u"Supprimer les lignes", wx.Bitmap( u"../formatmp3/gui/icons/exit.png", wx.BITMAP_TYPE_ANY ), wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
+		self.toolBar.AddLabelTool( wx.ID_ANY, u"Supprimer les lignes", wx.NullBitmap, wx.NullBitmap, wx.ITEM_NORMAL, wx.EmptyString, wx.EmptyString, None ) 
 		
 		self.toolBar.Realize() 
 		

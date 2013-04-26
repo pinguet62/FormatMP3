@@ -12,11 +12,13 @@ Interface graphique de l'application
 
 
 
-import os.path
-import wx
-from wx.lib.pubsub import pub as Publisher
 from formatmp3.actions.Action import *
 from formatmp3.gui.ActionGui import *
+from wx.lib.pubsub import pub as Publisher
+import pickle
+import os.path
+import threading
+import wx
 
 
 
@@ -46,6 +48,7 @@ class Model(object):
         @author: Julien
         '''
         self._stop = False
+        self.filesave = None
         self.filelist = []
         self.actionlist = []
     
@@ -225,6 +228,33 @@ class Model(object):
                 Publisher.sendMessage(ERROR, error=err)
         Publisher.sendMessage(FILELIST_CHANGED)
         self._stop = True
+    
+    # Chargement et sauvegarde
+    
+    def open(self, path):
+        '''
+        Charger les actions du fichier
+        @param path: Fichier d'entrée
+        @author: Julien
+        '''
+        fichier = open(path.get(), 'r')
+        self.actionlist = pickle.load(fichier)
+        self.filesave = path.get()
+        Publisher.sendMessage(ACTIONLIST_CHANGED)
+    
+    
+    def save(self, path):
+        '''
+        Enregistrer les actions dans un fichier
+        @param path: Fichier de sortie
+        @author: Julien
+        '''
+        fichier = open(path.get(), 'w')
+        pickle.dump(self.actionlist, fichier)
+        fichier.close()
+        self.filesave = path
+        
+        
 
 
 
@@ -253,15 +283,44 @@ class View(wx.Frame):
         #     Fichier
         menubar_fichier = wx.Menu()
         menubar.Append(menubar_fichier, "&Fichier")
+        #         Ouvrir
+        self.menubar_fichier_ouvrir = wx.MenuItem(menubar_fichier, wx.ID_ANY, "&Ouvrir\tCtrl+O")
+        menubar_fichier_ouvrir_image = wx.Image("icons/open.png")
+        menubar_fichier_ouvrir_image.Rescale(16,16)
+        menubar_fichier_ouvrir_bitmap = wx.BitmapFromImage(menubar_fichier_ouvrir_image)
+        self.menubar_fichier_ouvrir.SetBitmap(menubar_fichier_ouvrir_bitmap)
+        menubar_fichier.AppendItem(self.menubar_fichier_ouvrir)
+        #     .
+        menubar_fichier.AppendSeparator()
+        #         Enregistrer
+        self.menubar_fichier_enregistrer = wx.MenuItem(menubar_fichier, wx.ID_ANY, "&Enregistrer\tCtrl+S")
+        menubar_fichier_enregistrer_image = wx.Image("icons/save.png")
+        menubar_fichier_enregistrer_image.Rescale(16,16)
+        menubar_fichier_enregistrer_bitmap = wx.BitmapFromImage(menubar_fichier_enregistrer_image)
+        self.menubar_fichier_enregistrer.SetBitmap(menubar_fichier_enregistrer_bitmap)
+        menubar_fichier.AppendItem(self.menubar_fichier_enregistrer)
+        #         Enregistrer sous
+        self.menubar_fichier_enregistrerSous = wx.MenuItem(menubar_fichier, wx.ID_ANY, "Enregistrer &sous...\tCtrl-Shift+S")
+        menubar_fichier_enregistrerSous_image = wx.Image("icons/save.png")
+        menubar_fichier_enregistrerSous_image.Rescale(16,16)
+        menubar_fichier_enregistrerSous_bitmap = wx.BitmapFromImage(menubar_fichier_enregistrerSous_image)
+        self.menubar_fichier_enregistrerSous.SetBitmap(menubar_fichier_enregistrerSous_bitmap)
+        menubar_fichier.AppendItem(self.menubar_fichier_enregistrerSous)
+        #     .
+        menubar_fichier.AppendSeparator()
         #         Quitter
-        menubar_fichier_quitter = wx.MenuItem(menubar_fichier, wx.ID_ANY, "&Quitter\tAlt-F4")
-        menubar_fichier.AppendItem(menubar_fichier_quitter)
+        self.menubar_fichier_quitter = wx.MenuItem(menubar_fichier, wx.ID_ANY, "&Quitter\tAlt+F4")
+        menubar_fichier_quitter_image = wx.Image("icons/exit.png")
+        menubar_fichier_quitter_image.Rescale(16,16)
+        menubar_fichier_quitter_bitmap = wx.BitmapFromImage(menubar_fichier_quitter_image)
+        self.menubar_fichier_quitter.SetBitmap(menubar_fichier_quitter_bitmap)
+        menubar_fichier.AppendItem(self.menubar_fichier_quitter)
         #     Aide
         menubar_aide = wx.Menu()
         menubar.Append(menubar_aide, "&?")
         #         A propos
-        menubar_aide_aPropos = wx.MenuItem(menubar_aide, wx.ID_ANY, "A &propos de FormatMP3")
-        menubar_aide.AppendItem(menubar_aide_aPropos)
+        self.menubar_aide_aPropos = wx.MenuItem(menubar_aide, wx.ID_ANY, "A &propos de FormatMP3")
+        menubar_aide.AppendItem(self.menubar_aide_aPropos)
         
         # Barre d'outils
         toolBar = self.CreateToolBar()
@@ -320,9 +379,9 @@ class View(wx.Frame):
         files_toolbar.Realize()
         #             Liste
         self.listFiles_listCtrl = wx.ListCtrl(files_panel, style=wx.LC_REPORT)
-        self.listFiles_listCtrl.InsertColumn(0, "Dossier", width=200)
-        self.listFiles_listCtrl.InsertColumn(1, "Nom d'origine", width=125)
-        self.listFiles_listCtrl.InsertColumn(2, "Nouveau nom", width=125)
+        self.listFiles_listCtrl.InsertColumn(0, "Dossier", width=300)
+        self.listFiles_listCtrl.InsertColumn(1, "Nom d'origine", width=150)
+        self.listFiles_listCtrl.InsertColumn(2, "Nouveau nom", width=150)
         files_boxSizer.Add(self.listFiles_listCtrl, 1, wx.ALL|wx.EXPAND, 5)
         #         Actions
         actions_panel = wx.Panel(main_splitterWindow)
@@ -438,16 +497,31 @@ class Controller(object):
         # Binding de la vue
         self.view.Bind(event=wx.EVT_CLOSE, handler=self.OnClose)
         # Binding des éléments de la vue
-        #     Barre d'outils principale
-        self.view.Bind(wx.EVT_TOOL,
+        #     Menu
+        self.view.Bind(wx.EVT_MENU, self.OnOpen, self.view.menubar_fichier_ouvrir)
+        self.view.Bind(wx.EVT_MENU, self.OnSave, self.view.menubar_fichier_enregistrer)
+        self.view.Bind(wx.EVT_MENU, self.OnSaveAs, self.view.menubar_fichier_enregistrerSous)
+        self.view.Bind(wx.EVT_MENU,
                        lambda event:
                            self.view.Close(),
-                       self.view.exit_tool)
+                       self.view.menubar_fichier_quitter)
+        #     Barre d'outils principale
+        #self.view.Bind(wx.EVT_TOOL,
+        #               lambda event:
+        #                   self.view.Close(),
+        #               self.view.exit_tool)
+        self.view.Bind(wx.EVT_TOOL, self.test, self.view.exit_tool)
         #     Barre d'outils de la liste des fichiers
         self.view.Bind(wx.EVT_TOOL, self.OnAddFiles, self.view.addFile_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnAddFolder, self.view.addFolder_tool)
-        self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedListFiles, self.view.removeSelectedListFiles_tool)
-        self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllListFiles, self.view.removeAllListFiles_tool)
+        self.view.Bind(wx.EVT_TOOL,
+                       lambda event:
+                           self.removeSelectedListFiles(),
+                       self.view.removeSelectedListFiles_tool)
+        self.view.Bind(wx.EVT_TOOL,
+                       lambda event:
+                           self.model.removeAllFiles(),
+                       self.view.removeAllListFiles_tool)
         #     Barre d'outils de la liste des actions
         self.view.Bind(wx.EVT_LISTBOX, self.OnSelectedAction, self.view.listActionsToDo_listBox)
         self.view.Bind(wx.EVT_TOOL, self.OnAddAction, self.view.addAction_tool)
@@ -473,6 +547,9 @@ class Controller(object):
         self.model.AddAction(Cut())
         self.model.AddAction(InsertString())
     
+    def test(self, event):
+        self.model.save(Path("C:\\Users\\Julien\\Desktop\\toto.xml"))
+    
     # Erreur
     
     def Error(self, err):
@@ -482,6 +559,59 @@ class Controller(object):
         @author: Julien
         '''
         print err
+    
+    # Ouvrir ou Enregistrer les actions
+    
+    def OnOpen(self, event):
+        '''
+        Clic sur le bouton "Ouvrir" du menu
+        @param event: Événement
+        @todo: Implémenter
+        @author: Julien
+        '''
+        fDialog = wx.FileDialog(self.view, "Enregistrer sous", wildcard="XML files (*.xml)|*.xml", style=wx.FD_OPEN)
+        if fDialog.ShowModal() != wx.ID_OK:
+            return
+        strPath = os.path.join(fDialog.GetDirectory(), fDialog.GetFilename())
+        path = Path(strPath)
+        self.model.open(path)
+    
+    
+    def OnSave(self, event):
+        '''
+        Clic sur le bouton "Enregistrer" du menu
+        @param event: Événement
+        @todo: Implémenter
+        @author: Julien
+        '''
+        if self.model.filesave is None:
+            fDialog = wx.FileDialog(self.view, "Enregistrer sous", wildcard="XML files (*.xml)|*.xml", style=wx.FD_SAVE)
+            if fDialog.ShowModal() != wx.ID_OK:
+                return
+            strPath = os.path.join(fDialog.GetDirectory(), fDialog.GetFilename())
+            path = Path(strPath)
+        else:
+            path = self.model.filesave
+        self.model.save(path)
+    
+    
+    def OnSaveAs(self, event):
+        '''
+        Clic sur le bouton "Enregistrer sous..." du menu
+        @param event: Événement
+        @author: Julien
+        '''
+        
+        if self.model.filesave is None:
+            filename = ""
+        else:
+            filename = self.model.filesave.filename
+        fDialog = wx.FileDialog(self.view, "Enregistrer sous", defaultFile=filename, wildcard="XML files (*.xml)|*.xml", style=wx.FD_SAVE)
+        if fDialog.ShowModal() != wx.ID_OK:
+            return
+        strPath = os.path.join(fDialog.GetDirectory(), fDialog.GetFilename())
+        path = Path(strPath)
+        self.model.save(path)
     
     # Manipulation des fichiers
     
@@ -516,10 +646,10 @@ class Controller(object):
         self.model.addFolder(path)
     
     
-    def OnRemoveSelectedListFiles(self, event):
+    def removeSelectedListFiles(self):
         '''
         Clic sur le bouton "Supprimer les fichiers sélectionnés"
-        @param event: Événement
+        @todo: Utiliser les index de ligne plutôt que de faire os.path.join(direname, basename)
         @author: Julien
         '''
         pathlist = []
@@ -527,19 +657,12 @@ class Controller(object):
         while index != -1:
             direname = self.view.listFiles_listCtrl.GetItem(index, 0).GetText()
             basename = self.view.listFiles_listCtrl.GetItem(index, 1).GetText()
-            path = os.path.join(direname, basename)
+            strPath = os.path.join(direname, basename)
+            path = Path(strPath)
             pathlist.append(path)
             index = self.view.listFiles_listCtrl.GetNextSelected(index)
         self.model.removeFiles(pathlist)
     
-    
-    def OnRemoveAllListFiles(self, event):
-        '''
-        Clic sur le bouton "Supprimer tous les fichiers"
-        @param event: Événement
-        @author: Julien
-        '''
-        self.model.removeAllFiles()
     
     # Manipulation des actions
     
@@ -649,6 +772,20 @@ class Controller(object):
             self.model.SwapActions(index, index+1)
             self.view.listActionsToDo_listBox.Selection = index+1
     
+    # Exécution
+    
+    def _onExecuteActions(self):
+        '''
+        Thread d'exécution
+        @author: Julien
+        '''
+        try:
+            self.model.Execute()
+        except Exception, err:
+            pass
+        finally:
+            self.execute_thread = None
+    
     
     def OnExecuteActions(self, event):
         '''
@@ -656,7 +793,10 @@ class Controller(object):
         @param event: Événement
         @author: Julien
         '''
-        self.model.Execute()
+        if self.execute_thread is not None:
+            return
+        self.execute_thread = threading.Thread(target=self._onExecuteActions, name="Exécution")
+        self.execute_thread.run()
     
     
     # Affichage des éléments
