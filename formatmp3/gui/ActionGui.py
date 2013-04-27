@@ -12,14 +12,9 @@ Permettent de paramétrer les actions
 
 
 
-import wx
-from wx.lib.pubsub import pub as Publisher
 from formatmp3.actions.Action import *
-
-
-
-# Messages des interfaces graphiques des actions
-ACTION_CHANGED = "ACTION_CHANGED"
+from wx.lib.pubsub import pub as Publisher
+import wx
 
 
 
@@ -41,6 +36,10 @@ class ActionGui(wx.Panel):
     Interface de base des interfaces graphiques
     @author: Julien
     '''
+    
+    
+    # Messages des interfaces graphiques des actions
+    ACTION_CHANGED = "ACTION_CHANGED"
     
     
     def __init__(self, parent, action):
@@ -147,7 +146,7 @@ class CaseChangeGui(ActionGui):
         @param modification: Modification
         '''
         self.action.modification = modification
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnRangeChanged(self, event, range):
@@ -157,7 +156,7 @@ class CaseChangeGui(ActionGui):
         @param range: Partie
         '''
         self.action.range = range
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
 
 
 
@@ -227,7 +226,7 @@ class ReplaceStringGui(ActionGui):
         @author: Julien
         '''
         self.action.oldStr = self.oldStr_textCtrl.Value
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnNewStrChanged(self, event):
@@ -237,7 +236,7 @@ class ReplaceStringGui(ActionGui):
         @author: Julien
         '''
         self.action.newStr = self.newStr_textCtrl.Value
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnRangeChanged(self, event, range):
@@ -247,7 +246,7 @@ class ReplaceStringGui(ActionGui):
         @param range: Partie
         '''
         self.action.range = range
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
 
 
 
@@ -334,7 +333,7 @@ class CutGui(ActionGui):
         @author: Julien
         '''
         self.action.nomber = self.number_spinCtrl.Value
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnPositionChanged(self, event):
@@ -344,7 +343,7 @@ class CutGui(ActionGui):
         @author: Julien
         '''
         self.action.position = self.position_spinCtrl.Value
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnSensChanged(self, event):
@@ -354,7 +353,7 @@ class CutGui(ActionGui):
         @author: Julien
         '''
         self.action.sens = self.beginSens_radioButton.Value
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnRangeChanged(self, event, range):
@@ -364,7 +363,7 @@ class CutGui(ActionGui):
         @param range: Partie
         '''
         self.action.range = range
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
 
 
 
@@ -451,7 +450,7 @@ class InsertStringGui(ActionGui):
         @author: Julien
         '''
         self.action.string = self.string_textCtrl.Value
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnPositionChanged(self, event):
@@ -461,7 +460,7 @@ class InsertStringGui(ActionGui):
         @author: Julien
         '''
         self.action.position = self.position_spinCtrl.Value
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnSensChanged(self, event):
@@ -471,7 +470,7 @@ class InsertStringGui(ActionGui):
         @author: Julien
         '''
         self.action.sens = self.beginSens_radioButton.Value
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
     
     
     def OnRangeChanged(self, event, range):
@@ -481,7 +480,7 @@ class InsertStringGui(ActionGui):
         @param range: Partie
         '''
         self.action.range = range
-        Publisher.sendMessage(ACTION_CHANGED)
+        Publisher.sendMessage(ActionGui.ACTION_CHANGED)
 
 
 

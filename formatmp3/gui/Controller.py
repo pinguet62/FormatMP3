@@ -67,7 +67,10 @@ class Controller(object):
                            self.model.removeAllFiles(),
                        self.view.removeAllListFiles_tool)
         #     Barre d'outils de la liste des actions
-        self.view.Bind(wx.EVT_LISTBOX, self.OnSelectedAction, self.view.listActionsToDo_listBox)
+        self.view.Bind(wx.EVT_LISTBOX,
+                       lambda event:
+                           self._refreshSelectedActionGui(),
+                       self.view.listActionsToDo_listBox)
         self.view.Bind(wx.EVT_TOOL, self.OnAddAction, self.view.addAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedAction, self.view.removeSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllActions, self.view.removeAllActions_tool)
@@ -82,7 +85,7 @@ class Controller(object):
         Publisher.subscribe(self.Error, Model.ERROR)
         Publisher.subscribe(self.RefreshFilelist, Model.FILELIST_CHANGED)
         Publisher.subscribe(self.RefreshActionlist, Model.ACTIONLIST_CHANGED)
-        Publisher.subscribe(self.RefreshFilelist, ACTION_CHANGED)
+        Publisher.subscribe(self.RefreshFilelist, ActionGui.ACTION_CHANGED)
         
         self.view.Show()
         
@@ -210,21 +213,6 @@ class Controller(object):
     
     # Manipulation des actions
     
-    def OnSelectedAction(self, event):
-        '''
-        Sélection d'une action dans la liste
-        @param event: Événement
-        @author: Julien
-        '''
-        index = self.view.listActionsToDo_listBox.Selection
-        self._showActionGui(index)
-        # Toolbar : monter/descendre action
-        if index == 0:
-            pass
-        elif index == self.view.listActionsToDo_listBox.Count-1:
-            pass
-    
-    
     def _onAddAction(self, event, action):
         '''
         Clic sur un sous-menu du bouton "Ajouter une action"
@@ -235,7 +223,7 @@ class Controller(object):
         lastIndex = self.view.listActionsToDo_listBox.Count
         self.model.AddAction(action)
         self.view.listActionsToDo_listBox.Selection = lastIndex
-        self._showActionGui(lastIndex)
+        self._refreshSelectedActionGui()
     
     
     def OnAddAction(self, event):
@@ -267,15 +255,9 @@ class Controller(object):
         action = self.model.actionlist[index]
         self.model.removeAction(action)
         # Sélectionner le précédent
-        if self.view.listActionsToDo_listBox.Count == 0:
-            self.view.hideSelectedAction()
-        else:
-            if index == 0:
-                self.view.listActionsToDo_listBox.Selection = 0
-                self._showActionGui(0)
-            else:
-                self.view.listActionsToDo_listBox.Selection = index-1
-                self._showActionGui(index-1)
+        if self.view.listActionsToDo_listBox.Count != 0:
+            self.view.listActionsToDo_listBox.Selection = max(0, index-1)
+        self._refreshSelectedActionGui()
     
     
     def OnRemoveAllActions(self, event):
@@ -285,7 +267,7 @@ class Controller(object):
         @author: Julien
         '''
         self.model.removeAllActions()
-        self.view.hideSelectedAction()
+        self._refreshSelectedActionGui()
     
     
     def OnUpSelectedAction(self, event):
@@ -325,7 +307,7 @@ class Controller(object):
         '''
         try:
             self.model.Execute()
-        except Exception, err:
+        except:
             pass
         finally:
             self.execute_thread = None
@@ -376,14 +358,18 @@ class Controller(object):
         self.RefreshFilelist()
     
     
-    def _showActionGui(self, index):
+    def _refreshSelectedActionGui(self):
         '''
         Afficher l'action
         @param index: Index
         @author: Julien
         '''
-        action = self.model.actionlist[index]
-        newActionGui = createGui(self.view.actions_splitter, action)
+        index = self.view.listActionsToDo_listBox.Selection
+        if index == -1:
+            newActionGui = wx.Panel(self.view.actions_splitter)
+        else:
+            action = self.model.actionlist[index]
+            newActionGui = createGui(self.view.actions_splitter, action)
         self.view.setSelectedActionPanel(newActionGui)
     
     # Événements de la vue

@@ -222,14 +222,6 @@ class View(wx.Frame):
         self.actions_splitter.ReplaceWindow(oldPanel, newPanel)
         self.selectedAction_panel = newPanel
         oldPanel.Destroy()
-    
-    
-    def hideSelectedAction(self):
-        '''
-        Effacer le panel de l'action sélectionnée
-        @author: Julien
-        '''
-        self.setSelectedActionPanel(wx.Panel(self.actions_splitter))
 
 
 
