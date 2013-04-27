@@ -253,8 +253,6 @@ class Model(object):
         pickle.dump(self.actionlist, fichier)
         fichier.close()
         self.filesave = path
-        
-        
 
 
 
