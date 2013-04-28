@@ -4,10 +4,8 @@
 
 
 '''
-Interface graphique de l'application
+Fenêtre principale de l'application
 @author: Julien
-@todo: Log
-@todo: Hauteur max des paramètres, ou scrollbar
 '''
 
 
@@ -15,17 +13,10 @@ Interface graphique de l'application
 from formatmp3.actions.Action import *
 from formatmp3.gui.ActionGui import *
 from wx.lib.pubsub import pub as Publisher
-import pickle
 import os.path
+import pickle
 import threading
 import wx
-
-
-
-# Messages de l'interface graphique
-ERROR = "ERROR"
-FILELIST_CHANGED = "FILELIST_CHANGED"
-ACTIONLIST_CHANGED = "ACTIONLIST_CHANGED"
 
 
 
@@ -36,10 +27,16 @@ actions = [CaseChange, ReplaceString, Cut, InsertString]
 
 class Model(object):
     '''
-    Données de l'application
-    Contient les fichiers à modifier ainsi que les actions à effectuer
+    Modèle
+    Contient les fichiers à modifier et les action à effectuer
     @author: Julien
     '''
+    
+    
+    # Messages de l'interface graphique
+    ERROR = "ERROR"
+    FILELIST_CHANGED = "FILELIST_CHANGED"
+    ACTIONLIST_CHANGED = "ACTIONLIST_CHANGED"
     
     
     def __init__(self):
@@ -67,7 +64,7 @@ class Model(object):
     def addFile(self, path):
         '''
         Ajouter un fichier
-        @param path: path
+        @param path: Path
         @author: Julien
         '''
         oldCount = len(self.filelist)
@@ -75,7 +72,7 @@ class Model(object):
         newCount = len(self.filelist)
         if oldCount < newCount:
             self.filelist.sort()
-            Publisher.sendMessage(FILELIST_CHANGED)
+            Publisher.sendMessage(Model.FILELIST_CHANGED)
     
     
     def addFiles(self, pathlist=[]):
@@ -90,7 +87,7 @@ class Model(object):
         newCount = len(self.filelist)
         if oldCount < newCount:
             self.filelist.sort()
-            Publisher.sendMessage(FILELIST_CHANGED)
+            Publisher.sendMessage(Model.FILELIST_CHANGED)
     
     
     def _addFolder(self, strDirname):
@@ -119,7 +116,7 @@ class Model(object):
         newCount = len(self.filelist)
         if oldCount < newCount:
             self.filelist.sort()
-            Publisher.sendMessage(FILELIST_CHANGED)
+            Publisher.sendMessage(Model.FILELIST_CHANGED)
     
     
     def removeFiles(self, pathlist=[]):
@@ -134,7 +131,7 @@ class Model(object):
                 self.filelist.remove(path)
                 filesDeleted = True
         if filesDeleted:
-            Publisher.sendMessage(FILELIST_CHANGED)
+            Publisher.sendMessage(Model.FILELIST_CHANGED)
     
     
     def removeAllFiles(self):
@@ -144,7 +141,7 @@ class Model(object):
         '''
         if self.filelist:
             self.filelist = []
-            Publisher.sendMessage(FILELIST_CHANGED)
+            Publisher.sendMessage(Model.FILELIST_CHANGED)
     
     
     def AddAction(self, action):
@@ -154,7 +151,7 @@ class Model(object):
         @author: Julien
         '''
         self.actionlist.append(action)
-        Publisher.sendMessage(ACTIONLIST_CHANGED)
+        Publisher.sendMessage(Model.ACTIONLIST_CHANGED)
     
     
     def getOverviewFilelist(self):
@@ -174,12 +171,12 @@ class Model(object):
     def SwapActions(self, i1, i2):
         '''
         Echanger 2 actions
-        @param i1: Indice
-        @param i2: Indice
+        @param i1: Indice 1
+        @param i2: Indice 2
         @author: Julien
         '''
         self.actionlist[i1], self.actionlist[i2] = self.actionlist[i2], self.actionlist[i1]
-        Publisher.sendMessage(ACTIONLIST_CHANGED)
+        Publisher.sendMessage(Model.ACTIONLIST_CHANGED)
     
     
     def removeAction(self, action):
@@ -190,7 +187,7 @@ class Model(object):
         '''
         if action in self.actionlist:
             self.actionlist.remove(action)
-            Publisher.sendMessage(ACTIONLIST_CHANGED)
+            Publisher.sendMessage(Model.ACTIONLIST_CHANGED)
     
     
     def removeAllActions(self):
@@ -200,7 +197,7 @@ class Model(object):
         '''
         if self.actionlist:
             self.actionlist = []
-            Publisher.sendMessage(ACTIONLIST_CHANGED)
+            Publisher.sendMessage(Model.ACTIONLIST_CHANGED)
     
     # Exécution
     
@@ -221,12 +218,12 @@ class Model(object):
             try:
                 for action in self.actionlist:
                     if self._stop:
-                        Publisher.sendMessage(FILELIST_CHANGED)
+                        Publisher.sendMessage(Model.FILELIST_CHANGED)
                         return
                     action.execute(path)
             except BaseException, err:
-                Publisher.sendMessage(ERROR, error=err)
-        Publisher.sendMessage(FILELIST_CHANGED)
+                Publisher.sendMessage(Model.ERROR, error=err)
+        Publisher.sendMessage(Model.FILELIST_CHANGED)
         self._stop = True
     
     # Chargement et sauvegarde
@@ -240,7 +237,7 @@ class Model(object):
         fichier = open(path.get(), 'r')
         self.actionlist = pickle.load(fichier)
         self.filesave = path.get()
-        Publisher.sendMessage(ACTIONLIST_CHANGED)
+        Publisher.sendMessage(Model.ACTIONLIST_CHANGED)
     
     
     def save(self, path):
@@ -258,7 +255,7 @@ class Model(object):
 
 class View(wx.Frame):
     '''
-    Fenêtre principale
+    Vue
     @author: Julien
     '''
     
@@ -464,20 +461,12 @@ class View(wx.Frame):
         self.actions_splitter.ReplaceWindow(oldPanel, newPanel)
         self.selectedAction_panel = newPanel
         oldPanel.Destroy()
-    
-    
-    def hideSelectedAction(self):
-        '''
-        Effacer le panel de l'action sélectionnée
-        @author: Julien
-        '''
-        self.setSelectedActionPanel(wx.Panel(self.actions_splitter))
 
 
 
 class Controller(object):
     '''
-    Controlleur de l'application
+    Controlleur
     @author: Julien
     '''
     
@@ -521,7 +510,10 @@ class Controller(object):
                            self.model.removeAllFiles(),
                        self.view.removeAllListFiles_tool)
         #     Barre d'outils de la liste des actions
-        self.view.Bind(wx.EVT_LISTBOX, self.OnSelectedAction, self.view.listActionsToDo_listBox)
+        self.view.Bind(wx.EVT_LISTBOX,
+                       lambda event:
+                           self._refreshSelectedActionGui(),
+                       self.view.listActionsToDo_listBox)
         self.view.Bind(wx.EVT_TOOL, self.OnAddAction, self.view.addAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveSelectedAction, self.view.removeSelectedAction_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnRemoveAllActions, self.view.removeAllActions_tool)
@@ -533,10 +525,10 @@ class Controller(object):
                            self.model.stop(),
                        self.view.stopActions_tool)
         # Événements du modèle
-        Publisher.subscribe(self.Error, ERROR)
-        Publisher.subscribe(self.RefreshFilelist, FILELIST_CHANGED)
-        Publisher.subscribe(self.RefreshActionlist, ACTIONLIST_CHANGED)
-        Publisher.subscribe(self.RefreshFilelist, ACTION_CHANGED)
+        Publisher.subscribe(self.Error, Model.ERROR)
+        Publisher.subscribe(self.RefreshFilelist, Model.FILELIST_CHANGED)
+        Publisher.subscribe(self.RefreshActionlist, Model.ACTIONLIST_CHANGED)
+        Publisher.subscribe(self.RefreshFilelist, ActionGui.ACTION_CHANGED)
         
         self.view.Show()
         
@@ -664,21 +656,6 @@ class Controller(object):
     
     # Manipulation des actions
     
-    def OnSelectedAction(self, event):
-        '''
-        Sélection d'une action dans la liste
-        @param event: Événement
-        @author: Julien
-        '''
-        index = self.view.listActionsToDo_listBox.Selection
-        self._showActionGui(index)
-        # Toolbar : monter/descendre action
-        if index == 0:
-            pass
-        elif index == self.view.listActionsToDo_listBox.Count-1:
-            pass
-    
-    
     def _onAddAction(self, event, action):
         '''
         Clic sur un sous-menu du bouton "Ajouter une action"
@@ -689,7 +666,7 @@ class Controller(object):
         lastIndex = self.view.listActionsToDo_listBox.Count
         self.model.AddAction(action)
         self.view.listActionsToDo_listBox.Selection = lastIndex
-        self._showActionGui(lastIndex)
+        self._refreshSelectedActionGui()
     
     
     def OnAddAction(self, event):
@@ -721,15 +698,9 @@ class Controller(object):
         action = self.model.actionlist[index]
         self.model.removeAction(action)
         # Sélectionner le précédent
-        if self.view.listActionsToDo_listBox.Count == 0:
-            self.view.hideSelectedAction()
-        else:
-            if index == 0:
-                self.view.listActionsToDo_listBox.Selection = 0
-                self._showActionGui(0)
-            else:
-                self.view.listActionsToDo_listBox.Selection = index-1
-                self._showActionGui(index-1)
+        if self.view.listActionsToDo_listBox.Count != 0:
+            self.view.listActionsToDo_listBox.Selection = max(0, index-1)
+        self._refreshSelectedActionGui()
     
     
     def OnRemoveAllActions(self, event):
@@ -739,7 +710,7 @@ class Controller(object):
         @author: Julien
         '''
         self.model.removeAllActions()
-        self.view.hideSelectedAction()
+        self._refreshSelectedActionGui()
     
     
     def OnUpSelectedAction(self, event):
@@ -779,7 +750,7 @@ class Controller(object):
         '''
         try:
             self.model.Execute()
-        except Exception, err:
+        except:
             pass
         finally:
             self.execute_thread = None
@@ -830,14 +801,18 @@ class Controller(object):
         self.RefreshFilelist()
     
     
-    def _showActionGui(self, index):
+    def _refreshSelectedActionGui(self):
         '''
         Afficher l'action
         @param index: Index
         @author: Julien
         '''
-        action = self.model.actionlist[index]
-        newActionGui = createGui(self.view.actions_splitter, action)
+        index = self.view.listActionsToDo_listBox.Selection
+        if index == -1:
+            newActionGui = wx.Panel(self.view.actions_splitter)
+        else:
+            action = self.model.actionlist[index]
+            newActionGui = createGui(self.view.actions_splitter, action)
         self.view.setSelectedActionPanel(newActionGui)
     
     # Événements de la vue

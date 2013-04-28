@@ -29,6 +29,7 @@ class Action(object):
         @author: Julien
         '''
     
+    # Informations
     
     @staticmethod
     def getTitle():
@@ -51,6 +52,7 @@ class Action(object):
         '''
         return NotImplementedError()
     
+    # Exécution
     
     def getOverview(self, oldPath):
         '''
@@ -98,6 +100,7 @@ class CaseChange(Action):
         self.range = PathModification.FILENAME
         self.modification = CaseChange.FIRST_MAJ
     
+    # Informations
     
     @staticmethod
     def getTitle():
@@ -118,6 +121,7 @@ class CaseChange(Action):
         '''
         return "Mettre en minuscule, majuscule, ... le nom du fichier"
     
+    # Exécution
     
     def getOverview(self, oldPath):
         '''
@@ -182,6 +186,7 @@ class ReplaceString(Action):
         self.oldStr = ""
         self.newStr = ""
     
+    # Informations
     
     @staticmethod
     def getTitle():
@@ -202,6 +207,7 @@ class ReplaceString(Action):
         '''
         return "Remplacer une chaîne de caractères par une autre"
     
+    # Exécution
     
     def getOverview(self, oldPath):
         '''
@@ -259,6 +265,7 @@ class Cut(Action):
         self._nomber = 0
         self.sens = Cut.A_PARTIR_DEBUT
     
+    # Informations
     
     @staticmethod
     def getTitle():
@@ -279,6 +286,7 @@ class Cut(Action):
         '''
         return "Supprimer des caractères du nom de fichier"
     
+    # Propriétés
     
     def get_position(self):
         '''
@@ -322,10 +330,10 @@ class Cut(Action):
         self._nomber = int(nomber)
     
     
-    # Propriétés
     position = property(fget = get_position, fset = set_position)
     nomber = property(fget = get_nomber, fset = set_nomber)
     
+    # Exécution
     
     def getOverview(self, oldPath):
         '''
@@ -386,6 +394,7 @@ class InsertString(Action):
         self._position = 0
         self.sens = InsertString.A_PARTIR_DEBUT
     
+    # Informations
     
     @staticmethod
     def getTitle():
@@ -406,6 +415,7 @@ class InsertString(Action):
         '''
         return "Insérer une chaîne de caractères dans le nom du fichier"
     
+    # Propriétés
     
     def get_position(self):
         '''
@@ -428,9 +438,9 @@ class InsertString(Action):
         self._position = position
     
     
-    # Propriétés
     position = property(fget = get_position, fset = set_position)
     
+    # Exécution
     
     def getOverview(self, oldPath):
         '''
@@ -490,6 +500,7 @@ class UpdateTags(Action):
         self.genre = None
         self.annee = None
     
+    # Informations
     
     @staticmethod
     def getTitle():
@@ -510,6 +521,7 @@ class UpdateTags(Action):
         '''
         return "Modifier les tags musicaux d'un fichier MP3"
     
+    # Exécution
     
     def execute(self):
         '''
