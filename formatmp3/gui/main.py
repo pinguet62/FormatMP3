@@ -261,6 +261,11 @@ class View(wx.Frame):
     '''
     
     
+    iconMenuSize = wx.Size(16,16)
+    iconMaintoolbarSize = iconMenuSize
+    iconToolbarSize = iconMenuSize
+    
+    
     def __init__(self):
         '''
         Constructeur
@@ -282,7 +287,7 @@ class View(wx.Frame):
         #         Ouvrir
         self.menubar_fichier_ouvrir = wx.MenuItem(menubar_fichier, wx.ID_ANY, "&Ouvrir\tCtrl+O")
         menubar_fichier_ouvrir_image = wx.Image("icons/open.png")
-        menubar_fichier_ouvrir_image.Rescale(16,16)
+        menubar_fichier_ouvrir_image.Rescale(View.iconMenuSize.width, View.iconMenuSize.height)
         menubar_fichier_ouvrir_bitmap = wx.BitmapFromImage(menubar_fichier_ouvrir_image)
         self.menubar_fichier_ouvrir.SetBitmap(menubar_fichier_ouvrir_bitmap)
         menubar_fichier.AppendItem(self.menubar_fichier_ouvrir)
@@ -291,14 +296,14 @@ class View(wx.Frame):
         #         Enregistrer
         self.menubar_fichier_enregistrer = wx.MenuItem(menubar_fichier, wx.ID_ANY, "&Enregistrer\tCtrl+S")
         menubar_fichier_enregistrer_image = wx.Image("icons/save.png")
-        menubar_fichier_enregistrer_image.Rescale(16,16)
+        menubar_fichier_enregistrer_image.Rescale(View.iconMenuSize.width, View.iconMenuSize.height)
         menubar_fichier_enregistrer_bitmap = wx.BitmapFromImage(menubar_fichier_enregistrer_image)
         self.menubar_fichier_enregistrer.SetBitmap(menubar_fichier_enregistrer_bitmap)
         menubar_fichier.AppendItem(self.menubar_fichier_enregistrer)
         #         Enregistrer sous
         self.menubar_fichier_enregistrerSous = wx.MenuItem(menubar_fichier, wx.ID_ANY, "Enregistrer &sous...\tCtrl-Shift+S")
         menubar_fichier_enregistrerSous_image = wx.Image("icons/save.png")
-        menubar_fichier_enregistrerSous_image.Rescale(16,16)
+        menubar_fichier_enregistrerSous_image.Rescale(View.iconMenuSize.width, View.iconMenuSize.height)
         menubar_fichier_enregistrerSous_bitmap = wx.BitmapFromImage(menubar_fichier_enregistrerSous_image)
         self.menubar_fichier_enregistrerSous.SetBitmap(menubar_fichier_enregistrerSous_bitmap)
         menubar_fichier.AppendItem(self.menubar_fichier_enregistrerSous)
@@ -307,7 +312,7 @@ class View(wx.Frame):
         #         Quitter
         self.menubar_fichier_quitter = wx.MenuItem(menubar_fichier, wx.ID_ANY, "&Quitter\tAlt+F4")
         menubar_fichier_quitter_image = wx.Image("icons/exit.png")
-        menubar_fichier_quitter_image.Rescale(16,16)
+        menubar_fichier_quitter_image.Rescale(View.iconMenuSize.width, View.iconMenuSize.height)
         menubar_fichier_quitter_bitmap = wx.BitmapFromImage(menubar_fichier_quitter_image)
         self.menubar_fichier_quitter.SetBitmap(menubar_fichier_quitter_bitmap)
         menubar_fichier.AppendItem(self.menubar_fichier_quitter)
@@ -322,7 +327,7 @@ class View(wx.Frame):
         toolBar = self.CreateToolBar()
         #     Quitter
         exit_image = wx.Image("icons/exit.png")
-        exit_image.Rescale(16,16)
+        exit_image.Rescale(View.iconMaintoolbarSize.width, View.iconMaintoolbarSize.height)
         exit_bitmap = wx.BitmapFromImage(exit_image)
         self.exit_tool = toolBar.AddLabelTool(wx.ID_ANY, "Quitter", exit_bitmap)
         # .
@@ -351,24 +356,24 @@ class View(wx.Frame):
         files_boxSizer.Add(files_toolbar, flag=wx.EXPAND)
         #                 Ajouter un fichier
         addFile_image = wx.Image("icons/add_file.png")
-        addFile_image.Rescale(16,16)
+        addFile_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         addFile_bitmap = wx.BitmapFromImage(addFile_image)
         self.addFile_tool = files_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter fichier", bitmap=addFile_bitmap, shortHelp="Ajouter un fichier dans la liste")
         #                 Ajouter un répertoire
         addFolder_image = wx.Image("icons/add_folder.png")
-        addFolder_image.Rescale(16,16)
+        addFolder_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         addFolder_bitmap = wx.BitmapFromImage(addFolder_image)
         self.addFolder_tool = files_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter répertoire", bitmap=addFolder_bitmap, shortHelp="Ajouter un répertoire dans la liste")
         #             .
         files_toolbar.AddSeparator()
         #                 Supprimer la sélection
         removeSelectedListFiles_image = wx.Image("icons/remove_selected.png")
-        removeSelectedListFiles_image.Rescale(16,16)
+        removeSelectedListFiles_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         removeSelectedListFiles_bitmap = wx.BitmapFromImage(removeSelectedListFiles_image)
         self.removeSelectedListFiles_tool = files_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. sélection", bitmap=removeSelectedListFiles_bitmap, shortHelp="Supprimer les fichiers sélectionnés de la liste")
         #                 Supprimer tout
         removeAllListFiles_image = wx.Image("icons/remove_all.png")
-        removeAllListFiles_image.Rescale(16,16)
+        removeAllListFiles_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         removeAllListFiles_bitmap = wx.BitmapFromImage(removeAllListFiles_image)
         self.removeAllListFiles_tool = files_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. tout", bitmap=removeAllListFiles_bitmap, shortHelp="Supprimer tous les fichiers de la liste")
         #             .
@@ -393,43 +398,43 @@ class View(wx.Frame):
         self.actions_boxSizer.Add(actions_toolbar, flag=wx.EXPAND)
         #                 Ajouter
         addAction_image = wx.Image("icons/add.png")
-        addAction_image.Rescale(16,16)
+        addAction_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         addAction_bitmap = wx.BitmapFromImage(addAction_image)
         self.addAction_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Ajouter", bitmap=addAction_bitmap, shortHelp="Ajouter une action à la liste")
         #             .
         actions_toolbar.AddSeparator()
         #                 Supprimer la sélection
         removeSelectedAction_image = wx.Image("icons/remove_selected.png")
-        removeSelectedAction_image.Rescale(16,16)
+        removeSelectedAction_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         removeSelectedAction_bitmap = wx.BitmapFromImage(removeSelectedAction_image)
         self.removeSelectedAction_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. sélection", bitmap=removeSelectedAction_bitmap, shortHelp="Supprimer l'action sélectionné de la liste")
         #                 Supprimer tout
         removeAllActions_image = wx.Image("icons/remove_all.png")
-        removeAllActions_image.Rescale(16,16)
+        removeAllActions_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         removeAllActions_bitmap = wx.BitmapFromImage(removeAllActions_image)
         self.removeAllActions_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Supp. tout", bitmap=removeAllActions_bitmap, shortHelp="Supprimer toutes les actions de la liste")
         #             .
         actions_toolbar.AddSeparator()
         #                 Monter l'action
         upSelectedAction_image = wx.Image("icons/up.png")
-        upSelectedAction_image.Rescale(16,16)
+        upSelectedAction_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         upSelectedAction_bitmap = wx.BitmapFromImage(upSelectedAction_image)
         self.upSelectedAction_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Monter", bitmap=upSelectedAction_bitmap, shortHelp="Monter l'action sélectionnée dans la liste")
         #                 Descendre l'action
         downSelectedAction_image = wx.Image("icons/down.png")
-        downSelectedAction_image.Rescale(16,16)
+        downSelectedAction_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         downSelectedAction_bitmap = wx.BitmapFromImage(downSelectedAction_image)
         self.downSelectedAction_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Descendre", bitmap=downSelectedAction_bitmap, shortHelp="Descendre l'action sélectionnée dans la liste")
         #             .
         actions_toolbar.AddSeparator()
         #                 Exécuter
         executeActions_image = wx.Image("icons/execute.png")
-        executeActions_image.Rescale(16,16)
+        executeActions_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         executeActions_bitmap = wx.BitmapFromImage(executeActions_image)
         self.executeActions_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Exécuter", bitmap=executeActions_bitmap, shortHelp="Exécuter les actions sur les fichiers")
         #                 Stoper
         stopActions_image = wx.Image("icons/stop.png")
-        stopActions_image.Rescale(16,16)
+        stopActions_image.Rescale(View.iconToolbarSize.width, View.iconToolbarSize.height)
         stopActions_bitmap = wx.BitmapFromImage(stopActions_image)
         self.stopActions_tool = actions_toolbar.AddLabelTool(wx.ID_ANY, label="Stop", bitmap=stopActions_bitmap, shortHelp="Arrêter l'exécution")
         #             .
@@ -618,9 +623,7 @@ class Controller(object):
         if fDialog.ShowModal() != wx.ID_OK:
             return
         pathlist = []
-        direname = fDialog.GetDirectory()
-        for basename in fDialog.GetFilenames():
-            strPath = os.path.join(direname, basename)
+        for strPath in fDialog.GetPaths():
             path = Path(strPath)
             pathlist.append(path)
         self.model.addFiles(pathlist)
