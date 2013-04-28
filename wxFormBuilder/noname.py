@@ -17,7 +17,7 @@ import wx.xrc
 class MyFrame1 ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 634,771 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"FormatMP3 - Formatez vos fichiers MP3 en un clic !", pos = wx.DefaultPosition, size = wx.Size( 634,771 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
@@ -526,6 +526,97 @@ class UpdateTagsGui_panel ( wx.Panel ):
 		self.SetSizer( boxSizer )
 		self.Layout()
 		boxSizer.Fit( self )
+	
+	def __del__( self ):
+		pass
+	
+
+###########################################################################
+## Class MyFrame2
+###########################################################################
+
+class MyFrame2 ( wx.Frame ):
+	
+	def __init__( self, parent ):
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"À propos", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		
+		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
+		
+		frame_boxSizer = wx.BoxSizer( wx.VERTICAL )
+		
+		self.main_panel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( -1,-1 ), wx.TAB_TRAVERSAL )
+		main_boxSizer = wx.BoxSizer( wx.VERTICAL )
+		
+		self.title_staticText = wx.StaticText( self.main_panel, wx.ID_ANY, u"FormatMP3", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title_staticText.Wrap( -1 )
+		self.title_staticText.SetFont( wx.Font( 20, 70, 90, 92, False, wx.EmptyString ) )
+		
+		main_boxSizer.Add( self.title_staticText, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 5 )
+		
+		gridSizer = wx.GridSizer( 0, 2, 0, 0 )
+		
+		self.title_version_staticText = wx.StaticText( self.main_panel, wx.ID_ANY, u"Version :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title_version_staticText.Wrap( -1 )
+		self.title_version_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		gridSizer.Add( self.title_version_staticText, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+		
+		self.value_version_staticText = wx.StaticText( self.main_panel, wx.ID_ANY, u"1.0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.value_version_staticText.Wrap( -1 )
+		gridSizer.Add( self.value_version_staticText, 0, wx.ALL, 5 )
+		
+		self.title_sources_staticText = wx.StaticText( self.main_panel, wx.ID_ANY, u"Sources :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title_sources_staticText.Wrap( -1 )
+		self.title_sources_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		gridSizer.Add( self.title_sources_staticText, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+		
+		self.value_sources_hyperlinkCtrl = wx.HyperlinkCtrl( self.main_panel, wx.ID_ANY, u"GitHub", u"https://github.com/pinguet62/FormatMP3", wx.DefaultPosition, wx.DefaultSize, wx.HL_DEFAULT_STYLE )
+		gridSizer.Add( self.value_sources_hyperlinkCtrl, 0, wx.ALL, 5 )
+		
+		self.title_licence_staticText = wx.StaticText( self.main_panel, wx.ID_ANY, u"Licence :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title_licence_staticText.Wrap( -1 )
+		self.title_licence_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		gridSizer.Add( self.title_licence_staticText, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+		
+		self.value_licence_hyperlinkCtrl = wx.HyperlinkCtrl( self.main_panel, wx.ID_ANY, u"Beerware", u"http://fr.wikipedia.org/wiki/Beerware", wx.DefaultPosition, wx.DefaultSize, wx.HL_DEFAULT_STYLE )
+		gridSizer.Add( self.value_licence_hyperlinkCtrl, 0, wx.ALL, 5 )
+		
+		self.title_developpePar_staticText = wx.StaticText( self.main_panel, wx.ID_ANY, u"Développé par :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title_developpePar_staticText.Wrap( -1 )
+		self.title_developpePar_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		gridSizer.Add( self.title_developpePar_staticText, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+		
+		self.value_developpePar_staticText = wx.StaticText( self.main_panel, wx.ID_ANY, u"Julien PINGUET", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.value_developpePar_staticText.Wrap( -1 )
+		gridSizer.Add( self.value_developpePar_staticText, 0, wx.ALL, 5 )
+		
+		self.title_contact_staticText = wx.StaticText( self.main_panel, wx.ID_ANY, u"Contact :", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.title_contact_staticText.Wrap( -1 )
+		self.title_contact_staticText.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString ) )
+		
+		gridSizer.Add( self.title_contact_staticText, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+		
+		self.value_contact_hyperlinkCtrl = wx.HyperlinkCtrl( self.main_panel, wx.ID_ANY, u"Email", u"mailto:pinguet62@gmail.com?subject=FormatMP3", wx.DefaultPosition, wx.DefaultSize, wx.HL_DEFAULT_STYLE )
+		gridSizer.Add( self.value_contact_hyperlinkCtrl, 0, wx.ALL, 5 )
+		
+		
+		main_boxSizer.Add( gridSizer, 0, wx.ALIGN_CENTER_HORIZONTAL|wx.ALL, 0 )
+		
+		
+		self.main_panel.SetSizer( main_boxSizer )
+		self.main_panel.Layout()
+		main_boxSizer.Fit( self.main_panel )
+		frame_boxSizer.Add( self.main_panel, 1, wx.EXPAND|wx.ALL, 0 )
+		
+		
+		self.SetSizer( frame_boxSizer )
+		self.Layout()
+		frame_boxSizer.Fit( self )
+		
+		self.Centre( wx.BOTH )
 	
 	def __del__( self ):
 		pass

@@ -269,7 +269,6 @@ class View(wx.Frame):
     def __init__(self):
         '''
         Constructeur
-        @param parent: Fenêtre parent
         @author: Julien
         '''
         # Fenêtre
@@ -337,18 +336,18 @@ class View(wx.Frame):
         statusBar = self.CreateStatusBar()
         
         # Sizer
-        main_boxSizer = wx.BoxSizer(wx.VERTICAL)
-        self.SetSizer(main_boxSizer)
+        frame_boxSizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(frame_boxSizer)
         #     Splitter
         main_splitterWindow = wx.SplitterWindow(self, style=wx.SP_3D|wx.SP_NO_XP_THEME)
-        main_boxSizer.Add(main_splitterWindow, 1, wx.ALL|wx.EXPAND)
+        frame_boxSizer.Add(main_splitterWindow, 1, wx.ALL|wx.EXPAND)
         #         Fichiers à modifier
         files_panel = wx.Panel(main_splitterWindow)
         files_boxSizer = wx.BoxSizer(wx.VERTICAL)
         files_panel.SetSizer(files_boxSizer)
         #             Titre
         title_files_staticText = wx.StaticText(files_panel, label="Fichiers à modifier")
-        title_files_font = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString)
+        title_files_font = wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         title_files_staticText.SetFont(title_files_font)
         files_boxSizer.Add(title_files_staticText, flag=wx.ALL, border=5)
         #             Barre d'outils
@@ -390,7 +389,7 @@ class View(wx.Frame):
         actions_panel.SetSizer(self.actions_boxSizer)
         #             Titre
         title_actions_staticText = wx.StaticText(actions_panel, label="Actions à réaliser")
-        title_actions_font = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 90, 92, False, wx.EmptyString)
+        title_actions_font = wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         title_actions_staticText.SetFont(title_actions_font)
         self.actions_boxSizer.Add(title_actions_staticText, flag=wx.ALL, border=5)
         #             Barre d'outils
@@ -485,8 +484,8 @@ class Controller(object):
         self.execute_thread = None
         
         self.model = Model()
-        
         self.view = View()
+        
         # Binding de la vue
         self.view.Bind(event=wx.EVT_CLOSE, handler=self.OnClose)
         # Binding des éléments de la vue
@@ -541,10 +540,12 @@ class Controller(object):
         
         self.view.Show()
         
+        # DEBUG
         self.model.AddAction(CaseChange())
         self.model.AddAction(ReplaceString())
         self.model.AddAction(Cut())
         self.model.AddAction(InsertString())
+    
     
     def test(self, event):
         self.model.save(Path("C:\\Users\\Julien\\Desktop\\toto.xml"))
