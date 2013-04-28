@@ -10,8 +10,8 @@ Fenêtre principale de l'application
 
 
 
+from ActionGui import *
 from formatmp3.actions.Action import *
-from formatmp3.gui.ActionGui import *
 from wx.lib.pubsub import pub as Publisher
 import os.path
 import pickle
@@ -33,8 +33,9 @@ class Model(object):
     '''
     
     
-    # Messages de l'interface graphique
+    # Messages émis à l'interface graphique
     ERROR = "ERROR"
+    FILESAVE_CHANGED = "FILESAVE_CHANGED"
     FILELIST_CHANGED = "FILELIST_CHANGED"
     ACTIONLIST_CHANGED = "ACTIONLIST_CHANGED"
     
@@ -487,7 +488,10 @@ class Controller(object):
         #     Menu
         self.view.Bind(wx.EVT_MENU, self.OnOpen, self.view.menubar_fichier_ouvrir)
         self.view.Bind(wx.EVT_MENU, self.OnSave, self.view.menubar_fichier_enregistrer)
-        self.view.Bind(wx.EVT_MENU, self.OnSaveAs, self.view.menubar_fichier_enregistrerSous)
+        self.view.Bind(wx.EVT_MENU,
+                       lambda event:
+                           self._saveAs(),
+                       self.view.menubar_fichier_enregistrerSous)
         self.view.Bind(wx.EVT_MENU,
                        lambda event:
                            self.view.Close(),
@@ -559,12 +563,34 @@ class Controller(object):
         @todo: Implémenter
         @author: Julien
         '''
-        fDialog = wx.FileDialog(self.view, "Enregistrer sous", wildcard="XML files (*.xml)|*.xml", style=wx.FD_OPEN)
+        fDialog = wx.FileDialog(self.view, "Enregistrer sous", wildcard="Fichiers XML (*.xml)|*.xml|Fichiers texte (*.txt)|*.txt|Tous les fichiers (*.*)|*.*", style=wx.FD_OPEN)
         if fDialog.ShowModal() != wx.ID_OK:
             return
-        strPath = os.path.join(fDialog.GetDirectory(), fDialog.GetFilename())
+        strPath = fDialog.GetPath()
         path = Path(strPath)
         self.model.open(path)
+    
+    
+    def _saveAs(self):
+        '''
+        "Enregistrer sous..."
+        Ouvrir la fenêtre d'exploration
+        @author: Julien
+        '''
+        if self.model.filesave is None:
+            filename = ""
+        else:
+            filename = self.model.filesave.filename
+        fDialog = wx.FileDialog(self.view, "Enregistrer sous", defaultFile=filename, wildcard="Fichiers XML (*.xml)|*.xml|Fichiers texte (*.txt)|*.txt|Tous les fichiers (*.*)|*.*", style=wx.FD_SAVE)
+        if fDialog.ShowModal() != wx.ID_OK:
+            return
+        strPath = fDialog.GetPath()
+        if os.path.isfile(strPath):
+            mDialog = wx.MessageDialog(self.view, strPath+"existe déjà.\nVoulez-vous le remplacer ?", "Confirmer l'enregistrement", wx.YES_NO|wx.NO_DEFAULT|wx.ICON_EXCLAMATION)
+            if mDialog.ShowModal() != wx.YES:
+                return
+        path = Path(strPath)
+        self.model.save(path)
     
     
     def OnSave(self, event):
@@ -575,33 +601,10 @@ class Controller(object):
         @author: Julien
         '''
         if self.model.filesave is None:
-            fDialog = wx.FileDialog(self.view, "Enregistrer sous", wildcard="XML files (*.xml)|*.xml", style=wx.FD_SAVE)
-            if fDialog.ShowModal() != wx.ID_OK:
-                return
-            strPath = os.path.join(fDialog.GetDirectory(), fDialog.GetFilename())
-            path = Path(strPath)
+            self._saveAs()
         else:
             path = self.model.filesave
-        self.model.save(path)
-    
-    
-    def OnSaveAs(self, event):
-        '''
-        Clic sur le bouton "Enregistrer sous..." du menu
-        @param event: Événement
-        @author: Julien
-        '''
-        
-        if self.model.filesave is None:
-            filename = ""
-        else:
-            filename = self.model.filesave.filename
-        fDialog = wx.FileDialog(self.view, "Enregistrer sous", defaultFile=filename, wildcard="XML files (*.xml)|*.xml", style=wx.FD_SAVE)
-        if fDialog.ShowModal() != wx.ID_OK:
-            return
-        strPath = os.path.join(fDialog.GetDirectory(), fDialog.GetFilename())
-        path = Path(strPath)
-        self.model.save(path)
+            self.model.save(path)
     
     # Manipulation des fichiers
     
