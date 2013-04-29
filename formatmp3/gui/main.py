@@ -13,6 +13,7 @@ Fenêtre principale de l'application
 from ActionGui import *
 from formatmp3.actions.Action import *
 from wx.lib.pubsub import pub as Publisher
+import about
 import os.path
 import pickle
 import threading
@@ -266,16 +267,20 @@ class View(wx.Frame):
     iconToolbarSize = iconMenuSize
     
     
-    def __init__(self):
+    def __init__(self, parent=None):
         '''
         Constructeur
+        @param parent: Fenêtre parent
         @author: Julien
         '''
         # Fenêtre
         minSize = (675,700)
-        wx.Frame.__init__(self, None, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
+        wx.Frame.__init__(self, parent, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
         #self.SetMinSize(minSize)
         self.CenterOnScreen()
+        # Icone
+        icon = wx.Icon("icons/application.png", wx.BITMAP_TYPE_PNG)
+        self.SetIcon(icon)
         
         # Barre de menus
         menubar = wx.MenuBar(0)
@@ -320,6 +325,10 @@ class View(wx.Frame):
         menubar.Append(menubar_aide, "&?")
         #         A propos
         self.menubar_aide_aPropos = wx.MenuItem(menubar_aide, wx.ID_ANY, "A &propos de FormatMP3")
+        menubar_aide_aPropos_image = wx.Image("icons/about.png")
+        menubar_aide_aPropos_image.Rescale(View.iconMenuSize.width, View.iconMenuSize.height)
+        menubar_aide_aPropos_bitmap = wx.BitmapFromImage(menubar_aide_aPropos_image)
+        self.menubar_aide_aPropos.SetBitmap(menubar_aide_aPropos_bitmap)
         menubar_aide.AppendItem(self.menubar_aide_aPropos)
         
         # Barre d'outils
@@ -476,19 +485,19 @@ class Controller(object):
     '''
     
     
-    def __init__(self):
+    def __init__(self, app):
         '''
         Constructeur
+        @param app: Application
         @author: Julien
         '''
         self.execute_thread = None
-        
+        self.app = app
         self.model = Model()
-        self.view = View()
+        self.view = View(None)
         
         # Binding de la vue
         self.view.Bind(event=wx.EVT_CLOSE, handler=self.OnClose)
-        # Binding des éléments de la vue
         #     Menu
         self.view.Bind(wx.EVT_MENU, self.OnOpen, self.view.menubar_fichier_ouvrir)
         self.view.Bind(wx.EVT_MENU, self.OnSave, self.view.menubar_fichier_enregistrer)
@@ -500,13 +509,14 @@ class Controller(object):
                        lambda event:
                            self.view.Close(),
                        self.view.menubar_fichier_quitter)
+        self.view.Bind(wx.EVT_MENU, self.OnAbout, self.view.menubar_aide_aPropos)
         #     Barre d'outils principale
         #self.view.Bind(wx.EVT_TOOL,
         #               lambda event:
         #                   self.view.Close(),
         #               self.view.exit_tool)
         self.view.Bind(wx.EVT_TOOL, self.test, self.view.exit_tool)
-        #     Barre d'outils de la liste des fichiers
+        #     Barre d'outils des fichiers
         self.view.Bind(wx.EVT_TOOL, self.OnAddFiles, self.view.addFile_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnAddFolder, self.view.addFolder_tool)
         self.view.Bind(wx.EVT_TOOL,
@@ -517,7 +527,7 @@ class Controller(object):
                        lambda event:
                            self.model.removeAllFiles(),
                        self.view.removeAllListFiles_tool)
-        #     Barre d'outils de la liste des actions
+        #     Barre d'outils des actions
         self.view.Bind(wx.EVT_LISTBOX,
                        lambda event:
                            self._refreshSelectedActionGui(),
@@ -532,12 +542,14 @@ class Controller(object):
                        lambda event:
                            self.model.stop(),
                        self.view.stopActions_tool)
+        
         # Événements du modèle
         Publisher.subscribe(self.Error, Model.ERROR)
         Publisher.subscribe(self.RefreshFilelist, Model.FILELIST_CHANGED)
         Publisher.subscribe(self.RefreshActionlist, Model.ACTIONLIST_CHANGED)
         Publisher.subscribe(self.RefreshFilelist, ActionGui.ACTION_CHANGED)
         
+        # Afficher
         self.view.Show()
         
         # DEBUG
@@ -545,6 +557,10 @@ class Controller(object):
         self.model.AddAction(ReplaceString())
         self.model.AddAction(Cut())
         self.model.AddAction(InsertString())
+        # Test
+        #fen = wx.Frame(self.view, style=wx.DEFAULT_FRAME_STYLE)
+        #fen.Show()
+        #self.app.SetTopWindow(fen)
     
     
     def test(self, event):
@@ -831,12 +847,23 @@ class Controller(object):
         @author: Julien
         '''
         if self.execute_thread is not None:
+            print "@todo: Confirmation et arrêter le thread"
             return
         event.Skip()
+    
+    # Autres fenêtres
+    
+    def OnAbout(self, event):
+        '''
+        Clic sur le menu "A propos"
+        @param event: Événement
+        @author: Julien
+        '''
+        about.Controller(self.app)
 
 
 
 if __name__ == '__main__':
     app = wx.App(False)
-    controller = Controller()
+    controller = Controller(app)
     app.MainLoop()

@@ -21,13 +21,14 @@ class View(wx.Frame):
     '''
     
     
-    def __init__(self):
+    def __init__(self, parent=None):
         '''
         Constructeur
+        @param parent: Fenêtre parent
         @author: Julien
         '''
         # Fenêtre
-        wx.Frame.__init__(self, None, title="À propos de FormatMP3", style=wx.CAPTION|wx.SYSTEM_MENU|wx.CLOSE_BOX)#wx.DEFAULT_FRAME_STYLE^wx.RESIZE_BORDER)
+        wx.Frame.__init__(self, parent, title="À propos de FormatMP3", style=wx.CAPTION|wx.SYSTEM_MENU|wx.CLOSE_BOX|wx.FRAME_NO_TASKBAR)#wx.DEFAULT_FRAME_STYLE^wx.RESIZE_BORDER)
         self.CenterOnScreen()
         
         frame_boxSizer = wx.BoxSizer(wx.VERTICAL)
@@ -100,17 +101,37 @@ class Controller(object):
     '''
     
     
-    def __init__(self):
+    def __init__(self, app):
         '''
         Constructeur
+        @param app: Application
         @author: Julien
         '''
-        self.view = View()
+        self.app = app
+        self.view = View(app.TopWindow)
+        
+        # Binding de la vue
+        self.view.Bind(event=wx.EVT_CLOSE, handler=self.OnClose)
+        
+        # Afficher
+        self.view.GetParent().Enable(False)
         self.view.Show()
+    
+    
+    # Événements de la vue
+    
+    def OnClose(self, event):
+        '''
+        Quitter
+        @param event: Événement
+        @author: Julien
+        '''
+        self.view.GetParent().Enable(True)
+        event.Skip()
 
 
 
 if __name__ == '__main__':
     app = wx.App(False)
-    controller = Controller()
+    controller = Controller(app)
     app.MainLoop()
