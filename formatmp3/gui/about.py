@@ -30,6 +30,9 @@ class View(wx.Frame):
         # Fenêtre
         wx.Frame.__init__(self, parent, title="À propos de FormatMP3", style=wx.CAPTION|wx.SYSTEM_MENU|wx.CLOSE_BOX|wx.FRAME_NO_TASKBAR)#wx.DEFAULT_FRAME_STYLE^wx.RESIZE_BORDER)
         self.CenterOnScreen()
+        # Icone
+        icon = wx.Icon("icons/about.png", wx.BITMAP_TYPE_PNG)
+        self.SetIcon(icon)
         
         frame_boxSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(frame_boxSizer)
@@ -114,9 +117,9 @@ class Controller(object):
         self.view.Bind(event=wx.EVT_CLOSE, handler=self.OnClose)
         
         # Afficher
-        self.view.GetParent().Enable(False)
+        if self.view.GetParent() is not None:
+            self.view.GetParent().Enable(False)
         self.view.Show()
-    
     
     # Événements de la vue
     
@@ -126,7 +129,8 @@ class Controller(object):
         @param event: Événement
         @author: Julien
         '''
-        self.view.GetParent().Enable(True)
+        if self.view.GetParent() is not None:
+            self.view.GetParent().Enable(True)
         event.Skip()
 
 

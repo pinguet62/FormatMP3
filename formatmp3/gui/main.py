@@ -511,11 +511,10 @@ class Controller(object):
                        self.view.menubar_fichier_quitter)
         self.view.Bind(wx.EVT_MENU, self.OnAbout, self.view.menubar_aide_aPropos)
         #     Barre d'outils principale
-        #self.view.Bind(wx.EVT_TOOL,
-        #               lambda event:
-        #                   self.view.Close(),
-        #               self.view.exit_tool)
-        self.view.Bind(wx.EVT_TOOL, self.test, self.view.exit_tool)
+        self.view.Bind(wx.EVT_TOOL,
+                       lambda event:
+                           self.view.Close(),
+                       self.view.exit_tool)
         #     Barre d'outils des fichiers
         self.view.Bind(wx.EVT_TOOL, self.OnAddFiles, self.view.addFile_tool)
         self.view.Bind(wx.EVT_TOOL, self.OnAddFolder, self.view.addFolder_tool)
@@ -561,10 +560,6 @@ class Controller(object):
         #fen = wx.Frame(self.view, style=wx.DEFAULT_FRAME_STYLE)
         #fen.Show()
         #self.app.SetTopWindow(fen)
-    
-    
-    def test(self, event):
-        self.model.save(Path("C:\\Users\\Julien\\Desktop\\toto.xml"))
     
     # Erreur
     

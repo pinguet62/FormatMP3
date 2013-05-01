@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from argparse import ArgumentTypeError
 
 
 
@@ -11,9 +10,10 @@ Action sur les fichiers
 
 
 
-import os
-import copy
 from formatmp3.actions.Path import *
+import copy
+import eyed3
+import os
 
 
 
@@ -523,13 +523,26 @@ class UpdateTags(Action):
     
     # Exécution
     
-    def execute(self):
+    def getOverview(self, oldPath):
+        '''
+        Obtenir l'aperçu de la modification
+        @param oldPath: Chemin du fichier
+        @return: Chemin du fichier modifié
+        @author: Julien
+        '''
+        return oldPath
+    
+    
+    def execute(self, path):
         '''
         Exécuter la modification
+        @param path: Chemin du fichier (modifié après exécution)
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        pass # TODO
+        newPath = self.getOverview(path)
+        #TODO os.rename(oldPath.get(), newPath.get())
+        path.set(newPath.get())
 
 
 
