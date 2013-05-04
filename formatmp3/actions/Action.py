@@ -486,6 +486,7 @@ class UpdateTags(Action):
     
     
     AUTO = "%auto%"
+    FILENAME = "%filename"
     
     
     def __init__(self):
@@ -495,10 +496,27 @@ class UpdateTags(Action):
         '''
         Action.__init__(self)
         
-        self.artiste = None
+        self.title = None
+        self.subtitle = None
+        #self.notation = None
+        self.comment = None
+        self.artist = None
+        self.albumArtist = None
         self.album = None
+        self.year = None
+        self.trackNumber = None
         self.genre = None
-        self.annee = None
+        self.publisher = None
+        self.encodedBy = None
+        self.urlAuteur = None
+        self.composer = None
+        self.conductor = None
+        #self.groupDescription = None
+        #self.ambiance = None
+        self.discNumber = None
+        #self.originalKey = None
+        self.bpm = None
+        self.compilation = None
     
     # Informations
     
@@ -540,9 +558,7 @@ class UpdateTags(Action):
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        newPath = self.getOverview(path)
-        #TODO os.rename(oldPath.get(), newPath.get())
-        path.set(newPath.get())
+        pass
 
 
 

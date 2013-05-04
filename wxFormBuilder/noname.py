@@ -11,10 +11,10 @@ import wx
 import wx.xrc
 
 ###########################################################################
-## Class MyFrame1
+## Class MainFrame
 ###########################################################################
 
-class MyFrame1 ( wx.Frame ):
+class MainFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
 		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"FormatMP3 - Formatez vos fichiers MP3 en un clic !", pos = wx.DefaultPosition, size = wx.Size( 634,771 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
@@ -495,29 +495,167 @@ class UpdateTagsGui_panel ( wx.Panel ):
 		
 		gridSizer = wx.GridSizer( 0, 2, 0, 0 )
 		
+		self.title_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Titre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.title_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.title_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.title_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.subtitle_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Sous-titre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.subtitle_checkBox.SetValue(True) 
+		gridSizer.Add( self.subtitle_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.subtitle_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.subtitle_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.notation_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Notation : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.notation_checkBox.Enable( False )
+		
+		gridSizer.Add( self.notation_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.notation_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.notation_textCtrl.Enable( False )
+		
+		gridSizer.Add( self.notation_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.comment_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Commentaire : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.comment_checkBox.SetValue(True) 
+		self.comment_checkBox.Enable( False )
+		
+		gridSizer.Add( self.comment_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.comment_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.comment_textCtrl.Enable( False )
+		
+		gridSizer.Add( self.comment_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.albumArtist_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Artiste de l'album : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.albumArtist_checkBox.SetValue(True) 
+		gridSizer.Add( self.albumArtist_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.artistAlbum_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.artistAlbum_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
 		self.artiste_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Artiste : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.artiste_checkBox, 0, wx.ALL, 5 )
+		gridSizer.Add( self.artiste_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.artiste_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.artiste_textCtrl, 0, wx.ALL, 5 )
+		gridSizer.Add( self.artiste_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.album_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Album : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.album_checkBox, 0, wx.ALL, 5 )
+		gridSizer.Add( self.album_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.album_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.album_textCtrl, 0, wx.ALL, 5 )
-		
-		self.genre_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Genre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.genre_checkBox, 0, wx.ALL, 5 )
-		
-		self.genre_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.genre_textCtrl, 0, wx.ALL, 5 )
+		gridSizer.Add( self.album_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.annee_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Année : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.annee_checkBox, 0, wx.ALL, 5 )
+		gridSizer.Add( self.annee_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.annee_textCtrl = wx.TextCtrl( self, wx.ID_ANY, u"azza", wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.annee_textCtrl, 0, wx.ALL, 5 )
+		self.annee_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.annee_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.trackNumber_checkBox = wx.CheckBox( self, wx.ID_ANY, u"N° : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.trackNumber_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.trackNumber_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.trackNumber_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.genre_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Genre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.genre_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.genre_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.genre_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.publisher_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Éditeur : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.publisher_checkBox.SetValue(True) 
+		gridSizer.Add( self.publisher_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.publisher_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.publisher_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.urlAuteur_checkBox = wx.CheckBox( self, wx.ID_ANY, u"URL de l'auteur : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.urlAuteur_checkBox.SetValue(True) 
+		gridSizer.Add( self.urlAuteur_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.urlAuteur_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.urlAuteur_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.composer_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Compositeur : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.composer_checkBox.SetValue(True) 
+		gridSizer.Add( self.composer_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.composer_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.composer_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.conductor_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Chef d'orchestre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.conductor_checkBox.SetValue(True) 
+		gridSizer.Add( self.conductor_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.conductor_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.conductor_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.groupDescription_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Description du groupe : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.groupDescription_checkBox.SetValue(True) 
+		self.groupDescription_checkBox.Enable( False )
+		
+		gridSizer.Add( self.groupDescription_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.groupDescription_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.groupDescription_textCtrl.Enable( False )
+		
+		gridSizer.Add( self.groupDescription_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.ambiance_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Ambiance : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.ambiance_checkBox.SetValue(True) 
+		self.ambiance_checkBox.Enable( False )
+		
+		gridSizer.Add( self.ambiance_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.ambiance_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.ambiance_textCtrl.Enable( False )
+		
+		gridSizer.Add( self.ambiance_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.discNumber_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Partie du coffret : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.discNumber_checkBox.SetValue(True) 
+		gridSizer.Add( self.discNumber_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.discNumber_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.discNumber_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.originalKey_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Clé d'origine : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.originalKey_checkBox.SetValue(True) 
+		self.originalKey_checkBox.Enable( False )
+		
+		gridSizer.Add( self.originalKey_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.originalKey_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.originalKey_textCtrl.Enable( False )
+		
+		gridSizer.Add( self.originalKey_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.bpm_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Battements par minute : ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.bpm_checkBox.SetValue(True) 
+		gridSizer.Add( self.bpm_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.bpm_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gridSizer.Add( self.bpm_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.compilation_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Partie d'une compilation ? ", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.compilation_checkBox.SetValue(True) 
+		gridSizer.Add( self.compilation_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		compilation_boxSizer = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.yes_compilation_radioBtn = wx.RadioButton( self, wx.ID_ANY, u"oui", wx.DefaultPosition, wx.DefaultSize, 0 )
+		compilation_boxSizer.Add( self.yes_compilation_radioBtn, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		self.no_compilation_radioBtn = wx.RadioButton( self, wx.ID_ANY, u"non", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.no_compilation_radioBtn.SetValue( True ) 
+		compilation_boxSizer.Add( self.no_compilation_radioBtn, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		
+		
+		gridSizer.Add( compilation_boxSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 0 )
 		
 		
 		boxSizer.Add( gridSizer, 0, wx.ALL, 5 )
@@ -532,13 +670,13 @@ class UpdateTagsGui_panel ( wx.Panel ):
 	
 
 ###########################################################################
-## Class MyFrame2
+## Class AboutFrame
 ###########################################################################
 
-class MyFrame2 ( wx.Frame ):
+class AboutFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"À propos", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"À propos", pos = wx.DefaultPosition, size = wx.Size( -1,-1 ), style = wx.CAPTION|wx.CLOSE_BOX|wx.SYSTEM_MENU|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		

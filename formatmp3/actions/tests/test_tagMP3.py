@@ -120,23 +120,26 @@ class TestMutagen(unittest.TestCase):
         # notation
         # commentaire
         self.assertEqual(audio1_file["artist"][0], "artiste1") # artiste ayant participé
-        # artiste de l'album
+        self.assertEqual(audio1_file["performer"][0], "artisteAlbum1") # artiste de l'album
         self.assertEqual(audio1_file["album"][0], "album1") # album
-        # année
-        # n°
-        # genre
-        # éditeur
+        self.assertEqual(int(audio1_file["date"][0]), 1111) # année
+        self.assertEqual(int(audio1_file["tracknumber"][0]), 11) # n°
+        self.assertEqual(audio1_file["genre"][0], "genre1") # genre
+        self.assertEqual(audio1_file["organization"][0], "editeur1") # éditeur
         self.assertEqual(audio1_file["encodedby"][0], "encodePar1") # encodé par
-        # URL de l'auteur
+        self.assertEqual(audio1_file["website"][0], "urlAuteur1") # URL de l'auteur
         self.assertEqual(audio1_file["composer"][0], "compositeur1") # compositeur
-        # chef d'orchestre
+        self.assertEqual(audio1_file["conductor"][0], "chefOrchestre1") # chef d'orchestre
         # description du groupe
         # ambiance
-        # partie du coffret
+        self.assertEqual(int(audio1_file["discnumber"][0]), 111) # partie du coffret
         # clé d'origine
         self.assertEqual(int(audio1_file["bpm"][0]), 11111) # battements par minute
-        # partie d'une compilation
+        self.assertEqual(int(audio1_file["compilation"][0]), 0) # partie d'une compilation
         
+        #print int(audio1_file["arranger"][0])
+        #print mutagen.easyid3.EasyID3.valid_keys.keys()
+        print mutagen.File(audio1_path, easy=True)
 
 
 
