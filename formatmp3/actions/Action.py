@@ -497,8 +497,8 @@ class UpdateTags(Action):
         Action.__init__(self)
         
         self.title = None
-        self.subtitle = None
-        #self.notation = None
+        self.subtitle = ""
+        self.notation = 1 # non dispo
         self.comment = None
         self.artist = None
         self.albumArtist = None

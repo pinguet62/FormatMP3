@@ -91,32 +91,28 @@ class CaseChangeGui(ActionGui):
         lower_radioButton.Value = (self.action.modification is CaseChange.LOWER)
         lower_radioButton.Bind(wx.EVT_RADIOBUTTON,
                                lambda event, modification=CaseChange.LOWER:
-                                   self.OnModificationChanged(event, modification)
-                               )
+                                   self.OnModificationChanged(event, modification))
         options_staticBoxSizer.Add(lower_radioButton, flag=wx.ALL, border=5)
         #     FIRST_MAJ
         firstMaj_radioButton = wx.RadioButton(self, label="Majuscule la première lettre du nom")
         firstMaj_radioButton.Value = (self.action.modification is CaseChange.FIRST_MAJ)
         firstMaj_radioButton.Bind(wx.EVT_RADIOBUTTON,
                                   lambda event, modification=CaseChange.FIRST_MAJ:
-                                      self.OnModificationChanged(event, modification)
-                                  )
+                                      self.OnModificationChanged(event, modification))
         options_staticBoxSizer.Add(firstMaj_radioButton, flag=wx.ALL, border=5)
         #     TITLE
         title_radioButton = wx.RadioButton(self, label="Majuscule la première lettre de chaque mot")
         title_radioButton.Value = (self.action.modification is CaseChange.TITLE)
         title_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                   lambda event, modification=CaseChange.TITLE:
-                                       self.OnModificationChanged(event, modification)
-                               )
+                               lambda event, modification=CaseChange.TITLE:
+                                   self.OnModificationChanged(event, modification))
         options_staticBoxSizer.Add(title_radioButton, flag=wx.ALL, border=5)
         #     UPPER
         upper_radioButton = wx.RadioButton(self, label="Tout en majuscule")
         upper_radioButton.Value = (self.action.modification is CaseChange.UPPER)
         upper_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                    lambda event, modification=CaseChange.UPPER:
-                                        self.OnModificationChanged(event, modification)
-                               )
+                               lambda event, modification=CaseChange.UPPER:
+                                   self.OnModificationChanged(event, modification))
         options_staticBoxSizer.Add(upper_radioButton, flag=wx.ALL, border=5)
         # Appliquer à
         appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
@@ -125,17 +121,15 @@ class CaseChangeGui(ActionGui):
         filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
         filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
         filename_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                      lambda event, range=PathModification.FILENAME:
-                                          self.OnRangeChanged(event, range)
-                                  )
+                                  lambda event, range=PathModification.FILENAME:
+                                      self.OnRangeChanged(event, range))
         appliquerA_staticBoxSizer.Add(filename_radioButton, flag=wx.ALL, border=5)
         #     EXTENSION
         extension_radioButton = wx.RadioButton(self, label="Extension")
         extension_radioButton.Value = (self.action.range is PathModification.EXTENSION)
         extension_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                       lambda event, range=PathModification.EXTENSION:
-                                           self.OnRangeChanged(event, range)
-                                   )
+                                   lambda event, range=PathModification.EXTENSION:
+                                       self.OnRangeChanged(event, range))
         appliquerA_staticBoxSizer.Add(extension_radioButton, flag=wx.ALL, border=5)
     
     
@@ -205,17 +199,15 @@ class ReplaceStringGui(ActionGui):
         filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
         filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
         filename_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                      lambda event, range=PathModification.FILENAME:
-                                          self.OnRangeChanged(event, range)
-                                  )
+                                  lambda event, range=PathModification.FILENAME:
+                                      self.OnRangeChanged(event, range))
         appliquerA_staticBoxSizer.Add(filename_radioButton, flag=wx.ALL, border=5)
         #     EXTENSION
         extension_radioButton = wx.RadioButton(self, label="Extension")
         extension_radioButton.Value = (self.action.range is PathModification.EXTENSION)
         extension_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                       lambda event, range=PathModification.EXTENSION:
-                                           self.OnRangeChanged(event, range)
-                                   )
+                                   lambda event, range=PathModification.EXTENSION:
+                                       self.OnRangeChanged(event, range))
         appliquerA_staticBoxSizer.Add(extension_radioButton, flag=wx.ALL, border=5)
     
     
@@ -312,17 +304,15 @@ class CutGui(ActionGui):
         filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
         filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
         filename_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                      lambda event, range=PathModification.FILENAME:
-                                          self.OnRangeChanged(event, range)
-                                  )
+                                  lambda event, range=PathModification.FILENAME:
+                                      self.OnRangeChanged(event, range))
         appliquerA_staticBoxSizer.Add(filename_radioButton, flag=wx.ALL, border=5)
         #     EXTENSION
         extension_radioButton = wx.RadioButton(self, label="Extension")
         extension_radioButton.Value = (self.action.range is PathModification.EXTENSION)
         extension_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                       lambda event, range=PathModification.EXTENSION:
-                                           self.OnRangeChanged(event, range)
-                                   )
+                                   lambda event, range=PathModification.EXTENSION:
+                                       self.OnRangeChanged(event, range))
         appliquerA_staticBoxSizer.Add(extension_radioButton, flag=wx.ALL, border=5)
     
     
@@ -429,17 +419,15 @@ class InsertStringGui(ActionGui):
         filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
         filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
         filename_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                      lambda event, range=PathModification.FILENAME:
-                                          self.OnRangeChanged(event, range)
-                                  )
+                                  lambda event, range=PathModification.FILENAME:
+                                      self.OnRangeChanged(event, range))
         appliquerA_staticBoxSizer.Add(filename_radioButton, flag=wx.ALL, border=5)
         #     EXTENSION
         extension_radioButton = wx.RadioButton(self, label="Extension")
         extension_radioButton.Value = (self.action.range is PathModification.EXTENSION)
         extension_radioButton.Bind(wx.EVT_RADIOBUTTON,
-                                       lambda event, range=PathModification.EXTENSION:
-                                           self.OnRangeChanged(event, range)
-                                   )
+                                   lambda event, range=PathModification.EXTENSION:
+                                       self.OnRangeChanged(event, range))
         appliquerA_staticBoxSizer.Add(extension_radioButton, flag=wx.ALL, border=5)
     
     
@@ -484,5 +472,218 @@ class InsertStringGui(ActionGui):
 
 
 
+class UpdateTagsGui(ActionGui):
+    '''
+    Interface graphique de la classe UpdateTags
+    @author: Julien
+    '''
+    
+    
+    def __init__(self, parent, action):
+        '''
+        Constructeur
+        @param parent: Fenêtre parent
+        @param action: Action
+        @author: Julien
+        '''
+        ActionGui.__init__(self, parent, action)
+        
+        # Options
+        description_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
+        self.boxSizer.Add(description_staticBoxSizer)
+        # Sous-Sizer
+        description_gridSizer = wx.GridSizer(0, 2)
+        description_staticBoxSizer.Add(description_gridSizer, flag=wx.ALL)
+        #     Titre
+        #         Title
+        title_checkBox = wx.CheckBox(self, label="Titre : ")
+        title_checkBox.Value = self.action.title is not None
+        title_checkBox.Bind(wx.EVT_CHECKBOX, self.OnTitleActived)
+        description_gridSizer.Add(title_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        choix_title_comboBox = [wx.EmptyString, UpdateTags.AUTO, UpdateTags.FILENAME]
+        self.title_comboBox = wx.ComboBox(self, choices=choix_title_comboBox)
+        if self.action.title is None:
+            self.title_comboBox.Enabled = False
+        else:
+            self.title_comboBox.Value = self.action.title
+        self.title_comboBox.Bind(wx.EVT_TEXT, self.OnTitleChanged)
+        description_gridSizer.Add(self.title_comboBox, flag=wx.ALL, border=5)
+        #     Sous-titre
+        #         Title
+        subtitle_checkBox = wx.CheckBox(self, label="Sous-titre : ")
+        subtitle_checkBox.Value = self.action.subtitle is not None
+        subtitle_checkBox.Bind(wx.EVT_CHECKBOX, self.OnSubtitleActived)
+        description_gridSizer.Add(subtitle_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        self.subtitle_textCtrl = wx.TextCtrl(self)
+        if self.action.subtitle is None:
+            self.subtitle_textCtrl.Enabled = False
+        else:
+            self.subtitle_textCtrl.Value = self.action.subtitle
+        self.subtitle_textCtrl.Bind(wx.EVT_TEXT, self.OnSubtitleChanged)
+        description_gridSizer.Add(self.subtitle_textCtrl, flag=wx.ALL, border=5)
+        #     Notation
+        #         Titre
+        notation_checkBox = wx.CheckBox(self, label="Notation : ")
+        notation_checkBox.Enabled = False # tmp
+        notation_checkBox.Value = self.action.notation is not None
+        notation_checkBox.Bind(wx.EVT_CHECKBOX, self.OnNotationActived)
+        description_gridSizer.Add(notation_checkBox, flag=wx.ALL, border=5)
+        #         Valueur
+        #             Panel
+        self.valeur_notation_panel = wx.Panel(self)
+        self.valeur_notation_panel.Enabled = False # tmp
+        if self.action.notation is None:
+            self.valeur_notation_panel.Enabled = False
+        self.valeur_notation_panel.Bind(wx.EVT_LEFT_UP,
+                                        lambda event:
+                                            self.resetNotation())
+        description_gridSizer.Add(self.valeur_notation_panel, flag=wx.ALL)
+        #             Sizer
+        valeur_notation_boxSizer = wx.BoxSizer()
+        self.valeur_notation_panel.SetSizer(valeur_notation_boxSizer)
+        #             .
+        valeur_notation_boxSizer.AddSpacer((10,0), flag=wx.ALL)
+        #             1
+        self.notation_1_radioButton = wx.RadioButton(self.valeur_notation_panel, style=wx.RB_GROUP)
+        self.notation_1_radioButton.Value = False
+        if self.action.notation == 1:
+            self.notation_1_radioButton.Value = True
+        self.notation_1_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                         lambda event:
+                                             self.updateNotation())
+        valeur_notation_boxSizer.Add(self.notation_1_radioButton, flag=wx.ALL, border=5)
+        #             2
+        self.notation_2_radioButton = wx.RadioButton(self.valeur_notation_panel)
+        if self.action.notation == 2:
+            self.notation_2_radioButton.Value = True
+        self.notation_2_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                         lambda event:
+                                             self.updateNotation())
+        valeur_notation_boxSizer.Add(self.notation_2_radioButton, flag=wx.ALL, border=5)
+        #             3
+        self.notation_3_radioButton = wx.RadioButton(self.valeur_notation_panel)
+        if self.action.notation == 3:
+            self.notation_3_radioButton.Value = True
+        self.notation_3_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                         lambda event:
+                                             self.updateNotation())
+        valeur_notation_boxSizer.Add(self.notation_3_radioButton, flag=wx.ALL, border=5)
+        #             4
+        self.notation_4_radioButton = wx.RadioButton(self.valeur_notation_panel)
+        if self.action.notation == 4:
+            self.notation_4_radioButton.Value = True
+        self.notation_4_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                         lambda event:
+                                             self.updateNotation())
+        valeur_notation_boxSizer.Add(self.notation_4_radioButton, flag=wx.ALL, border=5)
+        #             5
+        self.notation_5_radioButton = wx.RadioButton(self.valeur_notation_panel)
+        if self.action.notation == 5:
+            self.notation_5_radioButton.Value = True
+        self.notation_5_radioButton.Bind(wx.EVT_RADIOBUTTON,
+                                         lambda event:
+                                             self.updateNotation())
+        valeur_notation_boxSizer.Add(self.notation_5_radioButton, flag=wx.ALL, border=5)
+    
+    
+    def OnTitleActived(self, event):
+        '''
+        Activation de la modification du titre
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.title_comboBox.Enabled = True
+            self.action.title = self.title_comboBox.Value
+        else:
+            self.title_comboBox.Enabled = False
+            self.action.title = None
+    
+    
+    def OnTitleChanged(self, event):
+        '''
+        Modifitation du titre
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.title = event.GetString()
+    
+    
+    def OnSubtitleActived(self, event):
+        '''
+        Activation de la modification du sous-titre
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.subtitle_textCtrl.Enabled = True
+            self.action.title = self.title_comboBox.Value
+        else:
+            self.subtitle_textCtrl.Enabled = False
+            self.action.subtitle = None
+    
+    
+    def OnSubtitleChanged(self, event):
+        '''
+        Modifitation du titre
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.subtitle = event.GetString()
+    
+    
+    def OnNotationActived(self, event):
+        '''
+        Activation de la modification de la notation
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.valeur_notation_panel.Enabled = True
+            self.updateNotation()
+        else:
+            self.valeur_notation_panel.Enabled = False
+            self.action.notation = None
+    
+    
+    def resetNotation(self):
+        '''
+        Mise à jour de la notation vers 0
+        @author: Julien
+        '''
+        print "ok"
+        self.notation_1_radioButton.Value = False
+        self.notation_2_radioButton.Value = False
+        self.notation_3_radioButton.Value = False
+        self.notation_4_radioButton.Value = False
+        self.notation_5_radioButton.Value = False
+        self.action.notation = 0
+    
+    
+    def updateNotation(self):
+        '''
+        Mise à jour de la notation
+        @author: Julien
+        '''
+        if self.notation_1_radioButton.Value:
+            self.action.notation = 1
+        elif self.notation_2_radioButton.Value:
+            self.action.notation = 2
+        elif self.notation_3_radioButton.Value:
+            self.action.notation = 3
+        elif self.notation_4_radioButton.Value:
+            self.action.notation = 4
+        elif self.notation_5_radioButton.Value:
+            self.action.notation = 5
+        else:
+            self.action.notation = 0
+
+
+
 if __name__ == "__main__":
-    pass
+    app = wx.App(False)
+    import main
+    controller = main.Controller(app)
+    app.MainLoop()

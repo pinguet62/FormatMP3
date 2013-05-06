@@ -22,7 +22,7 @@ import wx
 
 
 # Liste des actions de l'application
-actions = [CaseChange, ReplaceString, Cut, InsertString]
+actions = [CaseChange, ReplaceString, Cut, InsertString, UpdateTags]
 
 
 
@@ -556,6 +556,7 @@ class Controller(object):
         self.model.AddAction(ReplaceString())
         self.model.AddAction(Cut())
         self.model.AddAction(InsertString())
+        self.model.AddAction(UpdateTags())
         # Test
         #fen = wx.Frame(self.view, style=wx.DEFAULT_FRAME_STYLE)
         #fen.Show()
