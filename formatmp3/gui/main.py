@@ -274,7 +274,7 @@ class View(wx.Frame):
         @author: Julien
         '''
         # Fenêtre
-        minSize = (675,700)
+        minSize = (675,800)
         wx.Frame.__init__(self, parent, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
         #self.SetMinSize(minSize)
         self.CenterOnScreen()
@@ -557,6 +557,8 @@ class Controller(object):
         self.model.AddAction(Cut())
         self.model.AddAction(InsertString())
         self.model.AddAction(UpdateTags())
+        self.view.listActionsToDo_listBox.Selection = 4
+        self._refreshSelectedActionGui()
         # Test
         #fen = wx.Frame(self.view, style=wx.DEFAULT_FRAME_STYLE)
         #fen.Show()

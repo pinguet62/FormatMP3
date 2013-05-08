@@ -8,8 +8,14 @@ TODO
 	Log
 	Actions
 		TagMP3
+			Notation
+			Description du groupe
+			Ambiance
+			Clé d'origine
 	ActionGUI
 		TagMP3
+			Notation
+			Année + Numéro : controle du copier/coller
 	Préférences
 		MVC
 		Filtre mp3

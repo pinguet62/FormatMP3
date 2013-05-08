@@ -496,33 +496,35 @@ class UpdateTagsGui_panel ( wx.Panel ):
 		
 		description_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Description" ), wx.VERTICAL )
 		
-		description_gridSizer = wx.GridSizer( 0, 2, 0, 0 )
+		description_flexGridSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
+		description_flexGridSizer.SetFlexibleDirection( wx.BOTH )
+		description_flexGridSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.title_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Titre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		description_gridSizer.Add( self.title_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		description_flexGridSizer.Add( self.title_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		title_comboBoxChoices = [ u"%auto%", u"%filename%", wx.EmptyString ]
 		self.title_comboBox = wx.ComboBox( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, title_comboBoxChoices, 0 )
 		self.title_comboBox.SetSelection( 1 )
-		description_gridSizer.Add( self.title_comboBox, 0, wx.ALL, 5 )
+		description_flexGridSizer.Add( self.title_comboBox, 0, wx.ALL, 5 )
 		
 		self.subtitle_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Sous-titre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.subtitle_checkBox.SetValue(True) 
-		description_gridSizer.Add( self.subtitle_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		description_flexGridSizer.Add( self.subtitle_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.subtitle_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		description_gridSizer.Add( self.subtitle_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		description_flexGridSizer.Add( self.subtitle_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.notation_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Notation : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.notation_checkBox.Enable( False )
 		
-		description_gridSizer.Add( self.notation_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		description_flexGridSizer.Add( self.notation_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.notation_panel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		valeurs_notation_boxSizer = wx.BoxSizer( wx.HORIZONTAL )
 		
 		
-		valeurs_notation_boxSizer.AddSpacer( ( 5, 0), 0, wx.ALL, 0 )
+		valeurs_notation_boxSizer.AddSpacer( ( 10, 0), 0, wx.ALL, 0 )
 		
 		self.notation_1_radioButton = wx.RadioButton( self.notation_panel, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
 		valeurs_notation_boxSizer.Add( self.notation_1_radioButton, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
@@ -543,21 +545,21 @@ class UpdateTagsGui_panel ( wx.Panel ):
 		self.notation_panel.SetSizer( valeurs_notation_boxSizer )
 		self.notation_panel.Layout()
 		valeurs_notation_boxSizer.Fit( self.notation_panel )
-		description_gridSizer.Add( self.notation_panel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 0 )
+		description_flexGridSizer.Add( self.notation_panel, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 0 )
 		
 		self.comment_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Commentaire : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.comment_checkBox.SetValue(True) 
 		self.comment_checkBox.Enable( False )
 		
-		description_gridSizer.Add( self.comment_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		description_flexGridSizer.Add( self.comment_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		self.comment_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.comment_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_MULTILINE )
 		self.comment_textCtrl.Enable( False )
 		
-		description_gridSizer.Add( self.comment_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		description_flexGridSizer.Add( self.comment_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
-		description_staticBoxSizer.Add( description_gridSizer, 0, wx.ALL, 0 )
+		description_staticBoxSizer.Add( description_flexGridSizer, 1, wx.EXPAND, 5 )
 		
 		
 		boxSizer.Add( description_staticBoxSizer, 0, wx.ALL, 5 )

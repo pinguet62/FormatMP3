@@ -14,6 +14,7 @@ Permettent de paramétrer les actions
 
 from formatmp3.actions.Action import *
 from wx.lib.pubsub import pub as Publisher
+import string
 import wx
 
 
@@ -31,7 +32,7 @@ def createGui(parent, action):
 
 
 
-class ActionGui(wx.Panel):
+class ActionGui(wx.ScrolledWindow):
     '''
     Interface de base des interfaces graphiques
     @author: Julien
@@ -51,7 +52,7 @@ class ActionGui(wx.Panel):
         '''
         self.action = action
         
-        wx.Panel.__init__(self, parent)
+        wx.ScrolledWindow.__init__(self, parent, style=wx.VSCROLL)
         self.boxSizer = wx.BoxSizer(wx.VERTICAL)
         self.SetSizer(self.boxSizer)
         # Title
@@ -488,18 +489,18 @@ class UpdateTagsGui(ActionGui):
         '''
         ActionGui.__init__(self, parent, action)
         
-        # Options
-        description_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
+        # Description
+        description_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Description"), wx.VERTICAL)
         self.boxSizer.Add(description_staticBoxSizer)
         # Sous-Sizer
-        description_gridSizer = wx.GridSizer(0, 2)
-        description_staticBoxSizer.Add(description_gridSizer, flag=wx.ALL)
+        description_flexGridSizer = wx.FlexGridSizer(0, 2)
+        description_staticBoxSizer.Add(description_flexGridSizer, flag=wx.ALL)
         #     Titre
         #         Title
         title_checkBox = wx.CheckBox(self, label="Titre : ")
         title_checkBox.Value = self.action.title is not None
         title_checkBox.Bind(wx.EVT_CHECKBOX, self.OnTitleActived)
-        description_gridSizer.Add(title_checkBox, flag=wx.ALL, border=5)
+        description_flexGridSizer.Add(title_checkBox, flag=wx.ALL, border=5)
         #         Valeur
         choix_title_comboBox = [wx.EmptyString, UpdateTags.AUTO, UpdateTags.FILENAME]
         self.title_comboBox = wx.ComboBox(self, choices=choix_title_comboBox)
@@ -508,13 +509,13 @@ class UpdateTagsGui(ActionGui):
         else:
             self.title_comboBox.Value = self.action.title
         self.title_comboBox.Bind(wx.EVT_TEXT, self.OnTitleChanged)
-        description_gridSizer.Add(self.title_comboBox, flag=wx.ALL, border=5)
+        description_flexGridSizer.Add(self.title_comboBox, flag=wx.ALL, border=5)
         #     Sous-titre
         #         Title
         subtitle_checkBox = wx.CheckBox(self, label="Sous-titre : ")
         subtitle_checkBox.Value = self.action.subtitle is not None
         subtitle_checkBox.Bind(wx.EVT_CHECKBOX, self.OnSubtitleActived)
-        description_gridSizer.Add(subtitle_checkBox, flag=wx.ALL, border=5)
+        description_flexGridSizer.Add(subtitle_checkBox, flag=wx.ALL, border=5)
         #         Valeur
         self.subtitle_textCtrl = wx.TextCtrl(self)
         if self.action.subtitle is None:
@@ -522,14 +523,14 @@ class UpdateTagsGui(ActionGui):
         else:
             self.subtitle_textCtrl.Value = self.action.subtitle
         self.subtitle_textCtrl.Bind(wx.EVT_TEXT, self.OnSubtitleChanged)
-        description_gridSizer.Add(self.subtitle_textCtrl, flag=wx.ALL, border=5)
+        description_flexGridSizer.Add(self.subtitle_textCtrl, flag=wx.ALL, border=5)
         #     Notation
         #         Titre
         notation_checkBox = wx.CheckBox(self, label="Notation : ")
         notation_checkBox.Enabled = False # tmp
         notation_checkBox.Value = self.action.notation is not None
         notation_checkBox.Bind(wx.EVT_CHECKBOX, self.OnNotationActived)
-        description_gridSizer.Add(notation_checkBox, flag=wx.ALL, border=5)
+        description_flexGridSizer.Add(notation_checkBox, flag=wx.ALL, border=5)
         #         Valueur
         #             Panel
         self.valeur_notation_panel = wx.Panel(self)
@@ -539,7 +540,7 @@ class UpdateTagsGui(ActionGui):
         self.valeur_notation_panel.Bind(wx.EVT_LEFT_UP,
                                         lambda event:
                                             self.resetNotation())
-        description_gridSizer.Add(self.valeur_notation_panel, flag=wx.ALL)
+        description_flexGridSizer.Add(self.valeur_notation_panel, flag=wx.ALL)
         #             Sizer
         valeur_notation_boxSizer = wx.BoxSizer()
         self.valeur_notation_panel.SetSizer(valeur_notation_boxSizer)
@@ -586,6 +587,110 @@ class UpdateTagsGui(ActionGui):
                                          lambda event:
                                              self.updateNotation())
         valeur_notation_boxSizer.Add(self.notation_5_radioButton, flag=wx.ALL, border=5)
+        #     Commentaire
+        #         Title
+        comment_checkBox = wx.CheckBox(self, label="Commentaire : ")
+        comment_checkBox.Value = self.action.comment is not None
+        comment_checkBox.Bind(wx.EVT_CHECKBOX, self.OnCommentActived)
+        description_flexGridSizer.Add(comment_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        self.comment_textCtrl = wx.TextCtrl(self, style=wx.TE_MULTILINE)
+        if self.action.comment is None:
+            self.comment_textCtrl.Enabled = False
+        else:
+            self.comment_textCtrl.Value = self.action.comment
+        self.comment_textCtrl.Bind(wx.EVT_TEXT, self.OnCommentChanged)
+        description_flexGridSizer.Add(self.comment_textCtrl, flag=wx.ALL, border=5)
+        # Média
+        media_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Média"), wx.VERTICAL)
+        self.boxSizer.Add(media_staticBoxSizer)
+        # Sous-Sizer
+        media_flexGridSizer = wx.FlexGridSizer(0, 2)
+        media_staticBoxSizer.Add(media_flexGridSizer, flag=wx.ALL)
+        #     Artiste ayant participé
+        #         Title
+        artist_checkBox = wx.CheckBox(self, label="Artiste ayant participé : ")
+        artist_checkBox.Value = self.action.artist is not None
+        artist_checkBox.Bind(wx.EVT_CHECKBOX, self.OnArtistActived)
+        media_flexGridSizer.Add(artist_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        self.artist_textCtrl = wx.TextCtrl(self)
+        if self.action.artist is None:
+            self.artist_textCtrl.Enabled = False
+        else:
+            self.artist_textCtrl.Value = self.action.artist
+        self.artist_textCtrl.Bind(wx.EVT_TEXT, self.OnArtistChanged)
+        media_flexGridSizer.Add(self.artist_textCtrl, flag=wx.ALL, border=5)
+        #     Artiste de l'album
+        #         Title
+        albumArtist_checkBox = wx.CheckBox(self, label="Artiste de l'album : ")
+        albumArtist_checkBox.Value = self.action.albumArtist is not None
+        albumArtist_checkBox.Bind(wx.EVT_CHECKBOX, self.OnAlbumArtistActived)
+        media_flexGridSizer.Add(albumArtist_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        self.albumArtist_textCtrl = wx.TextCtrl(self)
+        if self.action.albumArtist is None:
+            self.albumArtist_textCtrl.Enabled = False
+        else:
+            self.albumArtist_textCtrl.Value = self.action.albumArtist
+        self.albumArtist_textCtrl.Bind(wx.EVT_TEXT, self.OnAlbumArtistChanged)
+        media_flexGridSizer.Add(self.albumArtist_textCtrl, flag=wx.ALL, border=5)
+        #     Album
+        #         Title
+        album_checkBox = wx.CheckBox(self, label="Album : ")
+        album_checkBox.Value = self.action.album is not None
+        album_checkBox.Bind(wx.EVT_CHECKBOX, self.OnAlbumActived)
+        media_flexGridSizer.Add(album_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        self.album_textCtrl = wx.TextCtrl(self)
+        if self.action.album is None:
+            self.album_textCtrl.Enabled = False
+        else:
+            self.album_textCtrl.Value = self.action.album
+        self.album_textCtrl.Bind(wx.EVT_TEXT, self.OnAlbumChanged)
+        media_flexGridSizer.Add(self.album_textCtrl, flag=wx.ALL, border=5)
+        #     Année
+        #         Title
+        year_checkBox = wx.CheckBox(self, label="Année : ")
+        year_checkBox.Value = self.action.year is not None
+        year_checkBox.Bind(wx.EVT_CHECKBOX, self.OnYearActived)
+        media_flexGridSizer.Add(year_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        self.year_textCtrl = wx.TextCtrl(self, validator=IntOrEmptyValidator())
+        if self.action.year is None:
+            self.year_textCtrl.Enabled = False
+        else:
+            self.year_textCtrl.Value = self.action.year
+        self.year_textCtrl.Bind(wx.EVT_TEXT, self.OnYearChanged)
+        media_flexGridSizer.Add(self.year_textCtrl, flag=wx.ALL, border=5)
+        #     Numéro
+        #         Title
+        trackNumber_checkBox = wx.CheckBox(self, label="N° : ")
+        trackNumber_checkBox.Value = self.action.trackNumber is not None
+        trackNumber_checkBox.Bind(wx.EVT_CHECKBOX, self.OnTrackNumberActived)
+        media_flexGridSizer.Add(trackNumber_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        self.trackNumber_textCtrl = wx.TextCtrl(self, validator=IntOrEmptyValidator())
+        if self.action.trackNumber is None:
+            self.trackNumber_textCtrl.Enabled = False
+        else:
+            self.trackNumber_textCtrl.Value = self.action.trackNumber
+        self.trackNumber_textCtrl.Bind(wx.EVT_TEXT, self.OnTrackNumberChanged)
+        media_flexGridSizer.Add(self.trackNumber_textCtrl, flag=wx.ALL, border=5)
+        #     Genre
+        #         Title
+        genre_checkBox = wx.CheckBox(self, label="Genre : ")
+        genre_checkBox.Value = self.action.genre is not None
+        genre_checkBox.Bind(wx.EVT_CHECKBOX, self.OnGenreActived)
+        media_flexGridSizer.Add(genre_checkBox, flag=wx.ALL, border=5)
+        #         Valeur
+        self.genre_textCtrl = wx.TextCtrl(self)
+        if self.action.genre is None:
+            self.genre_textCtrl.Enabled = False
+        else:
+            self.genre_textCtrl.Value = self.action.genre
+        self.genre_textCtrl.Bind(wx.EVT_TEXT, self.OnGenreChanged)
+        media_flexGridSizer.Add(self.genre_textCtrl, flag=wx.ALL, border=5)
     
     
     def OnTitleActived(self, event):
@@ -619,7 +724,7 @@ class UpdateTagsGui(ActionGui):
         '''
         if event.IsChecked():
             self.subtitle_textCtrl.Enabled = True
-            self.action.title = self.title_comboBox.Value
+            self.action.subtitle = self.subtitle_comboBox.Value
         else:
             self.subtitle_textCtrl.Enabled = False
             self.action.subtitle = None
@@ -653,7 +758,6 @@ class UpdateTagsGui(ActionGui):
         Mise à jour de la notation vers 0
         @author: Julien
         '''
-        print "ok"
         self.notation_1_radioButton.Value = False
         self.notation_2_radioButton.Value = False
         self.notation_3_radioButton.Value = False
@@ -679,6 +783,237 @@ class UpdateTagsGui(ActionGui):
             self.action.notation = 5
         else:
             self.action.notation = 0
+    
+    
+    def OnCommentActived(self, event):
+        '''
+        Activation de la modification du commentaire
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.comment_textCtrl.Enabled = True
+            self.action.comment = self.comment_textCtrl.Value
+        else:
+            self.comment_textCtrl.Enabled = False
+            self.action.comment = None
+    
+    
+    def OnCommentChanged(self, event):
+        '''
+        Modifitation du commentaire
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.comment = event.GetString()
+    
+    
+    def OnArtistActived(self, event):
+        '''
+        Activation de la modification de l'artiste ayant participé
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.artist_textCtrl.Enabled = True
+            self.action.artist = self.artist_textCtrl.Value
+        else:
+            self.artist_textCtrl.Enabled = False
+            self.action.artist = None
+    
+    
+    def OnArtistChanged(self, event):
+        '''
+        Modifitation de l'artiste ayant participé
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.artist = event.GetString()
+    
+    
+    def OnAlbumArtistActived(self, event):
+        '''
+        Activation de la modification de l'artiste de l'album
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.albumArtist_textCtrl.Enabled = True
+            self.action.albumArtist = self.albumArtist_textCtrl.Value
+        else:
+            self.albumArtist_textCtrl.Enabled = False
+            self.action.albumArtist = None
+    
+    
+    def OnAlbumArtistChanged(self, event):
+        '''
+        Modifitation de l'artiste de l'album
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.albumArtist = event.GetString()
+    
+    
+    def OnAlbumActived(self, event):
+        '''
+        Activation de la modification de l'album
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.album_textCtrl.Enabled = True
+            self.action.album = self.album_textCtrl.Value
+        else:
+            self.album_textCtrl.Enabled = False
+            self.action.album = None
+    
+    
+    def OnAlbumChanged(self, event):
+        '''
+        Modifitation de l'album
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.album = event.GetString()
+    
+    
+    def OnYearActived(self, event):
+        '''
+        Activation de la modification de l'année
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.year_textCtrl.Enabled = True
+            self.action.year = self.year_textCtrl.Value # TODO: int(self.year_textCtrl.Value)
+        else:
+            self.year_textCtrl.Enabled = False
+            self.action.year = None
+    
+    
+    def OnYearChanged(self, event):
+        '''
+        Modifitation de l'année
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.year = event.GetString() # TODO: int(event.GetString())
+    
+    
+    def OnTrackNumberActived(self, event):
+        '''
+        Activation de la modification du numéro
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.trackNumber_textCtrl.Enabled = True
+            self.action.trackNumber = self.trackNumber_textCtrl.Value # TODO: int(self.trackNumber_textCtrl.Value)
+        else:
+            self.trackNumber_textCtrl.Enabled = False
+            self.action.trackNumber = None
+    
+    
+    def OnTrackNumberChanged(self, event):
+        '''
+        Modifitation du numéro
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.trackNumber = event.GetString() # TODO: int(event.GetString())
+    
+    
+    def OnGenreActived(self, event):
+        '''
+        Activation de la modification du genre
+        @param event: Événement
+        @author: Julien
+        '''
+        if event.IsChecked():
+            self.genre_textCtrl.Enabled = True
+            self.action.genre = self.genre_textCtrl.Value
+        else:
+            self.genre_textCtrl.Enabled = False
+            self.action.genre = None
+    
+    
+    def OnGenreChanged(self, event):
+        '''
+        Modifitation du genre
+        @param event: Événement
+        @author: Julien
+        '''
+        self.action.genre = event.GetString()
+
+
+
+class IntOrEmptyValidator(wx.PyValidator):
+    '''
+    Validation des champs qui ne peuvent contenir que des entiers ou une chaine vide.
+    @author: Julien
+    '''
+    
+    
+    def __init__(self, *args, **kwargs):
+        '''
+        Constructeur
+        @param args: Arguments
+        @param kwargs: Arguments passés par clé
+        @author: Julien
+        '''
+        wx.PyValidator.__init__(self, *args, **kwargs)
+        self.Bind(wx.EVT_CHAR, self.OnChar)
+    
+    
+    def Validate(self,  window):
+        '''
+        Valider la saisie
+        @param  window: Fenêtre
+        @return: True si valide, False sinon
+        @author: Julien
+        '''
+        textCtrl = self.GetWindow()
+        text = textCtrl.GetValue()
+        # Vide
+        if text == "":
+            return True
+        # Entier
+        try:
+            int(text)
+            return True
+        except ValueError:
+            pass
+        # Défaut
+        return False
+    
+    
+    def OnChar(self, event):
+        '''
+        Pression d'une touche
+        @param event: Événement
+        @author: Julien
+        '''
+        keycode = event.GetKeyCode()
+        if chr(keycode) not in string.digits:
+            return
+        event.Skip()
+    
+    
+    def Clone(self):
+        '''
+        Clonage de l'objet
+        @return: Objet cloné
+        @author: Julien
+        '''
+        return IntOrEmptyValidator()
+    
+    
+    def TransferToWindow(self):
+        return True
+    
+    
+    def TransferFromWindow(self):
+        return True
 
 
 

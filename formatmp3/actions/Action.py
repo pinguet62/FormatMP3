@@ -498,25 +498,25 @@ class UpdateTags(Action):
         
         self.title = None
         self.subtitle = ""
-        self.notation = 1 # non dispo
-        self.comment = None
-        self.artist = None
-        self.albumArtist = None
-        self.album = None
-        self.year = None
-        self.trackNumber = None
-        self.genre = None
-        self.publisher = None
-        self.encodedBy = None
-        self.urlAuteur = None
-        self.composer = None
-        self.conductor = None
-        #self.groupDescription = None
-        #self.ambiance = None
-        self.discNumber = None
-        #self.originalKey = None
-        self.bpm = None
-        self.compilation = None
+        self.notation = 1 # TODO: non dispo
+        self.comment = ""
+        self.artist = ""
+        self.albumArtist = ""
+        self.album = ""
+        self.year = ""
+        self.trackNumber = ""
+        self.genre = ""
+        self.publisher = ""
+        self.encodedBy = ""
+        self.urlAuteur = ""
+        self.composer = ""
+        self.conductor = ""
+        self.groupDescription = "" # TODO: non dispo
+        self.ambiance = "" # TODO: non dispo
+        self.discNumber = ""
+        self.originalKey = "" # TODO: non dispo
+        self.bpm = ""
+        self.compilation = ""
     
     # Informations
     
