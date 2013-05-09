@@ -509,14 +509,14 @@ class UpdateTags(Action):
         self.publisher = ""
         self.encodedBy = ""
         self.urlAuteur = ""
-        self.composer = ""
-        self.conductor = ""
+        self.composers = ""
+        self.conductors = ""
         self.groupDescription = "" # TODO: non dispo
         self.ambiance = "" # TODO: non dispo
         self.discNumber = ""
         self.originalKey = "" # TODO: non dispo
         self.bpm = ""
-        self.compilation = ""
+        self.compilation = False
     
     # Informations
     

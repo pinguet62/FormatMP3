@@ -17,7 +17,7 @@ import wx.xrc
 class MainFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"FormatMP3 - Formatez vos fichiers MP3 en un clic !", pos = wx.DefaultPosition, size = wx.Size( 634,771 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = u"FormatMP3 - Formatez vos fichiers MP3 en un clic !", pos = wx.DefaultPosition, size = wx.Size( 634,652 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHintsSz( wx.DefaultSize, wx.DefaultSize )
 		
@@ -101,7 +101,7 @@ class MainFrame ( wx.Frame ):
 		self.listActions_panel.SetSizer( listActions_boxSizer )
 		self.listActions_panel.Layout()
 		listActions_boxSizer.Fit( self.listActions_panel )
-		self.selectedAction_scrolledWindow = wx.ScrolledWindow( self.actions_splitter, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.HSCROLL|wx.VSCROLL )
+		self.selectedAction_scrolledWindow = wx.ScrolledWindow( self.actions_splitter, wx.ID_ANY, wx.DefaultPosition, wx.Size( 200,200 ), wx.ALWAYS_SHOW_SB|wx.HSCROLL|wx.VSCROLL )
 		self.selectedAction_scrolledWindow.SetScrollRate( 5, 5 )
 		boxSizer = wx.BoxSizer( wx.VERTICAL )
 		
@@ -172,7 +172,6 @@ class MainFrame ( wx.Frame ):
 		
 		self.selectedAction_scrolledWindow.SetSizer( boxSizer )
 		self.selectedAction_scrolledWindow.Layout()
-		boxSizer.Fit( self.selectedAction_scrolledWindow )
 		self.actions_splitter.SplitVertically( self.listActions_panel, self.selectedAction_scrolledWindow, 50 )
 		actions_boxSizer.Add( self.actions_splitter, 1, wx.ALL|wx.EXPAND, 0 )
 		
@@ -180,7 +179,7 @@ class MainFrame ( wx.Frame ):
 		self.actions_panel.SetSizer( actions_boxSizer )
 		self.actions_panel.Layout()
 		actions_boxSizer.Fit( self.actions_panel )
-		self.main_splitterWindow.SplitHorizontally( self.files_panel, self.actions_panel, 301 )
+		self.main_splitterWindow.SplitHorizontally( self.files_panel, self.actions_panel, 248 )
 		main_boxSizer.Add( self.main_splitterWindow, 1, wx.ALL|wx.EXPAND, 0 )
 		
 		
@@ -194,7 +193,7 @@ class MainFrame ( wx.Frame ):
 		pass
 	
 	def main_splitterWindowOnIdle( self, event ):
-		self.main_splitterWindow.SetSashPosition( 301 )
+		self.main_splitterWindow.SetSashPosition( 248 )
 		self.main_splitterWindow.Unbind( wx.EVT_IDLE )
 	
 	def actions_splitterOnIdle( self, event ):
@@ -277,24 +276,26 @@ class ReplaceStringGui_panel ( wx.Panel ):
 		
 		options_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Options" ), wx.VERTICAL )
 		
-		options_gridSizer = wx.GridSizer( 0, 2, 0, 0 )
+		options_flexGridSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
+		options_flexGridSizer.SetFlexibleDirection( wx.BOTH )
+		options_flexGridSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.oldStr_staticText = wx.StaticText( self, wx.ID_ANY, u"Remplacer : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.oldStr_staticText.Wrap( -1 )
-		options_gridSizer.Add( self.oldStr_staticText, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.oldStr_staticText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.oldStr_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		options_gridSizer.Add( self.oldStr_textCtrl, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.oldStr_textCtrl, 0, wx.ALL, 5 )
 		
 		self.newStr_staticText = wx.StaticText( self, wx.ID_ANY, u"Par : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.newStr_staticText.Wrap( -1 )
-		options_gridSizer.Add( self.newStr_staticText, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.newStr_staticText, 0, wx.ALL, 5 )
 		
 		self.newStr_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		options_gridSizer.Add( self.newStr_textCtrl, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.newStr_textCtrl, 0, wx.ALL, 5 )
 		
 		
-		options_staticBoxSizer.Add( options_gridSizer, 0, wx.ALL, 0 )
+		options_staticBoxSizer.Add( options_flexGridSizer, 1, wx.EXPAND, 5 )
 		
 		
 		boxSizer.Add( options_staticBoxSizer, 0, wx.ALL, 5 )
@@ -345,40 +346,35 @@ class CutGui_panel ( wx.Panel ):
 		
 		options_gridSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Options" ), wx.VERTICAL )
 		
-		gridSizer = wx.GridSizer( 3, 2, 0, 0 )
+		options_flexGridSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
+		options_flexGridSizer.SetFlexibleDirection( wx.BOTH )
+		options_flexGridSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.nomber_staticText = wx.StaticText( self, wx.ID_ANY, u"Nombre de caractères à supprimer : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.nomber_staticText.Wrap( -1 )
-		gridSizer.Add( self.nomber_staticText, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.nomber_staticText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.number_spinCtrl = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0, 0, 999, 0 )
-		gridSizer.Add( self.number_spinCtrl, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.number_spinCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.position_staticText = wx.StaticText( self, wx.ID_ANY, u"A partir de la position : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.position_staticText.Wrap( -1 )
-		gridSizer.Add( self.position_staticText, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.position_staticText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.position_spinCtrl = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10, 0 )
-		gridSizer.Add( self.position_spinCtrl, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.position_spinCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.sens_staticText = wx.StaticText( self, wx.ID_ANY, u"En partant : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.sens_staticText.Wrap( -1 )
-		gridSizer.Add( self.sens_staticText, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.sens_staticText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		sens_boxSizer = wx.BoxSizer( wx.HORIZONTAL )
-		
-		self.beginSens_radioButton = wx.RadioButton( self, wx.ID_ANY, u"du début", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
-		self.beginSens_radioButton.SetValue( True ) 
-		sens_boxSizer.Add( self.beginSens_radioButton, 0, wx.ALL, 5 )
-		
-		self.endSens_radioButton = wx.RadioButton( self, wx.ID_ANY, u"de la fin", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sens_boxSizer.Add( self.endSens_radioButton, 0, wx.ALL, 5 )
+		sens_choiceChoices = [ u"du début", u"de la fin" ]
+		self.sens_choice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, sens_choiceChoices, 0 )
+		self.sens_choice.SetSelection( 0 )
+		options_flexGridSizer.Add( self.sens_choice, 0, wx.ALL, 5 )
 		
 		
-		gridSizer.Add( sens_boxSizer, 0, wx.ALL, 0 )
-		
-		
-		options_gridSizer.Add( gridSizer, 0, wx.ALL, 0 )
+		options_gridSizer.Add( options_flexGridSizer, 1, wx.EXPAND, 5 )
 		
 		
 		boxSizer.Add( options_gridSizer, 0, wx.ALL, 5 )
@@ -427,40 +423,52 @@ class InsertStringGui_panel ( wx.Panel ):
 		
 		boxSizer.Add( self.description, 0, wx.ALL, 5 )
 		
-		gridSizer = wx.GridSizer( 0, 2, 0, 0 )
+		options_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Options" ), wx.VERTICAL )
+		
+		options_flexGridSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
+		options_flexGridSizer.SetFlexibleDirection( wx.BOTH )
+		options_flexGridSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.string_staticStext = wx.StaticText( self, wx.ID_ANY, u"Chaîne à insérer : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.string_staticStext.Wrap( -1 )
-		gridSizer.Add( self.string_staticStext, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.string_staticStext, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_textCtrl7 = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gridSizer.Add( self.m_textCtrl7, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.m_textCtrl7, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.position_staticText1 = wx.StaticText( self, wx.ID_ANY, u"A partir de la position : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.position_staticText1.Wrap( -1 )
-		gridSizer.Add( self.position_staticText1, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.position_staticText1, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.m_spinCtrl3 = wx.SpinCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10, 0 )
-		gridSizer.Add( self.m_spinCtrl3, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.m_spinCtrl3, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.sens_staticText = wx.StaticText( self, wx.ID_ANY, u"A partir : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.sens_staticText.Wrap( -1 )
-		gridSizer.Add( self.sens_staticText, 0, wx.ALL, 5 )
+		options_flexGridSizer.Add( self.sens_staticText, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		sens_sizer = wx.BoxSizer( wx.HORIZONTAL )
-		
-		self.beginSens_radioButton = wx.RadioButton( self, wx.ID_ANY, u"du début", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
-		self.beginSens_radioButton.SetValue( True ) 
-		sens_sizer.Add( self.beginSens_radioButton, 0, wx.ALL, 5 )
-		
-		self.endSens_radioButton = wx.RadioButton( self, wx.ID_ANY, u"de la fin", wx.DefaultPosition, wx.DefaultSize, 0 )
-		sens_sizer.Add( self.endSens_radioButton, 0, wx.ALL, 5 )
+		sens_choiceChoices = [ u"du début", u"de la fin" ]
+		self.sens_choice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, sens_choiceChoices, 0 )
+		self.sens_choice.SetSelection( 0 )
+		options_flexGridSizer.Add( self.sens_choice, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
-		gridSizer.Add( sens_sizer, 1, wx.ALL, 0 )
+		options_staticBoxSizer.Add( options_flexGridSizer, 1, wx.EXPAND, 5 )
 		
 		
-		boxSizer.Add( gridSizer, 0, wx.ALL, 5 )
+		boxSizer.Add( options_staticBoxSizer, 0, wx.ALL, 5 )
+		
+		appliquerA_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Appliquer à" ), wx.VERTICAL )
+		
+		self.filename_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Nom du fichier", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
+		self.filename_radioButton.SetValue( True ) 
+		appliquerA_staticBoxSizer.Add( self.filename_radioButton, 0, wx.ALL, 5 )
+		
+		self.extension_radioButton = wx.RadioButton( self, wx.ID_ANY, u"Extension", wx.DefaultPosition, wx.DefaultSize, 0 )
+		appliquerA_staticBoxSizer.Add( self.extension_radioButton, 0, wx.ALL, 5 )
+		
+		
+		boxSizer.Add( appliquerA_staticBoxSizer, 0, wx.ALL, 5 )
 		
 		
 		self.SetSizer( boxSizer )
@@ -566,165 +574,164 @@ class UpdateTagsGui_panel ( wx.Panel ):
 		
 		media_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Média" ), wx.VERTICAL )
 		
-		media_gridSizer = wx.GridSizer( 0, 2, 0, 0 )
+		media_flexGridSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
+		media_flexGridSizer.SetFlexibleDirection( wx.BOTH )
+		media_flexGridSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.albumArtist_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Artiste de l'album : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.albumArtist_checkBox.SetValue(True) 
-		media_gridSizer.Add( self.albumArtist_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.albumArtist_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.artistAlbum_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.artistAlbum_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.artistAlbum_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.artiste_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Artiste : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.artiste_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.artiste_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.artiste_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.artiste_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.artiste_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.album_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Album : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.album_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.album_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.album_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.album_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.album_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.annee_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Année : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.annee_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.annee_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.annee_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.annee_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.annee_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.trackNumber_checkBox = wx.CheckBox( self, wx.ID_ANY, u"N° : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.trackNumber_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.trackNumber_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.trackNumber_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.trackNumber_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.trackNumber_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.genre_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Genre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.genre_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.genre_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.genre_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		media_gridSizer.Add( self.genre_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		media_flexGridSizer.Add( self.genre_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
-		media_staticBoxSizer.Add( media_gridSizer, 0, wx.ALL, 0 )
+		media_staticBoxSizer.Add( media_flexGridSizer, 0, wx.ALL, 0 )
 		
 		
 		boxSizer.Add( media_staticBoxSizer, 0, wx.ALL, 5 )
 		
 		origine_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Origine" ), wx.VERTICAL )
 		
-		origine_gridSizer = wx.GridSizer( 0, 2, 0, 0 )
+		origine_flexGridSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
+		origine_flexGridSizer.SetFlexibleDirection( wx.BOTH )
+		origine_flexGridSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.publisher_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Éditeur : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.publisher_checkBox.SetValue(True) 
-		origine_gridSizer.Add( self.publisher_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		origine_flexGridSizer.Add( self.publisher_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.publisher_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		origine_gridSizer.Add( self.publisher_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		origine_flexGridSizer.Add( self.publisher_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.encodedBy_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Encodé par : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.encodedBy_checkBox.SetValue(True) 
-		origine_gridSizer.Add( self.encodedBy_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		origine_flexGridSizer.Add( self.encodedBy_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.encodedBy_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		origine_gridSizer.Add( self.encodedBy_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		origine_flexGridSizer.Add( self.encodedBy_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.urlAuteur_checkBox = wx.CheckBox( self, wx.ID_ANY, u"URL de l'auteur : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.urlAuteur_checkBox.SetValue(True) 
-		origine_gridSizer.Add( self.urlAuteur_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		origine_flexGridSizer.Add( self.urlAuteur_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.urlAuteur_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		origine_gridSizer.Add( self.urlAuteur_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		origine_flexGridSizer.Add( self.urlAuteur_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
-		origine_staticBoxSizer.Add( origine_gridSizer, 0, wx.ALL, 0 )
+		origine_staticBoxSizer.Add( origine_flexGridSizer, 0, wx.ALL, 0 )
 		
 		
 		boxSizer.Add( origine_staticBoxSizer, 0, wx.ALL, 5 )
 		
 		contenu_staticBoxSizer = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Contenu" ), wx.VERTICAL )
 		
-		contenu_gridSizer = wx.GridSizer( 0, 2, 0, 0 )
+		contenu_flexGridSizer = wx.FlexGridSizer( 0, 2, 0, 0 )
+		contenu_flexGridSizer.SetFlexibleDirection( wx.BOTH )
+		contenu_flexGridSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		
 		self.composer_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Compositeur : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.composer_checkBox.SetValue(True) 
-		contenu_gridSizer.Add( self.composer_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.composer_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.composer_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		contenu_gridSizer.Add( self.composer_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.composer_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.conductor_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Chef d'orchestre : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.conductor_checkBox.SetValue(True) 
-		contenu_gridSizer.Add( self.conductor_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.conductor_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.conductor_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		contenu_gridSizer.Add( self.conductor_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.conductor_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.groupDescription_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Description du groupe : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.groupDescription_checkBox.SetValue(True) 
 		self.groupDescription_checkBox.Enable( False )
 		
-		contenu_gridSizer.Add( self.groupDescription_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.groupDescription_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.groupDescription_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.groupDescription_textCtrl.Enable( False )
 		
-		contenu_gridSizer.Add( self.groupDescription_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.groupDescription_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.ambiance_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Ambiance : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.ambiance_checkBox.SetValue(True) 
 		self.ambiance_checkBox.Enable( False )
 		
-		contenu_gridSizer.Add( self.ambiance_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.ambiance_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.ambiance_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.ambiance_textCtrl.Enable( False )
 		
-		contenu_gridSizer.Add( self.ambiance_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.ambiance_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.discNumber_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Partie du coffret : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.discNumber_checkBox.SetValue(True) 
-		contenu_gridSizer.Add( self.discNumber_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.discNumber_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.discNumber_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		contenu_gridSizer.Add( self.discNumber_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.discNumber_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.originalKey_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Clé d'origine : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.originalKey_checkBox.SetValue(True) 
 		self.originalKey_checkBox.Enable( False )
 		
-		contenu_gridSizer.Add( self.originalKey_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.originalKey_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.originalKey_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.originalKey_textCtrl.Enable( False )
 		
-		contenu_gridSizer.Add( self.originalKey_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.originalKey_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.bpm_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Battements par minute : ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.bpm_checkBox.SetValue(True) 
-		contenu_gridSizer.Add( self.bpm_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.bpm_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.bpm_textCtrl = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		contenu_gridSizer.Add( self.bpm_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.bpm_textCtrl, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		self.compilation_checkBox = wx.CheckBox( self, wx.ID_ANY, u"Partie d'une compilation ? ", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.compilation_checkBox.SetValue(True) 
-		contenu_gridSizer.Add( self.compilation_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		contenu_flexGridSizer.Add( self.compilation_checkBox, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
-		compilation_boxSizer = wx.BoxSizer( wx.HORIZONTAL )
-		
-		self.yes_compilation_radioBtn = wx.RadioButton( self, wx.ID_ANY, u"oui", wx.DefaultPosition, wx.DefaultSize, wx.RB_GROUP )
-		compilation_boxSizer.Add( self.yes_compilation_radioBtn, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-		
-		self.no_compilation_radioBtn = wx.RadioButton( self, wx.ID_ANY, u"non", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.no_compilation_radioBtn.SetValue( True ) 
-		compilation_boxSizer.Add( self.no_compilation_radioBtn, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		compilation_choiceChoices = [ u"Oui", u"Non" ]
+		self.compilation_choice = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, compilation_choiceChoices, 0 )
+		self.compilation_choice.SetSelection( 1 )
+		contenu_flexGridSizer.Add( self.compilation_choice, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
 		
 		
-		contenu_gridSizer.Add( compilation_boxSizer, 1, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 0 )
-		
-		
-		contenu_staticBoxSizer.Add( contenu_gridSizer, 0, wx.ALL, 0 )
+		contenu_staticBoxSizer.Add( contenu_flexGridSizer, 0, wx.ALL, 0 )
 		
 		
 		boxSizer.Add( contenu_staticBoxSizer, 0, wx.ALL, 5 )

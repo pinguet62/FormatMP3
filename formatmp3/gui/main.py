@@ -274,7 +274,7 @@ class View(wx.Frame):
         @author: Julien
         '''
         # Fenêtre
-        minSize = (675,800)
+        minSize = (675,700)
         wx.Frame.__init__(self, parent, title="FormatMP3 - Formatez vos fichiers MP3 en un clic !", size=minSize)
         #self.SetMinSize(minSize)
         self.CenterOnScreen()
