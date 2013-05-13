@@ -496,11 +496,11 @@ class UpdateTags(Action):
         '''
         Action.__init__(self)
         
-        self.title = None
+        self.title = ""
         self.subtitle = ""
-        self.notation = 1 # TODO: non dispo
+        self.notation = 0 # TODO: non dispo
         self.comment = ""
-        self.artist = ""
+        self.artist = "" # TODO: liste
         self.albumArtist = ""
         self.album = ""
         self.year = ""
@@ -509,7 +509,7 @@ class UpdateTags(Action):
         self.publisher = ""
         self.encodedBy = ""
         self.urlAuteur = ""
-        self.composers = ""
+        self.composers = "" # TODO: liste
         self.conductors = ""
         self.groupDescription = "" # TODO: non dispo
         self.ambiance = "" # TODO: non dispo
@@ -558,8 +558,32 @@ class UpdateTags(Action):
         @raise BaseException: Exception levée
         @author: Julien
         '''
-        pass
-
+        # titre
+        if self.title is not None:
+            if self.title == UpdateTags.FILENAME:
+                pass
+            else:
+                pass
+        # sous-titre
+        # notation
+        # commentaire
+        # artiste ayant participé
+        # artiste de l'album
+        # album
+        # année
+        # n°
+        # genre
+        # éditeur
+        # encodé par
+        # URL de l'auteur
+        # compositeur
+        # chef d'orchestre
+        # description du groupe
+        # ambiance
+        # partie du coffret
+        # clé d'origine
+        # battements par minute
+        # partie d'une compilation
 
 
 if __name__ == "__main__":

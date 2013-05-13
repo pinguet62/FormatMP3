@@ -60,14 +60,14 @@ class ActionGui(wx.ScrolledWindow):
         self.SetSizer(self.boxSizer)
         # Title
         title = wx.StaticText(self, label=str(action.__class__.getTitle()))
-        font_title = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 90, 92)
+        font_title = wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         title.SetFont(font_title)
-        self.boxSizer.Add(title)
+        self.boxSizer.Add(title, flag=wx.ALL, border=5)
         # Description
         description = wx.StaticText(self, label=str(action.__class__.getDescription()))
-        font_description = wx.Font(wx.NORMAL_FONT.GetPointSize(), 70, 93, 90)
+        font_description = wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL)
         description.SetFont(font_description)
-        self.boxSizer.Add(description)
+        self.boxSizer.Add(description, flag=wx.ALL, border=5)
 
 
 
@@ -89,7 +89,7 @@ class CaseChangeGui(ActionGui):
         
         # Options
         options_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
-        self.boxSizer.Add(options_staticBoxSizer)
+        self.boxSizer.Add(options_staticBoxSizer, flag=wx.ALL, border=5)
         #     LOWER
         lower_radioButton = wx.RadioButton(self, label="Tout en minuscule", style=wx.RB_GROUP)
         lower_radioButton.Value = (self.action.modification is CaseChange.LOWER)
@@ -120,7 +120,7 @@ class CaseChangeGui(ActionGui):
         options_staticBoxSizer.Add(upper_radioButton, flag=wx.ALL, border=5)
         # Appliquer à
         appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
-        self.boxSizer.Add(appliquerA_staticBoxSizer)
+        self.boxSizer.Add(appliquerA_staticBoxSizer, flag=wx.ALL, border=5)
         #     FILENAME
         filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
         filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
@@ -176,7 +176,7 @@ class ReplaceStringGui(ActionGui):
         
         # Options
         options_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
-        self.boxSizer.Add(options_staticBoxSizer)
+        self.boxSizer.Add(options_staticBoxSizer, flag=wx.ALL, border=5)
         # Sous-Sizer
         options_gridSizer = wx.GridSizer(0, 2)
         options_staticBoxSizer.Add(options_gridSizer, flag=wx.ALL)
@@ -198,7 +198,7 @@ class ReplaceStringGui(ActionGui):
         options_gridSizer.Add(self.newStr_textCtrl, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         # Appliquer à
         appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
-        self.boxSizer.Add(appliquerA_staticBoxSizer)
+        self.boxSizer.Add(appliquerA_staticBoxSizer, flag=wx.ALL, border=5)
         #     FILENAME
         filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
         filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
@@ -264,7 +264,7 @@ class CutGui(ActionGui):
         
         # Options
         options_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
-        self.boxSizer.Add(options_staticBoxSizer)
+        self.boxSizer.Add(options_staticBoxSizer, flag=wx.ALL, border=5)
         # Sous-Sizer
         options_gridSizer = wx.GridSizer(0, 2)
         options_staticBoxSizer.Add(options_gridSizer, flag=wx.ALL)
@@ -303,7 +303,7 @@ class CutGui(ActionGui):
         sens_boxSizer.Add(endSens_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         # Appliquer à
         appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
-        self.boxSizer.Add(appliquerA_staticBoxSizer)
+        self.boxSizer.Add(appliquerA_staticBoxSizer, flag=wx.ALL, border=5)
         #     FILENAME
         filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
         filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
@@ -379,7 +379,7 @@ class InsertStringGui(ActionGui):
         
         # Options
         options_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Options"), wx.VERTICAL)
-        self.boxSizer.Add(options_staticBoxSizer)
+        self.boxSizer.Add(options_staticBoxSizer, flag=wx.ALL, border=5)
         # Sous-Sizer
         options_gridSizer = wx.GridSizer(0, 2)
         options_staticBoxSizer.Add(options_gridSizer, flag=wx.ALL)
@@ -418,7 +418,7 @@ class InsertStringGui(ActionGui):
         sens_boxSizer.Add(endSens_radioButton, flag=wx.ALL, border=5)
         # Appliquer à
         appliquerA_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Appliquer à"), wx.VERTICAL)
-        self.boxSizer.Add(appliquerA_staticBoxSizer)
+        self.boxSizer.Add(appliquerA_staticBoxSizer, flag=wx.ALL, border=5)
         #     FILENAME
         filename_radioButton = wx.RadioButton(self, label="Nom du fichier", style=wx.RB_GROUP)
         filename_radioButton.Value = (self.action.range is PathModification.FILENAME)
@@ -494,7 +494,7 @@ class UpdateTagsGui(ActionGui):
         
         # Description
         description_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Description"), wx.VERTICAL)
-        self.boxSizer.Add(description_staticBoxSizer)
+        self.boxSizer.Add(description_staticBoxSizer, flag=wx.ALL, border=5)
         # Sous-Sizer
         description_flexGridSizer = wx.FlexGridSizer(0, 2)
         description_staticBoxSizer.Add(description_flexGridSizer, flag=wx.ALL)
@@ -606,7 +606,7 @@ class UpdateTagsGui(ActionGui):
         description_flexGridSizer.Add(self.comment_textCtrl, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         # Média
         media_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Média"), wx.VERTICAL)
-        self.boxSizer.Add(media_staticBoxSizer)
+        self.boxSizer.Add(media_staticBoxSizer, flag=wx.ALL, border=5)
         # Sous-Sizer
         media_flexGridSizer = wx.FlexGridSizer(0, 2)
         media_staticBoxSizer.Add(media_flexGridSizer, flag=wx.ALL)
@@ -696,7 +696,7 @@ class UpdateTagsGui(ActionGui):
         media_flexGridSizer.Add(self.genre_textCtrl, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         # Origine
         origine_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Origine"), wx.VERTICAL)
-        self.boxSizer.Add(origine_staticBoxSizer)
+        self.boxSizer.Add(origine_staticBoxSizer, flag=wx.ALL, border=5)
         # Sous-Sizer
         origine_flexGridSizer = wx.FlexGridSizer(0, 2)
         origine_staticBoxSizer.Add(origine_flexGridSizer, flag=wx.ALL)
@@ -744,7 +744,7 @@ class UpdateTagsGui(ActionGui):
         origine_flexGridSizer.Add(self.urlAuteur_textCtrl, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         # Contenu
         contenu_staticBoxSizer = wx.StaticBoxSizer(wx.StaticBox(self, label="Contenu"), wx.VERTICAL)
-        self.boxSizer.Add(contenu_staticBoxSizer)
+        self.boxSizer.Add(contenu_staticBoxSizer, flag=wx.ALL, border=5)
         # Sous-Sizer
         contenu_flexGridSizer = wx.FlexGridSizer(0, 2)
         contenu_staticBoxSizer.Add(contenu_flexGridSizer, flag=wx.ALL)
