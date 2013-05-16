@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from argparse import ArgumentError
 
 
 
@@ -13,6 +12,7 @@ Permettent de paramétrer les actions
 
 
 
+from argparse import ArgumentError
 from formatmp3.actions.Action import *
 from wx.lib.pubsub import pub as Publisher
 import string
@@ -530,14 +530,14 @@ class UpdateTagsGui(ActionGui):
         #     Notation
         #         Titre
         notation_checkBox = wx.CheckBox(self, label="Notation : ")
-        notation_checkBox.Enabled = False # tmp
+        notation_checkBox.Enabled = False # TODO: rechercher une solution
         notation_checkBox.Value = self.action.notation is not None
         notation_checkBox.Bind(wx.EVT_CHECKBOX, self.OnNotationActived)
         description_flexGridSizer.Add(notation_checkBox, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #         Valueur
         #             Panel
         self.valeur_notation_panel = wx.Panel(self)
-        self.valeur_notation_panel.Enabled = False # tmp
+        self.valeur_notation_panel.Enabled = False # TODO: rechercher une solution
         if self.action.notation is None:
             self.valeur_notation_panel.Enabled = False
         self.valeur_notation_panel.Bind(wx.EVT_LEFT_UP,
@@ -779,11 +779,13 @@ class UpdateTagsGui(ActionGui):
         #     Description du groupe
         #         Title
         groupDescription_checkBox = wx.CheckBox(self, label="Description du groupe : ")
+        groupDescription_checkBox.Enabled = False # TODO: rechercher une solution
         groupDescription_checkBox.Value = self.action.groupDescription is not None
         groupDescription_checkBox.Bind(wx.EVT_CHECKBOX, self.OnGroupDescriptionActived)
         contenu_flexGridSizer.Add(groupDescription_checkBox, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #         Valeur
         self.groupDescription_textCtrl = wx.TextCtrl(self)
+        self.groupDescription_textCtrl.Enabled = False # TODO: rechercher une solution
         if self.action.groupDescription is None:
             self.groupDescription_textCtrl.Enabled = False
         else:
@@ -793,11 +795,13 @@ class UpdateTagsGui(ActionGui):
         #     Ambiance
         #         Title
         ambiance_checkBox = wx.CheckBox(self, label="Ambiance : ")
+        ambiance_checkBox.Enabled = False # TODO: rechercher une solution
         ambiance_checkBox.Value = self.action.ambiance is not None
         ambiance_checkBox.Bind(wx.EVT_CHECKBOX, self.OnAmbianceActived)
         contenu_flexGridSizer.Add(ambiance_checkBox, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #         Valeur
         self.ambiance_textCtrl = wx.TextCtrl(self)
+        self.ambiance_textCtrl.Enabled = False # TODO: rechercher une solution
         if self.action.ambiance is None:
             self.ambiance_textCtrl.Enabled = False
         else:
@@ -821,11 +825,13 @@ class UpdateTagsGui(ActionGui):
         #     Clé d'origine
         #         Title
         originalKey_checkBox = wx.CheckBox(self, label="Clé d'origine : ")
+        originalKey_checkBox.Enabled = False # TODO: rechercher une solution
         originalKey_checkBox.Value = self.action.originalKey is not None
         originalKey_checkBox.Bind(wx.EVT_CHECKBOX, self.OnOriginalKeyActived)
         contenu_flexGridSizer.Add(originalKey_checkBox, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #         Valeur
         self.originalKey_textCtrl = wx.TextCtrl(self, validator=IntOrEmptyValidator())
+        self.originalKey_textCtrl.Enabled = False # TODO: rechercher une solution
         if self.action.originalKey is None:
             self.originalKey_textCtrl.Enabled = False
         else:

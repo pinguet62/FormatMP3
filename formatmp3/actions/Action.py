@@ -13,6 +13,8 @@ Action sur les fichiers
 from formatmp3.actions.Path import *
 import copy
 import eyed3
+import mutagen.easyid3
+import mutagen.id3
 import os
 
 
@@ -558,32 +560,69 @@ class UpdateTags(Action):
         @raise BaseException: Exception levée
         @author: Julien
         '''
+        audio = mutagen.easyid3.EasyID3(path.get())
+        
         # titre
         if self.title is not None:
             if self.title == UpdateTags.FILENAME:
-                pass
+                newTitle = path.filename
             else:
-                pass
+                newTitle = self.title
+            audio["title"] = newTitle
         # sous-titre
+        if self.subtitle is not None:
+            audio["version"] = self.subtitle
         # notation
         # commentaire
         # artiste ayant participé
+        if self.artist is not None:
+            audio["artist"] = self.artist
         # artiste de l'album
+        if self.albumArtist is not None:
+            audio["performer"] = self.albumArtist
         # album
+        if self.album is not None:
+            audio["album"] = self.album
         # année
+        if self.year is not None:
+            audio["date"] = str(self.year)
         # n°
+        if self.trackNumber is not None:
+            audio["tracknumber"] = str(self.trackNumber)
         # genre
+        if self.genre is not None:
+            audio["genre"] = self.genre
         # éditeur
+        if self.publisher is not None:
+            audio["organization"] = self.publisher
         # encodé par
+        if self.encodedBy is not None:
+            audio["encodedby"] = self.encodedBy
         # URL de l'auteur
+        if self.urlAuteur is not None:
+            audio["website"] = self.urlAuteur
         # compositeur
+        if self.composers is not None:
+            audio["composer"] = self.composers
         # chef d'orchestre
+        if self.conductors is not None:
+            audio["conductor"] = self.conductors
         # description du groupe
         # ambiance
         # partie du coffret
+        if self.discNumber is not None:
+            audio["discnumber"] = str(self.discNumber)
         # clé d'origine
         # battements par minute
+        if self.bpm is not None:
+            audio["bpm"] = self.bpm
         # partie d'une compilation
+        if self.compilation is not None:
+            if self.compilation:
+                audio["compilation"] = "1"
+            else:
+                audio["compilation"] = "0"
+
 
 
 if __name__ == "__main__":
