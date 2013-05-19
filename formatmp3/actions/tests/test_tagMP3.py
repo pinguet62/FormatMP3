@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from formatmp3.actions.Action import Action
 
 
 
@@ -52,7 +53,7 @@ class TestId3(unittest.TestCase):
         
         self.assertEqual(audio.tag.title, "title") # titre
         # sous-titre
-        # notation
+        self.assertEqual(audio.tag.frame_set["POPM"][0].rating, 1) # notation
         # commentaire
         self.assertEqual(audio.tag.artist, "artist1/artist2") # artiste ayant participé
         # artiste de l'album
@@ -104,7 +105,7 @@ class TestId3(unittest.TestCase):
         
         self.assertEqual(audio.tag.title, None) # titre
         # sous-titre
-        # notation
+        self.assertFalse("POPM" in audio.tag.frame_set) # notation
         # commentaire
         self.assertEqual(audio.tag.artist, None) # artiste ayant participé
         # artiste de l'album
@@ -206,7 +207,7 @@ class TestId3(unittest.TestCase):
         
         audio.tag.title = unicode("new_title") # titre
         # sous-titre
-        # notation
+        audio.tag.frame_set["POPM"][0].rating = 64 # notation
         # commentaire
         audio.tag.artist = unicode("new_artist") # artiste ayant participé
         # artiste de l'album
@@ -232,7 +233,7 @@ class TestId3(unittest.TestCase):
         
         self.assertEqual(audio.tag.title, "new_title") # titre
         # sous-titre
-        # notation
+        self.assertEqual(audio.tag.frame_set["POPM"][0].rating, 64) # notation
         # commentaire
         self.assertEqual(audio.tag.artist, "new_artist") # artiste ayant participé
         # artiste de l'album
@@ -314,7 +315,7 @@ class TestId3(unittest.TestCase):
         
         audio.tag.title = unicode("title") # titre
         # sous-titre
-        # notation
+        audio.tag.frame_set["POPM"] = eyed3.id3.frames.PopularityFrame(id="POPM", rating=1) # notation
         # commentaire
         audio.tag.artist = unicode("artist") # artiste ayant participé
         # artiste de l'album
@@ -340,7 +341,7 @@ class TestId3(unittest.TestCase):
         
         self.assertEqual(audio.tag.title, "title") # titre
         # sous-titre
-        # notation
+        self.assertEqual(audio.tag.frame_set["POPM"][0].rating, 1) # notation
         # commentaire
         self.assertEqual(audio.tag.artist, "artist") # artiste ayant participé
         # artiste de l'album

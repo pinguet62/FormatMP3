@@ -529,67 +529,67 @@ class UpdateTagsGui(ActionGui):
         description_flexGridSizer.Add(self.subtitle_textCtrl, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #     Notation
         #         Titre
-        notation_checkBox = wx.CheckBox(self, label="Notation : ")
-        notation_checkBox.Enabled = False # TODO: rechercher une solution
-        notation_checkBox.Value = self.action.notation is not None
-        notation_checkBox.Bind(wx.EVT_CHECKBOX, self.OnNotationActived)
-        description_flexGridSizer.Add(notation_checkBox, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
+        rating_checkBox = wx.CheckBox(self, label="Notation : ")
+        rating_checkBox.Enabled = False # TODO: rechercher une solution
+        rating_checkBox.Value = self.action.rating is not None
+        rating_checkBox.Bind(wx.EVT_CHECKBOX, self.OnRatingActived)
+        description_flexGridSizer.Add(rating_checkBox, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #         Valueur
         #             Panel
-        self.valeur_notation_panel = wx.Panel(self)
-        self.valeur_notation_panel.Enabled = False # TODO: rechercher une solution
-        if self.action.notation is None:
-            self.valeur_notation_panel.Enabled = False
-        self.valeur_notation_panel.Bind(wx.EVT_LEFT_UP,
+        self.valeur_rating_panel = wx.Panel(self)
+        self.valeur_rating_panel.Enabled = False # TODO: rechercher une solution
+        if self.action.rating is None:
+            self.valeur_rating_panel.Enabled = False
+        self.valeur_rating_panel.Bind(wx.EVT_LEFT_UP,
                                         lambda event:
-                                            self.resetNotation())
-        description_flexGridSizer.Add(self.valeur_notation_panel, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL)
+                                            self.resetRating())
+        description_flexGridSizer.Add(self.valeur_rating_panel, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL)
         #             Sizer
-        valeur_notation_boxSizer = wx.BoxSizer()
-        self.valeur_notation_panel.SetSizer(valeur_notation_boxSizer)
+        valeur_rating_boxSizer = wx.BoxSizer()
+        self.valeur_rating_panel.SetSizer(valeur_rating_boxSizer)
         #             .
-        valeur_notation_boxSizer.AddSpacer((10,0), flag=wx.ALL)
+        valeur_rating_boxSizer.AddSpacer((10,0), flag=wx.ALL)
         #             1
-        self.notation_1_radioButton = wx.RadioButton(self.valeur_notation_panel, style=wx.RB_GROUP)
-        self.notation_1_radioButton.Value = False
-        if self.action.notation == 1:
-            self.notation_1_radioButton.Value = True
-        self.notation_1_radioButton.Bind(wx.EVT_RADIOBUTTON,
+        self.rating_1_radioButton = wx.RadioButton(self.valeur_rating_panel, style=wx.RB_GROUP)
+        self.rating_1_radioButton.Value = False
+        if self.action.rating == 1:
+            self.rating_1_radioButton.Value = True
+        self.rating_1_radioButton.Bind(wx.EVT_RADIOBUTTON,
                                          lambda event:
-                                             self.updateNotation())
-        valeur_notation_boxSizer.Add(self.notation_1_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
+                                             self.updateRating())
+        valeur_rating_boxSizer.Add(self.rating_1_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #             2
-        self.notation_2_radioButton = wx.RadioButton(self.valeur_notation_panel)
-        if self.action.notation == 2:
-            self.notation_2_radioButton.Value = True
-        self.notation_2_radioButton.Bind(wx.EVT_RADIOBUTTON,
+        self.rating_2_radioButton = wx.RadioButton(self.valeur_rating_panel)
+        if self.action.rating == 2:
+            self.rating_2_radioButton.Value = True
+        self.rating_2_radioButton.Bind(wx.EVT_RADIOBUTTON,
                                          lambda event:
-                                             self.updateNotation())
-        valeur_notation_boxSizer.Add(self.notation_2_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
+                                             self.updateRating())
+        valeur_rating_boxSizer.Add(self.rating_2_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #             3
-        self.notation_3_radioButton = wx.RadioButton(self.valeur_notation_panel)
-        if self.action.notation == 3:
-            self.notation_3_radioButton.Value = True
-        self.notation_3_radioButton.Bind(wx.EVT_RADIOBUTTON,
+        self.rating_3_radioButton = wx.RadioButton(self.valeur_rating_panel)
+        if self.action.rating == 3:
+            self.rating_3_radioButton.Value = True
+        self.rating_3_radioButton.Bind(wx.EVT_RADIOBUTTON,
                                          lambda event:
-                                             self.updateNotation())
-        valeur_notation_boxSizer.Add(self.notation_3_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
+                                             self.updateRating())
+        valeur_rating_boxSizer.Add(self.rating_3_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #             4
-        self.notation_4_radioButton = wx.RadioButton(self.valeur_notation_panel)
-        if self.action.notation == 4:
-            self.notation_4_radioButton.Value = True
-        self.notation_4_radioButton.Bind(wx.EVT_RADIOBUTTON,
+        self.rating_4_radioButton = wx.RadioButton(self.valeur_rating_panel)
+        if self.action.rating == 4:
+            self.rating_4_radioButton.Value = True
+        self.rating_4_radioButton.Bind(wx.EVT_RADIOBUTTON,
                                          lambda event:
-                                             self.updateNotation())
-        valeur_notation_boxSizer.Add(self.notation_4_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
+                                             self.updateRating())
+        valeur_rating_boxSizer.Add(self.rating_4_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #             5
-        self.notation_5_radioButton = wx.RadioButton(self.valeur_notation_panel)
-        if self.action.notation == 5:
-            self.notation_5_radioButton.Value = True
-        self.notation_5_radioButton.Bind(wx.EVT_RADIOBUTTON,
+        self.rating_5_radioButton = wx.RadioButton(self.valeur_rating_panel)
+        if self.action.rating == 5:
+            self.rating_5_radioButton.Value = True
+        self.rating_5_radioButton.Bind(wx.EVT_RADIOBUTTON,
                                          lambda event:
-                                             self.updateNotation())
-        valeur_notation_boxSizer.Add(self.notation_5_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
+                                             self.updateRating())
+        valeur_rating_boxSizer.Add(self.rating_5_radioButton, flag=wx.ALL|wx.ALIGN_CENTER_VERTICAL, border=5)
         #     Commentaire
         #         Title
         comment_checkBox = wx.CheckBox(self, label="Commentaire : ")
@@ -918,50 +918,50 @@ class UpdateTagsGui(ActionGui):
         self.action.subtitle = event.GetString()
     
     
-    def OnNotationActived(self, event):
+    def OnRatingActived(self, event):
         '''
         Activation de la modification de la notation
         @param event: Événement
         @author: Julien
         '''
         if event.IsChecked():
-            self.valeur_notation_panel.Enabled = True
-            self.updateNotation()
+            self.valeur_rating_panel.Enabled = True
+            self.updateRating()
         else:
-            self.valeur_notation_panel.Enabled = False
-            self.action.notation = None
+            self.valeur_rating_panel.Enabled = False
+            self.action.rating = None
     
     
-    def resetNotation(self):
+    def resetRating(self):
         '''
         Mise à jour de la notation vers 0
         @author: Julien
         '''
-        self.notation_1_radioButton.Value = False
-        self.notation_2_radioButton.Value = False
-        self.notation_3_radioButton.Value = False
-        self.notation_4_radioButton.Value = False
-        self.notation_5_radioButton.Value = False
-        self.action.notation = 0
+        self.rating_1_radioButton.Value = False
+        self.rating_2_radioButton.Value = False
+        self.rating_3_radioButton.Value = False
+        self.rating_4_radioButton.Value = False
+        self.rating_5_radioButton.Value = False
+        self.action.rating = 0
     
     
-    def updateNotation(self):
+    def updateRating(self):
         '''
         Mise à jour de la notation
         @author: Julien
         '''
-        if self.notation_1_radioButton.Value:
-            self.action.notation = 1
-        elif self.notation_2_radioButton.Value:
-            self.action.notation = 2
-        elif self.notation_3_radioButton.Value:
-            self.action.notation = 3
-        elif self.notation_4_radioButton.Value:
-            self.action.notation = 4
-        elif self.notation_5_radioButton.Value:
-            self.action.notation = 5
+        if self.rating_1_radioButton.Value:
+            self.action.rating = 1
+        elif self.rating_2_radioButton.Value:
+            self.action.rating = 2
+        elif self.rating_3_radioButton.Value:
+            self.action.rating = 3
+        elif self.rating_4_radioButton.Value:
+            self.action.rating = 4
+        elif self.rating_5_radioButton.Value:
+            self.action.rating = 5
         else:
-            self.action.notation = 0
+            self.action.rating = 0
     
     
     def OnCommentActived(self, event):

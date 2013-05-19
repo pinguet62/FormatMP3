@@ -12,7 +12,7 @@ Action sur les fichiers
 
 from formatmp3.actions.Path import *
 import copy
-import eyed3
+import eyed3.id3
 import mutagen.easyid3
 import mutagen.id3
 import os
@@ -490,6 +490,8 @@ class UpdateTags(Action):
     AUTO = "%auto%"
     FILENAME = "%filename"
     
+    _EYED3_RATING = {1:1, 2:64, 3:128, 4:196, 5:255}
+    
     
     def __init__(self):
         '''
@@ -500,7 +502,7 @@ class UpdateTags(Action):
         
         self.title = ""
         self.subtitle = ""
-        self.notation = 0 # TODO: non dispo
+        self.rating = None # 0 # TODO: non dispo
         self.comment = ""
         self.artist = "" # TODO: liste
         self.albumArtist = ""
@@ -513,10 +515,10 @@ class UpdateTags(Action):
         self.urlAuteur = ""
         self.composers = "" # TODO: liste
         self.conductors = ""
-        self.groupDescription = "" # TODO: non dispo
-        self.ambiance = "" # TODO: non dispo
+        self.groupDescription = None # "" # TODO: non dispo
+        self.ambiance = None # "" # TODO: non dispo
         self.discNumber = ""
-        self.originalKey = "" # TODO: non dispo
+        self.originalKey = None # "" # TODO: non dispo
         self.bpm = ""
         self.compilation = False
     
@@ -560,6 +562,13 @@ class UpdateTags(Action):
         @raise BaseException: Exception levée
         @author: Julien
         '''
+        # notation
+        if self.rating is not None:
+            audio = eyed3.load(path.get())
+            value = UpdateTags._EYED3_RATING[self.rating]
+            audio.tag.frame_set["POPM"] = eyed3.id3.frames.PopularityFrame(id="POPM", rating=value)
+            audio.tag.save()
+        
         audio = mutagen.easyid3.EasyID3(path.get())
         
         # titre
@@ -573,6 +582,7 @@ class UpdateTags(Action):
         if self.subtitle is not None:
             audio["version"] = self.subtitle
         # notation
+        # TODO: réorganiser le code, ou voir avec mutagen
         # commentaire
         # artiste ayant participé
         if self.artist is not None:
@@ -622,6 +632,8 @@ class UpdateTags(Action):
                 audio["compilation"] = "1"
             else:
                 audio["compilation"] = "0"
+        
+        audio.tag.save()
 
 
 
