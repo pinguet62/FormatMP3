@@ -490,7 +490,7 @@ class UpdateTags(Action):
     AUTO = "%auto%"
     FILENAME = "%filename"
     
-    _EYED3_RATING = {1:1, 2:64, 3:128, 4:196, 5:255}
+    _ID3_RATING = {1:1, 2:64, 3:128, 4:196, 5:255}
     
     
     def __init__(self):
@@ -565,7 +565,7 @@ class UpdateTags(Action):
         # notation
         if self.rating is not None:
             audio = eyed3.load(path.get())
-            value = UpdateTags._EYED3_RATING[self.rating]
+            value = UpdateTags._ID3_RATING[self.rating]
             audio.tag.frame_set["POPM"] = eyed3.id3.frames.PopularityFrame(id="POPM", rating=value)
             audio.tag.save()
         
@@ -582,6 +582,9 @@ class UpdateTags(Action):
         if self.subtitle is not None:
             audio["version"] = self.subtitle
         # notation
+        
+            #.email = "Windows Media Player 9 Series"
+        
         # TODO: réorganiser le code, ou voir avec mutagen
         # commentaire
         # artiste ayant participé

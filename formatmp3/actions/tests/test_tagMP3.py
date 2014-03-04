@@ -48,6 +48,13 @@ class TestId3(unittest.TestCase):
         self.assertFalse(os.path.exists(dir_tgt))
     
     
+    def test(self):
+        audioRating = mutagen.id3.ID3("C:\\Users\\Julien\\Documents\\Development\\FormatMP3\\formatmp3\\actions\\tests\\src\\toto.mp3")
+        #audioRating.add(mutagen.id3.POPM(email=unicode("Windows Media Player 9 Series"), rating=64))
+        audioRating.save()
+    
+    
+    
     def test_read_full_eyed3(self):
         audio = eyed3.load(fullMP3)
         
@@ -75,11 +82,20 @@ class TestId3(unittest.TestCase):
     
     
     def test_read_full_mutagen(self):
-        audio = mutagen.easyid3.EasyID3(fullMP3)
+        pathFullMP3 = fullMP3
+        
+        audio = mutagen.easyid3.EasyID3(pathFullMP3)
         
         self.assertEqual(audio["title"][0], "title") # titre
         self.assertEqual(audio["version"][0], "subtitle") # sous-titre
-        # notation
+        audioRating = mutagen.id3.ID3(pathFullMP3) # notation
+        present = False
+        for frame in audioRating.values():
+            if type(frame) is mutagen.id3.POPM:
+                self.assertEqual(frame.rating, 1)
+                present = True
+                break
+        self.assertTrue(present)
         # commentaire
         self.assertEqual(audio["artist"][0], "artist1/artist2") # artiste ayant participé
         self.assertEqual(audio["performer"][0], "albumArtist") # artiste de l'album
@@ -127,7 +143,9 @@ class TestId3(unittest.TestCase):
     
     
     def test_read_none_mutagen(self):
-        audio = mutagen.easyid3.EasyID3(noneMP3)
+        pathNoneMP3 = noneMP3
+        
+        audio = mutagen.easyid3.EasyID3(pathNoneMP3)
         
         try:
             self.assertEqual(audio["title"][0], None) # titre
@@ -138,6 +156,13 @@ class TestId3(unittest.TestCase):
             self.assert_(False)
         except KeyError: pass
         # notation
+        audioRating = mutagen.id3.ID3(pathNoneMP3) # notation
+        present = False
+        for frame in audioRating.values():
+            if type(frame) is mutagen.id3.POPM:
+                present = True
+                break
+        self.assertFalse(present)
         # commentaire
         try:
             self.assertEqual(audio["artist"][0], "artist1/artist2") # artiste ayant participé
@@ -255,13 +280,18 @@ class TestId3(unittest.TestCase):
     
     
     def test_write_full_mutagen(self):
+        pathFullMP3 = fullMP3
+        
         self.test_read_full_mutagen()
         
-        audio = mutagen.easyid3.EasyID3(fullMP3)
+        audio = mutagen.easyid3.EasyID3(pathFullMP3)
         
         audio["title"] = "new_title" # titre
         audio["version"] = "new_subtitle" # sous-titre
         # notation
+        audioRating = mutagen.id3.ID3(pathFullMP3)
+        audioRating.add(mutagen.id3.POPM(email=unicode("Windows Media Player 9 Series"), rating=64))
+        audioRating.save()
         # commentaire
         audio["artist"] = "new_artist" # artiste ayant participé
         audio["performer"] = "new_albumArtist" # artiste de l'album
@@ -283,11 +313,18 @@ class TestId3(unittest.TestCase):
         
         audio.save()
         
-        audio = mutagen.easyid3.EasyID3(fullMP3)
+        audio = mutagen.easyid3.EasyID3(pathFullMP3)
         
         self.assertEqual(audio["title"][0], "new_title") # titre
         self.assertEqual(audio["version"][0], "new_subtitle") # sous-titre
-        # notation
+        audioRating = mutagen.id3.ID3(pathFullMP3) # notation
+        present = False
+        for frame in audioRating.values():
+            if type(frame) is mutagen.id3.POPM:
+                self.assertEqual(frame.rating, 64)
+                present = True
+                break
+        self.assertTrue(present)
         # commentaire
         self.assertEqual(audio["artist"][0], "new_artist") # artiste ayant participé
         self.assertEqual(audio["performer"][0], "new_albumArtist") # artiste de l'album
@@ -363,13 +400,18 @@ class TestId3(unittest.TestCase):
     
     
     def test_write_none_mutagen(self):
+        pathNoneMP3 = noneMP3
+        
         self.test_read_none_mutagen()
         
-        audio = mutagen.easyid3.EasyID3(noneMP3)
+        audio = mutagen.easyid3.EasyID3(pathNoneMP3)
         
         audio["title"] = "title" # titre
         audio["version"] = "subtitle" # sous-titre
         # notation
+        audioRating = mutagen.id3.ID3(pathNoneMP3)
+        audioRating.add(mutagen.id3.POPM(email=unicode("Windows Media Player 9 Series"), rating=1))
+        audioRating.save()
         # commentaire
         audio["artist"] = "artist" # artiste ayant participé
         audio["performer"] = "albumArtist" # artiste de l'album
@@ -391,11 +433,18 @@ class TestId3(unittest.TestCase):
         
         audio.save()
         
-        audio = mutagen.easyid3.EasyID3(noneMP3)
+        audio = mutagen.easyid3.EasyID3(pathNoneMP3)
         
         self.assertEqual(audio["title"][0], "title") # titre
         self.assertEqual(audio["version"][0], "subtitle") # sous-titre
-        # notation
+        audioRating = mutagen.id3.ID3(pathNoneMP3) # notation
+        present = False
+        for frame in audioRating.values():
+            if type(frame) is mutagen.id3.POPM:
+                self.assertEqual(frame.rating, 1)
+                present = True
+                break
+        self.assertTrue(present)
         # commentaire
         self.assertEqual(audio["artist"][0], "artist") # artiste ayant participé
         self.assertEqual(audio["performer"][0], "albumArtist") # artiste de l'album
